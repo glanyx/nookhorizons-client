@@ -5,7 +5,11 @@ import theme from "../theme";
 
 import { NavBar } from "../components";
 
+export const userData = {
+  isAuthenticated: true
+};
+
 storiesOf("Navigation Bar", module)
   .addDecorator(muiTheme(theme))
   .add("Unauthenticated", () => <NavBar />)
-  .add("Authenticated", () => <NavBar />);
+  .add("Authenticated", () => <NavBar {...userData} />);
