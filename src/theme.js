@@ -1,5 +1,5 @@
-import { createMuiTheme } from "@material-ui/core/styles";
-import { green, brown } from "@material-ui/core/colors";
+import { createMuiTheme, fade } from "@material-ui/core/styles";
+import { green, brown, black } from "@material-ui/core/colors";
 
 const theme = createMuiTheme({
   themeName: "Test Theme",
@@ -14,12 +14,12 @@ const theme = createMuiTheme({
     MuiButton: {
       root: {
         fontWeight: "bold",
-        color: "#59380e"
+        color: fade('#000000', 0.6)
       }
     },
     MuiDivider: {
       root: {
-        color: "#59380e"
+        backgroundColor: fade('#000000', 0.6)
       }
     }
   }
