@@ -16,6 +16,20 @@ storiesOf("Styled Switch", module)
   .add("Switch", () => (
     <StyledSwitch
       color={select("Theme", options.theme, "default")}
-      label={text("Label", "T&C")}
+      label={text("Label", "Terms and Conditions")}
     />
+  ))
+  .add("Disabled", () => (
+    <>
+      <StyledSwitch
+        disabled
+        color={select("Theme", options.theme, "default")}
+        label={text("Label", "Terms and Conditions")}
+      />
+      <StyledSwitch
+        disabled
+        checked={true}
+        label={text("Label", "Terms and Conditions")}
+      />
+    </>
   ));

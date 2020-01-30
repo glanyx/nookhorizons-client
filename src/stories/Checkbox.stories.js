@@ -16,6 +16,20 @@ storiesOf("Styled Checkbox", module)
   .add("Checkbox", () => (
     <StyledCheckbox
       color={select("Theme", options.theme, "default")}
-      label={text("Label", "T&C")}
+      label={text("Label", "Terms and Conditions")}
     />
+  ))
+  .add("Disabled", () => (
+    <>
+      <StyledCheckbox
+        disabled
+        color={select("Theme", options.theme, "default")}
+        label={text("Label", "Terms and Conditions")}
+      />
+      <StyledCheckbox
+        disabled
+        checked={true}
+        label={text("Label", "Terms and Conditions")}
+      />
+    </>
   ));
