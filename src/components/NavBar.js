@@ -1,14 +1,18 @@
 import React from "react";
+import { Link as RouterLink } from 'react-router-dom';
+
 import { Button, Divider, Grid, withStyles, InputBase, fade } from "@material-ui/core";
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
 const styles = theme => ({
   root: {
+    width: '100%',
     background: "#aa772c",
     display: "flex",
+  },
+  padding: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1)
   },
@@ -19,6 +23,7 @@ const styles = theme => ({
     borderRadius: 50
   },
   search: {
+    color: fade('#000000', 0.7),
     margin: theme.spacing(1),
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -43,7 +48,8 @@ const styles = theme => ({
     justifyContent: 'center'
   },
   inputRoot: {
-    color: 'inherit'
+    color: 'inherit',
+    display: 'block'
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
@@ -63,18 +69,12 @@ function NavBar(props) {
 
   return (
     <div className={classes.root}>
-      <Grid container alignItems="center">
-      <IconButton
-            aria-label="site menu"
-            aria-controls="menu-appbar"
-            color="inherit"
-          >
-            <MenuIcon />
-          </IconButton>
-        <Divider className={classes.divider} orientation="vertical" />
+      <Grid container className={classes.padding} alignItems="center">
         <Button>News</Button>
         <Divider className={classes.divider} orientation="vertical" />
         <Button>Market</Button>
+        <Divider className={classes.divider} orientation="vertical" />
+        <Button>Collections</Button>
         <Divider className={classes.divider} orientation="vertical" />
         <Button>Guides</Button>
         <Divider className={classes.divider} orientation="vertical" />
@@ -83,6 +83,7 @@ function NavBar(props) {
       </Grid>
       <Grid
         container
+        className={classes.padding}
         alignItems="center"
         alignContent="flex-end"
         justify="flex-end"
@@ -105,14 +106,13 @@ function NavBar(props) {
             aria-label="account of current user"
             aria-controls="menu-appbar"
             aria-haspopup="true"
-            color="inherit"
           >
             <AccountCircle />
           </IconButton>
         : <>
             <Button>Register</Button>
               <Divider className={classes.divider} orientation="vertical" />
-            <Button>Login</Button>
+            <Button component={RouterLink} to='/login'>Login</Button>
           </>
         }
       </Grid>

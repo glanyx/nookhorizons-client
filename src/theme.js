@@ -1,5 +1,5 @@
 import { createMuiTheme, fade } from "@material-ui/core/styles";
-import { green, brown, black } from "@material-ui/core/colors";
+import { green, brown } from "@material-ui/core/colors";
 
 const theme = createMuiTheme({
   themeName: "Test Theme",
@@ -13,13 +13,20 @@ const theme = createMuiTheme({
   overrides: {
     MuiButton: {
       root: {
-        fontWeight: "bold",
-        color: fade('#000000', 0.6)
+        color: fade('#000000', 0.6),
+      },
+      label: {
+        fontWeight: '700'
       }
     },
     MuiDivider: {
       root: {
         backgroundColor: fade('#000000', 0.6)
+      }
+    },
+    MuiTypography: {
+      h1: {
+        color: '#000000'
       }
     }
   }
