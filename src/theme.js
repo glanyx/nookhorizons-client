@@ -1,11 +1,15 @@
 import { createMuiTheme, fade } from "@material-ui/core/styles";
-import { green, brown } from "@material-ui/core/colors";
 
 const theme = createMuiTheme({
   themeName: "Test Theme",
   palette: {
-    primary: green,
-    secondary: brown
+    primary: {
+      main: "#aa772c"
+    },
+    secondary: {
+      main: "#4AC948",
+      contrastText: "white"
+    }
   },
   status: {
     danger: "orange"
@@ -13,20 +17,20 @@ const theme = createMuiTheme({
   overrides: {
     MuiButton: {
       root: {
-        color: fade('#000000', 0.6),
+        color: fade("#000000", 0.6)
       },
       label: {
-        fontWeight: '700'
+        fontWeight: "700"
       }
     },
     MuiDivider: {
       root: {
-        backgroundColor: fade('#000000', 0.6)
+        backgroundColor: fade("#000000", 0.6)
       }
     },
     MuiTypography: {
       h1: {
-        color: '#000000'
+        color: "#000000"
       }
     }
   }
