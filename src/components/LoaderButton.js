@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { makeStyles, CircularProgress } from "@material-ui/core";
 
-import { Button } from "@material-ui/core";
+import { StyledButton } from "./StyledButton";
 
 const useStyles = makeStyles(theme => ({
   root: {
