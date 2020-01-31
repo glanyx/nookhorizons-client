@@ -1,23 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { makeStyles, CircularProgress } from "@material-ui/core";
+import CheckIcon from '@material-ui/icons/Check';
 
-import { StyledButton } from "./StyledButton";
+import StyledButton from "./StyledButton";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex",
-    alignItems: "center"
+    display: "inline-block",
+    alignItems: "center",
   },
   wrapper: {
     margin: theme.spacing(1),
-    position: "relative"
+    position: "relative",
+    display: 'inline-block',
   },
   buttonSuccess: {
-    backgroundColor: "green"
+    backgroundColor: "green",
+    color: 'white'
   },
   buttonProgress: {
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.dark,
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12
+  },
+  buttonDone: {
+    color: theme.palette.secondary.dark,
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -26,7 +37,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function LoaderButton() {
+function LoaderButton({
+  color = 'primary',
+  variant = 'contained',
+  ...props
+}) {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -54,20 +69,24 @@ function LoaderButton() {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} {...props}>
       <div className={classes.wrapper}>
         <StyledButton
-          variant="contained"
-          color="primary"
+          variant={variant}
+          color={color}
           className={buttonClassname}
           disabled={loading}
           onClick={handleClick}
         >
-          Button
+          {success
+            ? <CheckIcon />
+            : props.children
+          }
         </StyledButton>
         {loading && (
           <CircularProgress size={24} className={classes.buttonProgress} />
         )}
+        
       </div>
     </div>
   );

@@ -31,6 +31,30 @@ const theme = createMuiTheme({
     MuiTypography: {
       h1: {
         color: "#000000"
+      },
+      body2: {
+        fontSize: 12
+      }
+    },
+    MuiCheckbox: {
+      colorSecondary: {
+        color: '#76531e',
+        '&$checked': {
+          color: '#76531e'
+        }
+      }
+    },
+    MuiFormControlLabel: {
+      root: {
+        '& .MuiTypography-body1': {
+          fontSize: 12
+        }
+      }
+    },
+    MuiLink: {
+      root: {
+        color: '#76531e',
+        fontWeight: 'bold'
       }
     }
   }

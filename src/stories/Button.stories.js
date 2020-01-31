@@ -1,6 +1,6 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
-import { withKnobs, select } from "@storybook/addon-knobs/react";
+import { withKnobs, select, text } from "@storybook/addon-knobs/react";
 import { muiTheme } from "storybook-addon-material-ui";
 import theme from "../theme";
 
@@ -22,4 +22,12 @@ storiesOf("Styled Button", module)
       Button
     </StyledButton>
   ))
-  .add("Loader Button", () => <LoaderButton />);
+  .add("Loader Button", () => (
+  <LoaderButton 
+    color={select("Theme", options.theme, "primary")}
+    variant={select("Variant", options.variant, "contained")}
+  >
+    {text('Text', 'Button')}
+  </LoaderButton>
+  
+  ));

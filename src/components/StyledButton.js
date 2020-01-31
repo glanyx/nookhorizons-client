@@ -7,7 +7,7 @@ function StyledButton({
     ...props
 }){
     return(
-        <Button variant={variant} color={color}>
+        <Button variant={variant} color={color} {...props}>
             {props.children}
         </Button>
     );

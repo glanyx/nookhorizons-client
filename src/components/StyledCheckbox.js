@@ -11,10 +11,10 @@ function StyledCheckbox({ color, label, ...props }) {
           checked={checked}
           onChange={e => setChecked(e.target.checked)}
           color={color}
-          {...props}
         />
       }
       label={label}
+      {...props}
     />
   );
 }

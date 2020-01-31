@@ -4,6 +4,8 @@ import { withKnobs, select, text } from "@storybook/addon-knobs/react";
 import { muiTheme } from "storybook-addon-material-ui";
 import theme from "../theme";
 
+import MailIcon from '@material-ui/icons/Mail';
+import LockIcon from '@material-ui/icons/Lock';
 import { StyledTextbox } from "../components";
 
 const options = {
@@ -14,16 +16,31 @@ storiesOf("Styled Textbox", module)
   .addDecorator(muiTheme(theme))
   .addDecorator(withKnobs)
   .add("Textbox", () => (
-    <StyledTextbox
-      color={select("Theme", options.theme, "default")}
-      label={text("Label", "Email address")}
-    />
+    <>
+      <StyledTextbox
+        type='email'
+        color={select("Theme", options.theme, "primary")}
+        label='Email address'
+      >
+        <MailIcon />
+      </StyledTextbox>
+      <br />
+      <br />
+      <StyledTextbox
+        type='password'
+        color={select("Theme", options.theme, "primary")}
+        label='Password'
+      >
+        <LockIcon />
+      </StyledTextbox>
+    </>
   ))
   .add("Error", () => (
     <StyledTextbox
       error
       helperText="Invalid Entry"
-      color={select("Theme", options.theme, "default")}
       label={text("Label", "Email address")}
-    />
+    >
+      <MailIcon />
+    </StyledTextbox>
   ));
