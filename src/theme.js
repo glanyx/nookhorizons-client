@@ -17,10 +17,11 @@ const theme = createMuiTheme({
   overrides: {
     MuiButton: {
       root: {
-        color: fade("#000000", 0.6)
+        color: fade("#000000", 0.75)
       },
       label: {
-        fontWeight: "700"
+        fontSize: 18,
+        fontWeight: "700",
       }
     },
     MuiDivider: {

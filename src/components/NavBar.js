@@ -19,8 +19,12 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    background: theme.palette.primary.main,
-    display: "flex"
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
+    display: "flex",
+    boxShadow: '0px 0px 2px 0px rgba(0,0,0,.8)',
+  },
+  button: {
+    textShadow: '0px 2px 1px rgba(190,140,70,.8)'
   },
   padding: {
     paddingLeft: theme.spacing(1),
@@ -33,13 +37,14 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 50
   },
   search: {
-    color: fade("#000000", 0.7),
+    color: fade("#ffffff", 0.7),
     margin: theme.spacing(1),
     position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
+    borderRadius: 20,
+    backgroundColor: fade(theme.palette.common.black, 0.3),
+    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
+      backgroundColor: fade(theme.palette.common.black, 0.4)
     },
     marginLeft: 0,
     width: "100%",
@@ -107,23 +112,23 @@ function NavBar({
   return (
     <div className={classes.root}>
       <Grid container className={classes.padding} alignItems="center">
-        <Button component={RouterLink} to="/">
+        <Button className={classes.button} component={RouterLink} to="/">
           News
         </Button>
         <Divider className={classes.divider} orientation="vertical" />
-        <Button component={RouterLink} to="/marketplace">
+        <Button className={classes.button} component={RouterLink} to="/marketplace">
           Market
         </Button>
         <Divider className={classes.divider} orientation="vertical" />
-        <Button component={RouterLink} to="/collections">
+        <Button className={classes.button} component={RouterLink} to="/collections">
           Collections
         </Button>
         <Divider className={classes.divider} orientation="vertical" />
-        <Button component={RouterLink} to="/guides">
+        <Button className={classes.button} component={RouterLink} to="/guides">
           Guides
         </Button>
         <Divider className={classes.divider} orientation="vertical" />
-        <Button href="https://discord.gg/YM29Fxb">Discord</Button>
+        <Button className={classes.button} href="https://discord.gg/YM29Fxb">Discord</Button>
         <Divider className={classes.divider} orientation="vertical" />
       </Grid>
       <Grid
@@ -170,11 +175,11 @@ function NavBar({
           </>
         ) : (
           <>
-            <Button component={RouterLink} to="/register">
+            <Button className={classes.button} component={RouterLink} to="/register">
               Register
             </Button>
             <Divider className={classes.divider} orientation="vertical" />
-            <Button component={RouterLink} to="/login">
+            <Button className={classes.button} component={RouterLink} to="/login">
               Login
             </Button>
           </>
