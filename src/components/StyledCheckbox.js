@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import { Checkbox, FormControlLabel } from "@material-ui/core";
 
-function StyledCheckbox({ color, label, ...props }) {
-  const [checked, setChecked] = useState(false);
+function StyledCheckbox({ color, label, checked, onChange, ...props }) {
 
   return (
     <FormControlLabel
       control={
         <Checkbox
           checked={checked}
-          onChange={e => setChecked(e.target.checked)}
+          onChange={onChange}
           color={color}
         />
       }
@@ -17,6 +17,13 @@ function StyledCheckbox({ color, label, ...props }) {
       {...props}
     />
   );
+}
+
+StyledCheckbox.propTypes = {
+  color: PropTypes.string,
+  label: PropTypes.string,
+  checked: PropTypes.bool,
+  onChange: PropTypes.func
 }
 
 export default StyledCheckbox;

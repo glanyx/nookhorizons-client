@@ -1,5 +1,6 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
+import { action } from '@storybook/addon-actions';
 import { withKnobs, select, text } from "@storybook/addon-knobs/react";
 import { muiTheme } from "storybook-addon-material-ui";
 import theme from "../theme";
@@ -7,6 +8,7 @@ import theme from "../theme";
 import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 import { StyledTextbox } from "../components";
+import { BottomNavigationAction } from "@material-ui/core";
 
 const options = {
   theme: ["default", "primary", "secondary"]
@@ -20,7 +22,8 @@ storiesOf("Styled Textbox", module)
       <StyledTextbox
         type='email'
         color={select("Theme", options.theme, "primary")}
-        label='Email address'
+        placeholder='Email address'
+        onChange={action('onChange')}
       >
         <MailIcon />
       </StyledTextbox>
@@ -29,7 +32,8 @@ storiesOf("Styled Textbox", module)
       <StyledTextbox
         type='password'
         color={select("Theme", options.theme, "primary")}
-        label='Password'
+        placeholder='Password'
+        onChange={action('onChange')}
       >
         <LockIcon />
       </StyledTextbox>
@@ -39,7 +43,8 @@ storiesOf("Styled Textbox", module)
     <StyledTextbox
       error
       helperText="Invalid Entry"
-      label={text("Label", "Email address")}
+      placeholder={text("Label", "Email address")}
+      onChange={action('onChange')}
     >
       <MailIcon />
     </StyledTextbox>

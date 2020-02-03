@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import clsx from "clsx";
+import PropTypes from 'prop-types';
 import { makeStyles, CircularProgress } from "@material-ui/core";
 import CheckIcon from '@material-ui/icons/Check';
 
@@ -40,33 +41,16 @@ const useStyles = makeStyles(theme => ({
 function LoaderButton({
   color = 'primary',
   variant = 'contained',
+  type,
+  loading,
+  success,
   ...props
 }) {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const timer = useRef();
 
   const buttonClassname = clsx({
     [classes.buttonSuccess]: success
   });
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, []);
-
-  const handleClick = () => {
-    if (!loading) {
-      setSuccess(false);
-      setLoading(true);
-      timer.current = setTimeout(() => {
-        setSuccess(true);
-        setLoading(false);
-      }, 2000);
-    }
-  };
 
   return (
     <div className={classes.root} {...props}>
@@ -76,7 +60,8 @@ function LoaderButton({
           color={color}
           className={buttonClassname}
           disabled={loading}
-          onClick={handleClick}
+          type={type}
+          {...props}
         >
           {success
             ? <CheckIcon />
@@ -86,10 +71,14 @@ function LoaderButton({
         {loading && (
           <CircularProgress size={24} className={classes.buttonProgress} />
         )}
-        
       </div>
     </div>
   );
+}
+
+LoaderButton.propTypes = {
+  loading: PropTypes.bool,
+  success: PropTypes.bool
 }
 
 export default LoaderButton;

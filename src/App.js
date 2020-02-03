@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 import './App.css';
 
-import {withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 
 import Routes from './Routes';
 import { NavBar } from './components';
+import { Auth } from 'aws-amplify';
 
-const styles = () => ({
+const useStyles = makeStyles(() => ({
   wrapper: {
     backgroundImage: `url(${process.env.PUBLIC_URL + '/ac%20background.png'})`
   },
@@ -19,20 +21,46 @@ const styles = () => ({
     width: '100%',
     height: '150px'
   }
-});
+}));
 
 function App(props) {
 
-  const { classes } = props;
+  const classes = useStyles();
+
+  const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
+
+  useEffect(() => {
+    onLoad();
+  }, []);
+
+  async function onLoad() {
+    try {
+      await Auth.currentSession();
+      userHasAuthenticated(true);
+    } catch(e) {
+      if (e !== 'No current user') {
+        alert(e);
+      }
+    }
+    setIsAuthenticating(false);
+  }
+
+  async function handleLogout() {
+    await Auth.signOut();
+    userHasAuthenticated(false);
+    props.history.push('/login');
+  }
 
   return (
+    !isAuthenticating &&
     <MuiThemeProvider theme={theme}>
       <div className={classes.wrapper}>
         <div className="App-header container">
           <div className={classes.banner} />
-          <NavBar />
+          <NavBar userProps={{ isAuthenticated, userHasAuthenticated }} onLogout={handleLogout}/>
           <div className={classes.innerWrapper}>
-            <Routes />
+            <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
           </div>
         </div>
       </div>
@@ -40,4 +68,4 @@ function App(props) {
   );
 }
 
-export default withStyles(styles)(App);
+export default withRouter(App);

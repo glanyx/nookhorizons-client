@@ -15,7 +15,7 @@ function Login(props) {
 
     return (
         <div className={classes.root}>
-            <LoginForm />
+            <LoginForm {...props} />
         </div>
     );
 }

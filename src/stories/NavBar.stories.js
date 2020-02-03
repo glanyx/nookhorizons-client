@@ -6,12 +6,16 @@ import theme from "../theme";
 
 import { NavBar } from "../components";
 
-export const userData = {
+export const userDataUnauthenticated = {
+  isAuthenticated: false
+};
+
+export const userDataAuthenticated = {
   isAuthenticated: true
 };
 
 storiesOf("Navigation Bar", module)
   .addDecorator(muiTheme(theme))
   .addDecorator(StoryRouter())
-  .add("Unauthenticated", () => <NavBar />)
-  .add("Authenticated", () => <NavBar {...userData} />);
+  .add("Unauthenticated", () => <NavBar userProps={userDataUnauthenticated} />)
+  .add("Authenticated", () => <NavBar userProps={userDataAuthenticated} />);

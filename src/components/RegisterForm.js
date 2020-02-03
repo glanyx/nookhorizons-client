@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Auth } from 'aws-amplify';
-import { Box, Grid, Typography, Link, fade, makeStyles } from "@material-ui/core";
+import { Box, Grid, Link, Typography, fade, makeStyles } from "@material-ui/core";
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 import { useFormFields } from '../libs/hooksLib';
 import StyledTextbox from './StyledTextbox';
+import StyledCheckbox from "./StyledCheckbox";
 import LoaderButton from './LoaderButton';
 
 const useStyles = makeStyles(theme => ({
@@ -37,17 +39,20 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     backgroundColor: fade(theme.palette.common.white, 0.15)
   },
+  checkbox: {
+    marginLeft: theme.spacing(1),
+    marginRight: '0px'
+  },
   button: {
     margin: 'auto'
   },
   typography: {
     marginTop: 'auto',
     marginBottom: 'auto',
-    marginLeft: theme.spacing(3)
   }
 }));
 
-function LoginForm({
+function RegisterForm({
   onSubmit,
   props
 }) {
@@ -55,28 +60,41 @@ function LoginForm({
   const preventDefault = event => event.preventDefault();
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
+  const [termsAndConditions, setTermsAndConditions] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
-    username: "",
-    password: ""
+    username: '',
+    email: '',
+    confirmEmail: '',
+    password: '',
+    confirmPassword: ''
   });
 
   function validateForm() {
-    return fields.username.length > 0 && fields.password.length > 0;
+    return (
+      fields.username.length > 0 &&
+      fields.email.length > 0 &&
+      fields.password.length > 0 &&
+      fields.email === fields.confirmEmail &&
+      fields.password === fields.confirmPassword &&
+      termsAndConditions
+    )
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
-
+    
     try {
-        await Auth.signIn(fields.username, fields.password);
-        setSuccess(true);
-        props.userHasAuthenticated(true);
-        props.history.push('/');
+      await Auth.signUp({
+        username: fields.username,
+        password: fields.password,
+        attributes: {
+          email: fields.email
+        }
+      });
+      setLoading(false);
     } catch(e) {
-      console.log(e);
       alert(e.message);
       setLoading(false);
     }
@@ -88,14 +106,14 @@ function LoginForm({
         <Grid container className={classes.root} border={5}>
           <Box border={5} className={classes.title}>
             <Typography variant='h2'>
-                Login
+                Register
             </Typography>
           </Box>
           <Grid container item>
             <StyledTextbox
               autoFocus
-              className={classes.textbox}
               id='username'
+              className={classes.textbox}
               placeholder='Username'
               type='username'
               variant='outlined'
@@ -108,8 +126,36 @@ function LoginForm({
           </Grid>
           <Grid container item>
             <StyledTextbox
+              id='email'
               className={classes.textbox}
+              placeholder='Email address'
+              type='email'
+              variant='outlined'
+              color='primary'
+              value={fields.email}
+              onChange={handleFieldChange}
+            >
+              <MailIcon />
+            </StyledTextbox>
+          </Grid>
+          <Grid container item>
+            <StyledTextbox
+              id='confirmEmail'
+              className={classes.textbox}
+              placeholder='Confirm Email address'
+              type='email'
+              variant='outlined'
+              color='primary'
+              value={fields.confirmEmail}
+              onChange={handleFieldChange}
+            >
+              <MailIcon />
+            </StyledTextbox>
+          </Grid>
+          <Grid container item>
+            <StyledTextbox
               id='password'
+              className={classes.textbox}
               placeholder='Password'
               type='password'
               variant='outlined'
@@ -121,15 +167,31 @@ function LoginForm({
             </StyledTextbox>
           </Grid>
           <Grid container item>
+            <StyledTextbox
+              id='confirmPassword'
+              className={classes.textbox}
+              placeholder='Confirm Password'
+              type='password'
+              variant='outlined'
+              color='primary'
+              value={fields.confirmPassword}
+              onChange={handleFieldChange}
+            >
+              <LockIcon />
+            </StyledTextbox>
+          </Grid>
+          <Grid container item>
+            <StyledCheckbox id='termsAndConditions' checked={termsAndConditions} onChange={e => setTermsAndConditions(e.target.checked)} className={classes.checkbox} />
             <Typography variant='body2' className={classes.typography}>
+              {`I accept the `}
               <Link href='#' onClick={preventDefault}>
-                Forgotten your password?
+                Terms and Conditions
               </Link>
             </Typography>
           </Grid>
           <Grid container item>
-            <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} success={success}>
-              Login
+            <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} >
+              Register
             </LoaderButton>
           </Grid>
         </Grid>
@@ -138,4 +200,4 @@ function LoginForm({
   );
 }
 
-export default LoginForm;
+export default RegisterForm;

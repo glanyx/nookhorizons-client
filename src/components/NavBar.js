@@ -1,19 +1,22 @@
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useState } from "react";
+import { Link as RouterLink, withRouter } from "react-router-dom";
 
 import {
   Button,
   Divider,
   Grid,
-  withStyles,
+  makeStyles,
   InputBase,
-  fade
+  fade,
+  Fade,
+  Menu,
+  MenuItem
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
     background: theme.palette.primary.main,
@@ -68,11 +71,38 @@ const styles = theme => ({
         width: 200
       }
     }
+  },
+  menu: {
+    '& .MuiMenu-paper': {
+      backgroundColor: fade(theme.palette.common.black, 0.8),
+      color: theme.palette.common.white
+    }
+  },
+  menuitem: {
   }
-});
+}));
 
-function NavBar(props) {
-  const { classes } = props;
+function NavBar({
+  userProps,
+  onLogout
+}) {
+
+  const classes = useStyles();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  };
+
+  function handleClose() {
+    setAnchorEl(null);
+  }
+
+  async function handleLogout() {
+    setAnchorEl(null);
+    onLogout();
+  }
 
   return (
     <div className={classes.root}>
@@ -116,14 +146,28 @@ function NavBar(props) {
             inputProps={{ "aria-label": "search" }}
           />
         </div>
-        {props.isAuthenticated ? (
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-          >
-            <AccountCircle />
-          </IconButton>
+        {userProps.isAuthenticated ? (
+          <>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleClick}
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id='user-menu'
+              className={classes.menu}
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              TransitionComponent={Fade}
+            >
+              <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+          </>
         ) : (
           <>
             <Button component={RouterLink} to="/register">
@@ -140,4 +184,4 @@ function NavBar(props) {
   );
 }
 
-export default withStyles(styles)(NavBar);
+export default withRouter(NavBar);

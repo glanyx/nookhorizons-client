@@ -5,11 +5,11 @@ import { withKnobs } from "@storybook/addon-knobs/react";
 import { muiTheme } from "storybook-addon-material-ui";
 import theme from "../theme";
 
-import { LoginForm } from "../components";
+import { RegisterForm } from "../components";
 
-storiesOf("Login Form", module)
+storiesOf("Register Form", module)
   .addDecorator(muiTheme(theme))
   .addDecorator(withKnobs)
   .add("Form", () => (
-    <LoginForm onSubmit={ e => { e.preventDefault(); action('Submitted')(e); }} />
+    <RegisterForm onSubmit={ e => { e.preventDefault(); action('Submitted')(e); }} />
   ));
