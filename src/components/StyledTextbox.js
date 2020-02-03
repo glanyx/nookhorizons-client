@@ -5,9 +5,6 @@ import { FormControl, InputAdornment, OutlinedInput, makeStyles, fade } from "@m
 const useStyles = makeStyles(theme => ({
   wrapper: {
     width: '100%',
-    '& label.Mui-focused': {
-      color: fade(theme.palette.common.black, 0.54)
-    }
   },
   adornment: {
     color: fade(theme.palette.common.black, 0.55)

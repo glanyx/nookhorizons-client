@@ -14,12 +14,13 @@ const useStyles = makeStyles(() => ({
   wrapper: {
     backgroundImage: `url(${process.env.PUBLIC_URL + '/ac%20background.png'})`
   },
-  // innerWrapper: {
-  //   backgroundImage: `url(${process.env.PUBLIC_URL + '/backdrop.png'})`,
-  // },
+  backdrop: {
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/backdrop.png'})`,
+  },
   banner: {
     width: '100%',
-    height: '150px'
+    height: '150px',
+    backgroundColor: '#6666ff'
   }
 }));
 
@@ -56,12 +57,10 @@ function App(props) {
     !isAuthenticating &&
     <MuiThemeProvider theme={theme}>
       <div className={classes.wrapper}>
-        <div className="App-header container">
+        <div className={`App-header container ${classes.backdrop}`}>
           <div className={classes.banner} />
           <NavBar userProps={{ isAuthenticated, userHasAuthenticated }} onLogout={handleLogout}/>
-          <div className={classes.innerWrapper}>
-            <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
-          </div>
+          <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
         </div>
       </div>
     </MuiThemeProvider>

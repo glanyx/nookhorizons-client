@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '0px 0px 2px 0px rgba(0,0,0,.8)',
   },
   button: {
-    textShadow: '0px 2px 1px rgba(190,140,70,.8)'
+    textShadow: '1px 2px 2px rgba(210,170,110,.7)',
   },
   padding: {
     paddingLeft: theme.spacing(1),

@@ -24,13 +24,16 @@ const useStyles = makeStyles(theme => ({
     justify: 'center'
   },
   title: {
+    color: fade(theme.palette.common.black, 0.8),
+    textShadow: '1px 2px 2px rgba(210,170,110,.7)',
     position: 'relative',
     padding: theme.spacing(2),
     transform: 'translateY(-50%)',
     marginBottom: theme.spacing(-5),
-    backgroundColor: theme.palette.primary.light,
-    borderColor: theme.palette.primary.dark,
-    borderRadius: 20
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
+    backgroundSize: 'cover',
+    borderRadius: 20,
+    boxShadow: '2px 4px 4px 2px rgba(0,0,0,.8)',
   },
   textbox: {
     margin: theme.spacing(1),
@@ -86,7 +89,7 @@ function LoginForm({
     <form onSubmit={onSubmit || handleSubmit}>
       <Box border={5} className={classes.wrapper}>
         <Grid container className={classes.root} border={5}>
-          <Box border={5} className={classes.title}>
+          <Box className={classes.title}>
             <Typography variant='h2'>
                 Login
             </Typography>
