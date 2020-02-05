@@ -2,25 +2,42 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import "./App.css";
 
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, fade } from "@material-ui/core";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
 import Routes from "./Routes";
-import { NavBar } from "./components";
+import { Clock, NavBar } from "./components";
 import { Auth } from "aws-amplify";
 
 const useStyles = makeStyles(() => ({
   wrapper: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/ac%20background.png"})`
+    background: `linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url(${process
+      .env.PUBLIC_URL + "/ac%20background.png"})`
   },
   backdrop: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/backdrop.png"})`
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/backdrop.png"})`,
+    height: "100%"
   },
   banner: {
     width: "100%",
     height: "150px",
+    display: "table",
     backgroundImage: `url(${process.env.PUBLIC_URL + "/banner.png"})`
+  },
+  clock: {
+    position: "relative",
+    padding: theme.spacing(1),
+    backgroundColor: fade(theme.palette.common.black, 0.35),
+    color: "white",
+    borderRadius: 10,
+    display: "inline-block",
+    float: "right",
+    marginRight: theme.spacing(2)
+  },
+  clockWrapper: {
+    display: "table-cell",
+    verticalAlign: "middle"
   }
 }));
 
@@ -57,7 +74,11 @@ function App(props) {
       <MuiThemeProvider theme={theme}>
         <div className={classes.wrapper}>
           <div className={`App-header container ${classes.backdrop}`}>
-            <div className={classes.banner} />
+            <div className={classes.banner}>
+              <div className={classes.clockWrapper}>
+                <Clock className={classes.clock} />
+              </div>
+            </div>
             <NavBar
               userProps={{ isAuthenticated, userHasAuthenticated }}
               onLogout={handleLogout}
