@@ -7,6 +7,7 @@ import {
   Grid,
   makeStyles,
   InputBase,
+  Icon,
   fade,
   Fade,
   Menu,
@@ -128,7 +129,9 @@ function NavBar({
           Guides
         </Button>
         <Divider className={classes.divider} orientation="vertical" />
-        <Button className={classes.button} href="https://discord.gg/YM29Fxb">Discord</Button>
+        <Button className={classes.button} href="https://discord.gg/YM29Fxb">
+          <Icon className={`${classes.icon} fab fa-discord`} />
+        </Button>
         <Divider className={classes.divider} orientation="vertical" />
       </Grid>
       <Grid
