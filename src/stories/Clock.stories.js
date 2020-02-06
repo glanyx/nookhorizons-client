@@ -12,8 +12,9 @@ storiesOf("Clock", module)
   .addDecorator(story => (
     <div
       style={{
+        color: 'white',
         padding: "1rem",
-        backgroundColor: "red",
+        backgroundColor: 'black',
         display: "inline-block",
         borderRadius: 10
       }}

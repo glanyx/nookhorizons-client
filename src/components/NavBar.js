@@ -26,6 +26,12 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     textShadow: '1px 2px 2px rgba(210,170,110,.7)',
+    '&:hover': {
+      backgroundColor: fade(theme.palette.common.black, 0.3),
+      boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
+      color: theme.palette.primary.light,
+      textShadow: '1px 2px 0px rgba(50,40,30,.9)',
+    }
   },
   padding: {
     paddingLeft: theme.spacing(1),
@@ -33,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     margin: theme.spacing(1),
+    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
     width: "3px",
     height: "15px",
     borderRadius: 50

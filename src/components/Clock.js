@@ -23,7 +23,8 @@ const styles = theme => {
     timeSuffix: {
       marginTop: "auto",
       marginBottom: "2px",
-      marginRight: "auto"
+      marginRight: "auto",
+      marginLeft: theme.spacing(-2)
     },
     dateWrapper: {
       display: "flex",
@@ -39,7 +40,8 @@ const styles = theme => {
       paddingBottom: "1px",
       borderRadius: 15,
       color: theme.palette.common.black,
-      backgroundColor: props => props.color
+      backgroundColor: props => props.color,
+      fontWeight: 'bold'
     },
     divider: {
       backgroundColor: props => props.color,

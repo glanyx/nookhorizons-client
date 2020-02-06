@@ -14,14 +14,17 @@ const useStyles = makeStyles({
 function StyledChip({
     color,
     variant,
-    label
+    label,
+    ...props
 }) {
     const classes = useStyles({
         color: color,
     });
 
     return(
-        <Chip className={classes.chip} icon={<FiberManualRecordIcon />} color='default' variant={variant} label={label} />
+        <div className={props.className}>
+            <Chip className={classes.chip} icon={<FiberManualRecordIcon />} color='default' variant={variant} label={label} />
+        </div>
     );
 }
 
