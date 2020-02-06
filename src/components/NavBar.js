@@ -13,6 +13,8 @@ import {
   Menu,
   MenuItem
 } from "@material-ui/core";
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
+import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -91,13 +93,12 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.common.white
     }
   },
-  menuitem: {
-  }
 }));
 
 function NavBar({
   userProps,
-  onLogout
+  onLogout,
+  ...props
 }) {
 
   const classes = useStyles();
@@ -117,86 +118,98 @@ function NavBar({
     onLogout();
   }
 
-  return (
-    <div className={classes.root}>
-      <Grid container className={classes.padding} alignItems="center">
-        <Button className={classes.button} component={RouterLink} to="/">
-          News
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" />
-        <Button className={classes.button} component={RouterLink} to="/marketplace">
-          Market
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" />
-        <Button className={classes.button} component={RouterLink} to="/collections">
-          Collections
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" />
-        <Button className={classes.button} component={RouterLink} to="/guides">
-          Guides
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" />
-        <Button className={classes.button} href="https://discord.gg/YM29Fxb">
-          <Icon className={`${classes.icon} fab fa-discord`} />
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" />
-      </Grid>
-      <Grid
-        container
-        className={classes.padding}
-        alignItems="center"
-        alignContent="flex-end"
-        justify="flex-end"
-      >
-        <div className={classes.search}>
-          <div className={classes.searchIcon}>
-            <SearchIcon />
+  if (isWidthDown('md', props.width)) {
+    return(
+      <div className={classes.root}>
+        <Grid container className={classes.padding} alignItems="center">
+          <Button className={classes.button}>
+            <MenuIcon />
+          </Button>
+        </Grid>
+      </div>
+    );
+  } else {
+    return (
+      <div className={classes.root}>
+        <Grid container className={classes.padding} alignItems="center">
+          <Button className={classes.button} component={RouterLink} to="/">
+            News
+          </Button>
+          <Divider className={classes.divider} orientation="vertical" />
+          <Button className={classes.button} component={RouterLink} to="/marketplace">
+            Market
+          </Button>
+          <Divider className={classes.divider} orientation="vertical" />
+          <Button className={classes.button} component={RouterLink} to="/collections">
+            Collections
+          </Button>
+          <Divider className={classes.divider} orientation="vertical" />
+          <Button className={classes.button} component={RouterLink} to="/guides">
+            Guides
+          </Button>
+          <Divider className={classes.divider} orientation="vertical" />
+          <Button className={classes.button} href="https://discord.gg/YM29Fxb">
+            <Icon className={`fab fa-discord`} />
+          </Button>
+          <Divider className={classes.divider} orientation="vertical" />
+        </Grid>
+        <Grid
+          container
+          className={classes.padding}
+          alignItems="center"
+          alignContent="flex-end"
+          justify="flex-end"
+        >
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Search.."
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput
+              }}
+              inputProps={{ "aria-label": "search" }}
+            />
           </div>
-          <InputBase
-            placeholder="Search.."
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput
-            }}
-            inputProps={{ "aria-label": "search" }}
-          />
-        </div>
-        {userProps.isAuthenticated ? (
-          <>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleClick}
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id='user-menu'
-              className={classes.menu}
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              TransitionComponent={Fade}
-            >
-              <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
-          </>
-        ) : (
-          <>
-            <Button className={classes.button} component={RouterLink} to="/register">
-              Register
-            </Button>
-            <Divider className={classes.divider} orientation="vertical" />
-            <Button className={classes.button} component={RouterLink} to="/login">
-              Login
-            </Button>
-          </>
-        )}
-      </Grid>
-    </div>
-  );
+          {userProps.isAuthenticated ? (
+            <>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleClick}
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id='user-menu'
+                className={classes.menu}
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+              >
+                <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Button className={classes.button} component={RouterLink} to="/register">
+                Register
+              </Button>
+              <Divider className={classes.divider} orientation="vertical" />
+              <Button className={classes.button} component={RouterLink} to="/login">
+                Login
+              </Button>
+            </>
+          )}
+        </Grid>
+      </div>
+    );
+  }
 }
 
-export default withRouter(NavBar);
+export default withWidth()(withRouter(NavBar));

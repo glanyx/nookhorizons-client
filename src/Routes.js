@@ -9,6 +9,7 @@ import {
   Collections,
   Guides
 } from "./containers";
+import NotFound from './NotFound';
 
 function Routes({ appProps }) {
   return (
@@ -19,6 +20,7 @@ function Routes({ appProps }) {
       <AppliedRoute path="/marketplace" exact component={Market} appProps={appProps} />
       <AppliedRoute path="/collections" exact component={Collections} appProps={appProps} />
       <AppliedRoute path="/guides" exact component={Guides} appProps={appProps} />
+      <Route component={NotFound} />
     </Switch>
   );
 }

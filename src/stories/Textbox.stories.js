@@ -8,7 +8,6 @@ import theme from "../theme";
 import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 import { StyledTextbox } from "../components";
-import { BottomNavigationAction } from "@material-ui/core";
 
 const options = {
   theme: ["default", "primary", "secondary"]

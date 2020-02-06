@@ -10,7 +10,8 @@ import LoaderButton from './LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    width: '500px',
+    maxWidth: '500px',
+    minWidth: '200px',
     borderRadius: '20px',
     backgroundColor: theme.palette.primary.light,
     borderColor: theme.palette.primary.dark,
@@ -38,7 +39,12 @@ const useStyles = makeStyles(theme => ({
   textbox: {
     margin: theme.spacing(1),
     width: '100%',
-    backgroundColor: fade(theme.palette.common.white, 0.15)
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    borderRadius: 50,
+    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
+    '&:hover': {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    }
   },
   button: {
     margin: 'auto'

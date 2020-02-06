@@ -12,3 +12,4 @@ export { default as NavBar } from "./NavBar";
 export { default as LoginForm } from './LoginForm';
 export { default as RegisterForm } from './RegisterForm';
 export { default as ItemCard } from './ItemCard';
+export { default as SaleCard } from './SaleCard';

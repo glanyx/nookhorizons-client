@@ -21,12 +21,12 @@ const useStyles = makeStyles(theme => ({
 
 function ItemCard({
     item: {
-        id,
+        itemId,
         name,
         category,
-        tags = []
+        tags = [],
+        saleCount
     },
-    saleCount,
     onSelect
 }){
 
@@ -59,12 +59,12 @@ function ItemCard({
 
 ItemCard.propTypes = {
     item: PropTypes.shape({
-        id: PropTypes.string.isRequired,
+        itemId: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
-        tags: PropTypes.arrayOf(PropTypes.string)
+        tags: PropTypes.arrayOf(PropTypes.string),
+        saleCount: PropTypes.number
     }),
-    saleCount: PropTypes.number,
     onSelect: PropTypes.func
 }
 

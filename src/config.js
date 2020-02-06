@@ -1,7 +1,7 @@
 export default {
     s3: {
         REGION: 'eu-west-2',
-        BUCKET: 'nook-horizons-uploads'
+        BUCKET: 'nookhorizons-uploads'
     },
     cognito: {
         REGION: 'eu-west-2',
