@@ -22,7 +22,7 @@ function StyledChip({
     });
 
     return(
-        <div className={props.className}>
+        <div {...props}>
             <Chip className={classes.chip} icon={<FiberManualRecordIcon />} color='default' variant={variant} label={label} />
         </div>
     );

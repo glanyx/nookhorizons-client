@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 
 function LoginForm({
   onSubmit,
-  props
+  ...props
 }) {
   const classes = useStyles();
   const preventDefault = event => event.preventDefault();

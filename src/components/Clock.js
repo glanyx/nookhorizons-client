@@ -72,8 +72,8 @@ function Clock(props) {
   ];
   const month = months[date.getMonth()];
   const dateNumber = date.getDate();
-  const days = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
-  const day = days[date.getDay() - 1];
+  const days = ["Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."];
+  const day = days[date.getDay()];
 
   useEffect(() => {
     let timerID = setInterval(() => tick(), 1000);

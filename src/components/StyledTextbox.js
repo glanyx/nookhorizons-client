@@ -31,7 +31,7 @@ function StyledTextbox({
         onChange={onChange}
         startAdornment={
           <InputAdornment position='start' className={classes.adornment}>
-            {props.children}
+            {props.children ? props.children : ''}
           </InputAdornment>
         }
         {...props}
