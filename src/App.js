@@ -13,17 +13,21 @@ import { Auth } from "aws-amplify";
 const useStyles = makeStyles(() => ({
   wrapper: {
     background: `linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url(${process
-      .env.PUBLIC_URL + "/ac%20background.png"})`
+      .env.PUBLIC_URL + "/grass1.png"})`,
+    backgroundSize: '150px',
+    backgroundColor: theme.palette.secondary.dark
   },
   backdrop: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/backdrop.png"})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/backdrop13.png"})`,
+    backgroundSize: '500px',
     height: "100%"
   },
   banner: {
     width: "100%",
     height: "150px",
     display: "table",
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/banner.png"})`
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/banner2.png"})`,
+    backgroundSize: 'cover'
   },
   clock: {
     position: "relative",
