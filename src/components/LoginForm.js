@@ -1,65 +1,69 @@
 import React, { useState } from "react";
-import { Auth } from 'aws-amplify';
-import { Box, Grid, Typography, Link, fade, makeStyles } from "@material-ui/core";
+import { Auth } from "aws-amplify";
+import {
+  Box,
+  Grid,
+  Typography,
+  Link,
+  fade,
+  makeStyles
+} from "@material-ui/core";
 
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import LockIcon from '@material-ui/icons/Lock';
-import { useFormFields } from '../libs/hooksLib';
-import StyledTextbox from './StyledTextbox';
-import LoaderButton from './LoaderButton';
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import LockIcon from "@material-ui/icons/Lock";
+import { useFormFields } from "../libs/hooksLib";
+import StyledTextbox from "./StyledTextbox";
+import LoaderButton from "./LoaderButton";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    maxWidth: '500px',
-    minWidth: '200px',
-    borderRadius: '20px',
+    maxWidth: "500px",
+    minWidth: "200px",
+    borderRadius: "20px",
     backgroundColor: theme.palette.primary.light,
     borderColor: theme.palette.primary.dark,
     marginTop: theme.spacing(7)
   },
   root: {
-    display: 'flex',
+    display: "flex",
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(6),
     paddingBottom: theme.spacing(5),
-    justify: 'center'
+    justify: "center"
   },
   title: {
     color: fade(theme.palette.common.black, 0.8),
-    textShadow: '1px 2px 2px rgba(210,170,110,.7)',
-    position: 'relative',
+    textShadow: "1px 2px 2px rgba(210,170,110,.7)",
+    position: "relative",
     padding: theme.spacing(2),
-    transform: 'translateY(-50%)',
+    transform: "translateY(-50%)",
     marginBottom: theme.spacing(-5),
-    backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
-    backgroundSize: 'cover',
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/MenuBar_back.png"})`,
+    backgroundSize: "cover",
     borderRadius: 20,
-    boxShadow: '2px 4px 4px 2px rgba(0,0,0,.8)',
+    boxShadow: "2px 4px 4px 2px rgba(0,0,0,.8)"
   },
   textbox: {
     margin: theme.spacing(1),
-    width: '100%',
+    width: "100%",
     backgroundColor: fade(theme.palette.common.white, 0.15),
     borderRadius: 50,
-    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+    boxShadow: "0px 0px 2px 2px rgba(190,140,70,.8)",
+    "&:hover": {
+      backgroundColor: fade(theme.palette.common.white, 0.25)
     }
   },
   button: {
-    margin: 'auto'
+    margin: "auto"
   },
   typography: {
-    marginTop: 'auto',
-    marginBottom: 'auto',
+    marginTop: "auto",
+    marginBottom: "auto",
     marginLeft: theme.spacing(3)
   }
 }));
 
-function LoginForm({
-  onSubmit,
-  ...props
-}) {
+function LoginForm({ onSubmit, ...props }) {
   const classes = useStyles();
   const preventDefault = event => event.preventDefault();
 
@@ -80,11 +84,11 @@ function LoginForm({
     setLoading(true);
 
     try {
-        await Auth.signIn(fields.username, fields.password);
-        setSuccess(true);
-        props.userHasAuthenticated(true);
-        props.history.push('/');
-    } catch(e) {
+      await Auth.signIn(fields.username, fields.password);
+      setSuccess(true);
+      props.userHasAuthenticated(true);
+      props.history.push("/");
+    } catch (e) {
       console.log(e);
       alert(e.message);
       setLoading(false);
@@ -92,58 +96,69 @@ function LoginForm({
   }
 
   return (
-    <form onSubmit={onSubmit || handleSubmit}>
-      <Box border={5} className={classes.wrapper}>
-        <Grid container className={classes.root} border={5}>
-          <Box className={classes.title}>
-            <Typography variant='h2'>
+    <>
+      <form name="login" onSubmit={onSubmit || handleSubmit}>
+        <Box border={5} className={classes.wrapper}>
+          <Grid container className={classes.root} border={5}>
+            <Box className={classes.title}>
+              <Typography variant="h2">Login</Typography>
+            </Box>
+            <Grid container item>
+              <StyledTextbox
+                autoFocus
+                className={classes.textbox}
+                id="username"
+                placeholder="Username"
+                type="username"
+                name="username"
+                variant="outlined"
+                color="primary"
+                value={fields.username}
+                onChange={handleFieldChange}
+              >
+                <AccountCircleIcon />
+              </StyledTextbox>
+            </Grid>
+            <Grid container item>
+              <StyledTextbox
+                className={classes.textbox}
+                id="password"
+                placeholder="Password"
+                type="password"
+                variant="outlined"
+                color="primary"
+                value={fields.password}
+                onChange={handleFieldChange}
+              >
+                <LockIcon />
+              </StyledTextbox>
+            </Grid>
+            <input type="hidden" name="form-name" value="login" />
+            <Grid container item>
+              <Typography variant="body2" className={classes.typography}>
+                <Link href="#" onClick={preventDefault}>
+                  Forgotten your password?
+                </Link>
+              </Typography>
+            </Grid>
+            <Grid container item>
+              <LoaderButton
+                className={classes.button}
+                disabled={!validateForm() || loading}
+                type="submit"
+                loading={loading}
+                success={success}
+              >
                 Login
-            </Typography>
-          </Box>
-          <Grid container item>
-            <StyledTextbox
-              autoFocus
-              className={classes.textbox}
-              id='username'
-              placeholder='Username'
-              type='username'
-              variant='outlined'
-              color='primary'
-              value={fields.username}
-              onChange={handleFieldChange}
-            >
-              <AccountCircleIcon />
-            </StyledTextbox>
+              </LoaderButton>
+            </Grid>
           </Grid>
-          <Grid container item>
-            <StyledTextbox
-              className={classes.textbox}
-              id='password'
-              placeholder='Password'
-              type='password'
-              variant='outlined'
-              color='primary'
-              value={fields.password}
-              onChange={handleFieldChange}
-            >
-              <LockIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <Typography variant='body2' className={classes.typography}>
-              <Link href='#' onClick={preventDefault}>
-                Forgotten your password?
-              </Link>
-            </Typography>
-          </Grid>
-          <Grid container item>
-            <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} success={success}>
-              Login
-            </LoaderButton>
-          </Grid>
-        </Grid>
-      </Box>
-    </form>
+        </Box>
+      </form>
+      <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+        <input type="username" name="username" />
+      </form>
+    </>
   );
 }
 
