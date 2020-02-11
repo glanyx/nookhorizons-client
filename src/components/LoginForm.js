@@ -84,7 +84,9 @@ function LoginForm({ onSubmit, ...props }) {
     setLoading(true);
 
     try {
-      await Auth.signIn(fields.username, fields.password);
+      await Auth.signIn(fields.username, fields.password, {
+        "form-name": "login"
+      });
       setSuccess(true);
       props.userHasAuthenticated(true);
       props.history.push("/");
@@ -100,8 +102,10 @@ function LoginForm({ onSubmit, ...props }) {
       <form
         name="login"
         data-netlify="true"
+        data-netlify-honeypot="bot-field"
         onSubmit={onSubmit || handleSubmit}
       >
+        <input type="hidden" name="form-name" value="login" />
         <Box border={5} className={classes.wrapper}>
           <Grid container className={classes.root} border={5}>
             <Box className={classes.title}>
@@ -137,7 +141,6 @@ function LoginForm({ onSubmit, ...props }) {
                 <LockIcon />
               </StyledTextbox>
             </Grid>
-            <input type="hidden" name="form-name" value="login" />
             <Grid container item>
               <Typography variant="body2" className={classes.typography}>
                 <Link href="#" onClick={preventDefault}>
