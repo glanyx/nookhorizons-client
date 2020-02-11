@@ -97,7 +97,11 @@ function LoginForm({ onSubmit, ...props }) {
 
   return (
     <>
-      <form name="login" onSubmit={onSubmit || handleSubmit}>
+      <form
+        name="login"
+        data-netlify="true"
+        onSubmit={onSubmit || handleSubmit}
+      >
         <Box border={5} className={classes.wrapper}>
           <Grid container className={classes.root} border={5}>
             <Box className={classes.title}>
@@ -154,9 +158,6 @@ function LoginForm({ onSubmit, ...props }) {
             </Grid>
           </Grid>
         </Box>
-      </form>
-      <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-        <input type="username" name="username" />
       </form>
     </>
   );
