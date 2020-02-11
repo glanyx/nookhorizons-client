@@ -14,10 +14,7 @@ import {
   MenuItem
 } from "@material-ui/core";
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
-import MenuIcon from '@material-ui/icons/Menu';
-import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -123,7 +120,7 @@ function NavBar({
       <div className={classes.root}>
         <Grid container className={classes.padding} alignItems="center">
           <Button className={classes.button}>
-            <MenuIcon />
+            <Icon className={`fas fa-bars`} />
           </Button>
         </Grid>
       </div>
@@ -175,14 +172,9 @@ function NavBar({
           </div>
           {userProps.isAuthenticated ? (
             <>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleClick}
-              >
-                <AccountCircle />
-              </IconButton>
+              <Button className={classes.button} onClick={handleClick}>
+                <Icon className={`fas fa-user-circle`} />
+              </Button>
               <Menu
                 id='user-menu'
                 className={classes.menu}

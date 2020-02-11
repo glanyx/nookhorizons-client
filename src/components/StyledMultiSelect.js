@@ -48,16 +48,16 @@ function StyledMultiSelect({
           renderValue={selected => (
               <div className={classes.chips}>
                   {selected.map(value => (
-                      <StyledChip key={value} label={value} className={classes.chip} />
+                      <StyledChip key={value.id} label={value.name} className={classes.chip} />
                   ))}
               </div>
             )}
           {...props}
         >
-        {options.map(name => (
-            <MenuItem key={name} value={name}>
-                <StyledCheckbox checked={choices.indexOf(name) > -1} />
-                <ListItemText primary={name} />
+        {options.map(option => (
+            <MenuItem key={option.tagId} value={option}>
+                <StyledCheckbox checked={choices.indexOf(option) > -1} />
+                <ListItemText primary={option.name} />
             </MenuItem>
         ))}
         {allowAdd && <MenuItem key='new'>

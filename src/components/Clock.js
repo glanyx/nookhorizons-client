@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Clock.css";
-import { makeStyles, Typography, Divider } from "@material-ui/core";
+import { makeStyles, Typography, Divider, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -8,22 +8,21 @@ const useStyles = makeStyles(theme => ({
   },
   timeWrapper: {
     display: "block",
-    padding: theme.spacing(1),
     color: props => props.color
   },
   flexWrapper: {
     display: "flex"
   },
   time: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
     margin: "auto"
   },
   timeSuffix: {
     marginTop: "auto",
-    marginBottom: "2px",
+    marginBottom: "4px",
     marginRight: "auto",
-    marginLeft: theme.spacing(-1)
+    marginLeft: theme.spacing(-3)
   },
   dateWrapper: {
     color: props => props.color,
@@ -89,25 +88,27 @@ function Clock(props) {
 
   return (
     <div className={props.className}>
-      <div className={classes.timeWrapper}>
-        <div className={classes.flexWrapper}>
-          <Typography className={classes.time}>
-            {`${hours >= 13 ? hours - 12 : hours}:${
-              minutes.toString().length < 2 ? `0${minutes}` : minutes
-            }`}
+      <Grid container direction='column'>
+        <Grid item className={classes.timeWrapper}>
+          <Grid item className={classes.flexWrapper}>
+            <Typography className={classes.time}>
+              {`${hours >= 13 ? hours - 12 : hours}:${
+                minutes.toString().length < 2 ? `0${minutes}` : minutes
+              }`}
+            </Typography>
+            <Typography className={classes.timeSuffix}>
+              {hours >= 12 ? "PM" : "AM"}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider variant="middle" className={classes.divider} />
+        <Grid container className={classes.dateWrapper} alignItems='center'>
+          <Typography className={classes.date}>{`${month} ${dateNumber}`}</Typography>
+          <Typography className={`text-cutout ${classes.dateSuffix}`}>
+            {day}
           </Typography>
-          <Typography className={classes.timeSuffix}>
-            {hours >= 12 ? "PM" : "AM"}
-          </Typography>
-        </div>
-      </div>
-      <Divider variant="middle" className={classes.divider} />
-      <div className={classes.dateWrapper}>
-        <Typography className={classes.date}>{`${month} ${dateNumber}`}</Typography>
-        <Typography className={`text-cutout ${classes.dateSuffix}`}>
-          {day}
-        </Typography>
-      </div>
+        </Grid>
+      </Grid>
     </div>
   );
 }

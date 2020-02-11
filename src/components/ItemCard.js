@@ -49,14 +49,14 @@ function ItemCard({
                         {name}
                     </Typography>
                     <Typography variant='h5'>
-                        {category}
+                        {category.name}
                     </Typography>
                     <Typography variant='body1'>
                         {description}
                     </Typography>
                     <div className={classes.tags}>
                         {tags.map((tag, i) =>
-                            <StyledChip className={classes.chip} label={tag} key={i} />
+                            <StyledChip className={classes.chip} label={tag.name} key={i} />
                         )}
                     </div>
                     <Grid container justify='flex-end' item>
@@ -74,8 +74,8 @@ ItemCard.propTypes = {
     item: PropTypes.shape({
         itemId: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        category: PropTypes.string.isRequired,
-        tags: PropTypes.arrayOf(PropTypes.string),
+        category: PropTypes.object.isRequired,
+        tags: PropTypes.arrayOf(PropTypes.object),
         description: PropTypes.string.isRequired,
         saleCount: PropTypes.number
     }),

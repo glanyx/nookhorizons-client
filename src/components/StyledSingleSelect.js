@@ -42,15 +42,15 @@ function StyledSingleSelect({
           value={choices}
           renderValue={selected => (
               <Typography className={classes.addMargin}>
-                  {selected}
+                  {selected.name}
               </Typography>
             )}
           {...props}
         >
-        {options.map(name => (
-            <MenuItem key={name} value={name}>
-                <StyledCheckbox checked={choices.indexOf(name) > -1} />
-                <ListItemText primary={name} />
+        {options.map(option => (
+            <MenuItem key={option.categoryId} value={option}>
+                <StyledCheckbox checked={choices.name === option.name} />
+                <ListItemText primary={option.name} />
             </MenuItem>
         ))}
         {allowAdd && <MenuItem key='new'>
@@ -66,7 +66,7 @@ StyledSingleSelect.propTypes = {
   color: PropTypes.string,
   label: PropTypes.string,
   options: PropTypes.array.isRequired,
-  choices: PropTypes.string.isRequired,
+  choices: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
   allowAdd: PropTypes.bool,
   onAdd: PropTypes.func

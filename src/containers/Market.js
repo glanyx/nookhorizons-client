@@ -44,14 +44,15 @@ function Market(props) {
     setSubmitting(true);
 
     try{
-      items.push(await createItem({ 
+      await createItem({ 
         name: fields.name,
         description: fields.description,
         source: fields.source,
-        category: category,
-        tags: tags,
+        category: category.categoryId,
+        tags: tags.map(tag => tag.tagId),
         retailPrice: price
-      }));
+      });
+      setItems(await loadItems());
       fields.name = '';
       fields.description = '';
       fields.source = '';
@@ -72,7 +73,7 @@ function Market(props) {
   }
 
   function validateForm() {
-    return fields.name.length > 0 && fields.description.length > 0 && category.length > 0
+    return fields.name.length > 0 && fields.description.length > 0 && category
   }
 
   /* Tags */
@@ -180,18 +181,16 @@ function Market(props) {
   const [price, setPrice] = useState('');
 
   const addItemMock = {
-    item: {
-      itemId: 'mock-id-1234',
-      name: fields.name,
-      category: category,
-      description: fields.description,
-      tags: tags,
-      saleCount: 0
-    }
+    itemId: 'mock-id-1234',
+    name: fields.name,
+    category: category,
+    description: fields.description,
+    tags: tags,
+    saleCount: 0
   }
   
   const tagData = {
-    options: tagOptions.map(tag => tag.name),
+    options: tagOptions,
     choices: tags,
     onChange: handleTagChange,
     allowAdd: true,
@@ -199,7 +198,7 @@ function Market(props) {
   }
 
   const categoryData = {
-    options: categoryOptions.map(cat => cat.name),
+    options: categoryOptions,
     choices: category,
     onChange: handleCategoryChange,
     allowAdd: true,
@@ -214,7 +213,7 @@ function Market(props) {
             <Grid container spacing={6}>
               <Grid item xs={6} className={classes.blockWrapper}>
                 <Grid item>
-                  <ItemCard {...addItemMock} />
+                  <ItemCard item={addItemMock} />
                 </Grid>
                 <Grid item>
                   <LoaderButton disabled={!validateForm()} type='submit' loading={submitting}>
