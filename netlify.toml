@@ -1,3 +1,0 @@
-[context.dev]
-    command = "echo 'dev'"
-    base = "dev"
