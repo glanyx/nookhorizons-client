@@ -48,7 +48,7 @@ function Market(props) {
         name: fields.name,
         description: fields.description,
         source: fields.source,
-        category: category.categoryId,
+        category: categoryChoice.categoryId,
         tags: tags.map(tag => tag.tagId),
         retailPrice: price
       });
@@ -56,7 +56,7 @@ function Market(props) {
       fields.name = '';
       fields.description = '';
       fields.source = '';
-      setCategory('');
+      setCategoryChoice('');
       setTags([]);
       setPrice('');
     } catch(e) {
@@ -73,7 +73,7 @@ function Market(props) {
   }
 
   function validateForm() {
-    return fields.name.length > 0 && fields.description.length > 0 && category
+    return fields.name.length > 0 && fields.description.length > 0 && categoryChoice
   }
 
   /* Tags */
@@ -88,7 +88,9 @@ function Market(props) {
     });
   }
   const handleTagChange = event => {
-    setTags(event.target.value);
+    if (event.target.value) {
+      setTags(event.target.value);
+    }
   }
   const handleNewTag = event => {
     event.preventDefault();
@@ -113,7 +115,7 @@ function Market(props) {
 
   /* Categories */
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [category, setCategory] = useState('');
+  const [categoryChoice, setCategoryChoice] = useState('');
   function loadCategories() {
     return API.get('nh', '/categories');
   }
@@ -123,7 +125,9 @@ function Market(props) {
     });
   }
   const handleCategoryChange = event => {
-    setCategory(event.target.value);
+    if (event.target.value) {
+      setCategoryChoice(event.target.value);
+    }
   }
   const handleNewCategory = event => {
     event.preventDefault();
@@ -183,7 +187,7 @@ function Market(props) {
   const addItemMock = {
     itemId: 'mock-id-1234',
     name: fields.name,
-    category: category,
+    category: categoryChoice,
     description: fields.description,
     tags: tags,
     saleCount: 0
@@ -199,7 +203,7 @@ function Market(props) {
 
   const categoryData = {
     options: categoryOptions,
-    choices: category,
+    choices: categoryChoice,
     onChange: handleCategoryChange,
     allowAdd: true,
     onAdd: handleNewCategory
@@ -273,7 +277,6 @@ function Market(props) {
                   <StyledSingleSelect
                     id='category'
                     color='primary'
-                    variant='outlined'
                     label='Category'
                     {...categoryData}
                   />

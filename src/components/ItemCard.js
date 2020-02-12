@@ -74,7 +74,10 @@ ItemCard.propTypes = {
     item: PropTypes.shape({
         itemId: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        category: PropTypes.object.isRequired,
+        category: PropTypes.oneOfType([
+            PropTypes.object,
+            PropTypes.string
+        ]).isRequired,
         tags: PropTypes.arrayOf(PropTypes.object),
         description: PropTypes.string.isRequired,
         saleCount: PropTypes.number
