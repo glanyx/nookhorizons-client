@@ -20,16 +20,22 @@ const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
     backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
+    backgroundSize: 'cover',
     display: "flex",
     boxShadow: '0px 0px 2px 0px rgba(0,0,0,.8)',
+    paddingTop: theme.spacing(.25),
+    paddingBottom: theme.spacing(.25)
   },
   button: {
     textShadow: '1px 2px 2px rgba(210,170,110,.7)',
+    height: '80%',
     '&:hover': {
-      backgroundColor: fade(theme.palette.common.black, 0.3),
+      background: `linear-gradient(rgba(255,200,200,.1),rgba(255,200,200,.1)),url(${process
+        .env.PUBLIC_URL + "/buttonBackground.png"})`,
       boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
       color: theme.palette.primary.light,
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
+
     }
   },
   padding: {
@@ -44,14 +50,14 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 50
   },
   search: {
-    color: fade("#ffffff", 0.7),
+    color: fade("#000000", 0.7),
     margin: theme.spacing(1),
     position: "relative",
     borderRadius: 20,
-    backgroundColor: fade(theme.palette.common.black, 0.3),
-    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
+    backgroundColor: fade(theme.palette.common.white, 0.6),
+    boxShadow: '0px 0px 2px 2px rgba(120,70,20,.8)',
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.black, 0.4)
+      backgroundImage: `url(${process.env.PUBLIC_URL + '/searchBackground.png'})`,
     },
     marginLeft: 0,
     width: "100%",
