@@ -14,9 +14,7 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     width: '500px',
     borderRadius: '20px',
-    backgroundColor: theme.palette.primary.light,
-    borderColor: theme.palette.primary.dark,
-    marginTop: theme.spacing(7)
+    height: '100%'
   },
   root: {
     display: 'flex',
@@ -42,9 +40,8 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     backgroundColor: fade(theme.palette.common.white, 0.15),
     borderRadius: 50,
-    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
     '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+      backgroundColor: fade(theme.palette.common.black, 0.15),
     }
   },
   checkbox: {
@@ -109,102 +106,99 @@ function RegisterForm({
   }
 
   return (
-    <form onSubmit={onSubmit || handleSubmit}>
-      <Box border={5} className={classes.wrapper}>
-        <Grid container className={classes.root} border={5}>
-          <Box className={classes.title}>
-            <Typography variant='h2'>
+    <>
+      <form onSubmit={onSubmit || handleSubmit}>
+        <Box className={classes.wrapper}>
+          <Grid container className={classes.root}>
+            <Grid container item>
+              <StyledTextbox
+                autoFocus
+                id='username'
+                className={classes.textbox}
+                placeholder='Username'
+                type='username'
+                variant='outlined'
+                color='primary'
+                value={fields.username}
+                onChange={handleFieldChange}
+              >
+                <AccountCircleIcon />
+              </StyledTextbox>
+            </Grid>
+            <Grid container item>
+              <StyledTextbox
+                id='email'
+                className={classes.textbox}
+                placeholder='Email address'
+                type='email'
+                variant='outlined'
+                color='primary'
+                value={fields.email}
+                onChange={handleFieldChange}
+              >
+                <MailIcon />
+              </StyledTextbox>
+            </Grid>
+            <Grid container item>
+              <StyledTextbox
+                id='confirmEmail'
+                className={classes.textbox}
+                placeholder='Confirm Email address'
+                type='email'
+                variant='outlined'
+                color='primary'
+                value={fields.confirmEmail}
+                onChange={handleFieldChange}
+              >
+                <MailIcon />
+              </StyledTextbox>
+            </Grid>
+            <Grid container item>
+              <StyledTextbox
+                id='password'
+                className={classes.textbox}
+                placeholder='Password'
+                type='password'
+                variant='outlined'
+                color='primary'
+                value={fields.password}
+                onChange={handleFieldChange}
+              >
+                <LockIcon />
+              </StyledTextbox>
+            </Grid>
+            <Grid container item>
+              <StyledTextbox
+                id='confirmPassword'
+                className={classes.textbox}
+                placeholder='Confirm Password'
+                type='password'
+                variant='outlined'
+                color='primary'
+                value={fields.confirmPassword}
+                onChange={handleFieldChange}
+              >
+                <LockIcon />
+              </StyledTextbox>
+            </Grid>
+            <Grid container item>
+              <StyledCheckbox id='termsAndConditions' checked={termsAndConditions} onChange={e => setTermsAndConditions(e.target.checked)} className={classes.checkbox} />
+              <Typography variant='body2' className={classes.typography}>
+                {`I accept the `}
+                <Link href='#' onClick={preventDefault}>
+                  Terms and Conditions
+                </Link>
+              </Typography>
+            </Grid>
+            <Grid container item>
+              <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} >
                 Register
-            </Typography>
-          </Box>
-          <Grid container item>
-            <StyledTextbox
-              autoFocus
-              id='username'
-              className={classes.textbox}
-              placeholder='Username'
-              type='username'
-              variant='outlined'
-              color='primary'
-              value={fields.username}
-              onChange={handleFieldChange}
-            >
-              <AccountCircleIcon />
-            </StyledTextbox>
+              </LoaderButton>
+            </Grid>
           </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='email'
-              className={classes.textbox}
-              placeholder='Email address'
-              type='email'
-              variant='outlined'
-              color='primary'
-              value={fields.email}
-              onChange={handleFieldChange}
-            >
-              <MailIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='confirmEmail'
-              className={classes.textbox}
-              placeholder='Confirm Email address'
-              type='email'
-              variant='outlined'
-              color='primary'
-              value={fields.confirmEmail}
-              onChange={handleFieldChange}
-            >
-              <MailIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='password'
-              className={classes.textbox}
-              placeholder='Password'
-              type='password'
-              variant='outlined'
-              color='primary'
-              value={fields.password}
-              onChange={handleFieldChange}
-            >
-              <LockIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='confirmPassword'
-              className={classes.textbox}
-              placeholder='Confirm Password'
-              type='password'
-              variant='outlined'
-              color='primary'
-              value={fields.confirmPassword}
-              onChange={handleFieldChange}
-            >
-              <LockIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledCheckbox id='termsAndConditions' checked={termsAndConditions} onChange={e => setTermsAndConditions(e.target.checked)} className={classes.checkbox} />
-            <Typography variant='body2' className={classes.typography}>
-              {`I accept the `}
-              <Link href='#' onClick={preventDefault}>
-                Terms and Conditions
-              </Link>
-            </Typography>
-          </Grid>
-          <Grid container item>
-            <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} >
-              Register
-            </LoaderButton>
-          </Grid>
-        </Grid>
-      </Box>
-    </form>
+        </Box>
+      </form>
+    </>
   );
 }
 

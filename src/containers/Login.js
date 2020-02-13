@@ -1,12 +1,15 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 
-import { LoginForm } from '../components';
+import { LoginForm, NoticeBoard, Pin } from '../components';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        marginTop: theme.spacing(10)
-    }
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        width: '100%',
+        height: '100%'
+      }
 }));
 
 function Login(props) {
@@ -14,9 +17,16 @@ function Login(props) {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
-            <LoginForm {...props} />
-        </div>
+        <Grid container justify='center' className={classes.root}>
+            <NoticeBoard
+                title='Login'
+                pin={
+                    <Pin />
+                }
+            >
+                <LoginForm />
+            </NoticeBoard>
+        </Grid>
     );
 }
 

@@ -19,10 +19,7 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     maxWidth: "500px",
     minWidth: "200px",
-    borderRadius: "20px",
-    backgroundColor: theme.palette.primary.light,
-    borderColor: theme.palette.primary.dark,
-    marginTop: theme.spacing(7)
+    borderRadius: "20px"
   },
   root: {
     display: "flex",
@@ -106,11 +103,8 @@ function LoginForm({ onSubmit, ...props }) {
         onSubmit={onSubmit || handleSubmit}
       >
         <input type="hidden" name="form-name" value="login" />
-        <Box border={5} className={classes.wrapper}>
-          <Grid container className={classes.root} border={5}>
-            <Box className={classes.title}>
-              <Typography variant="h2">Login</Typography>
-            </Box>
+        <Box className={classes.wrapper}>
+          <Grid container className={classes.root}>
             <Grid container item>
               <StyledTextbox
                 autoFocus
