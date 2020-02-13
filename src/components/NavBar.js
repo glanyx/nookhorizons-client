@@ -132,23 +132,6 @@ function NavBar({
           <Button className={classes.button} component={RouterLink} to="/">
             News
           </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/marketplace">
-            Market
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/collections">
-            Collections
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/guides">
-            Guides
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} href="https://discord.gg/YM29Fxb">
-            <Icon className={`fab fa-discord`} />
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
         </Grid>
         <Grid
           container
