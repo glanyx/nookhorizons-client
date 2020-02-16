@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(2, 1, 1, 1),
       letterSpacing: theme.spacing(1)
   },
-  pinWrapper: {
+  pin: {
     marginTop: theme.spacing(-2),
     marginBottom: theme.spacing(-2)
   },
@@ -30,19 +30,18 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(3)
   },
   stamp: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + '/BigStamp.png'})`,
-    backgroundSize: 'cover',
-    width: '90px',
-    height: '90px',
+    display: 'inline-block',
+    flexWrap: 'wrap',
     position: 'absolute',
-    bottom: 50,
-    right: 90
+    left: '65%',
+    bottom: '12%'
   }
 }));
 
 function NoticeBoard({
     title,
     pin,
+    sticker,
     ...props
 }) {
 
@@ -55,7 +54,7 @@ function NoticeBoard({
         </Typography>
         <Paper className={classes.inner}>
             {pin 
-            ? <Grid container justify='center' className={classes.pinWrapper}>
+            ? <Grid container justify='center' className={classes.pin}>
                     {pin}
                 </Grid>
             : null
@@ -63,7 +62,12 @@ function NoticeBoard({
             <div className={classes.contentWrapper}>
                 {props.children}
             </div>
-            <div className={classes.stamp} />
+            {pin 
+            ? <Grid container justify='center' className={classes.stamp}>
+                    {sticker}
+                </Grid>
+            : null
+            }
         </Paper>
     </Paper>
   );
@@ -71,7 +75,8 @@ function NoticeBoard({
 
 NoticeBoard.propTypes = {
     title: PropTypes.string,
-    pin: PropTypes.node
+    pin: PropTypes.node,
+    sticker: PropTypes.node
 }
 
 export default NoticeBoard;
