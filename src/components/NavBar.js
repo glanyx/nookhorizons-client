@@ -92,6 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
   menu: {
     '& .MuiMenu-paper': {
+      backgroundImage: 'none',
       backgroundColor: fade(theme.palette.common.black, 0.8),
       color: theme.palette.common.white
     }
