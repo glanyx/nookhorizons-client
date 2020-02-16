@@ -27,7 +27,7 @@ function Login(props) {
                     <Sticker />
                 }
             >
-                <LoginForm />
+                <LoginForm {...props} />
             </NoticeBoard>
         </Grid>
     );
