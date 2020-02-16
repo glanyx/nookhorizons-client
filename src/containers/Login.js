@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, makeStyles } from '@material-ui/core';
 
-import { LoginForm, NoticeBoard, Pin } from '../components';
+import { LoginForm, NoticeBoard, Pin, Sticker } from '../components';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -22,6 +22,9 @@ function Login(props) {
                 title='Login'
                 pin={
                     <Pin />
+                }
+                sticker={
+                    <Sticker />
                 }
             >
                 <LoginForm />

@@ -8,6 +8,7 @@ export { default as StyledSingleSelect } from './StyledSingleSelect';
 
 export { default as LoaderButton } from "./LoaderButton";
 export { default as NoticeBoard } from './NoticeBoard';
+export { default as Tos } from './TermsOfService';
 
 export { default as Clock } from './Clock';
 
@@ -18,3 +19,4 @@ export { default as ItemCard } from './ItemCard';
 export { default as SaleCard } from './SaleCard';
 
 export { default as Pin } from './Pin';
+export { default as Sticker } from './Sticker';

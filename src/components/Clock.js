@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./Clock.css";
+import { useNewTimer } from '../libs/timerHook';
 import { makeStyles, Typography, Divider, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
@@ -51,10 +52,10 @@ const useStyles = makeStyles(theme => ({
 function Clock(props) {
     
   const classes = useStyles(props);
-  const [date, setDate] = useState(new Date());
+  const timer = useNewTimer(new Date());
 
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  const hours = timer.getHours();
+  const minutes = timer.getMinutes();
   const months = [
     "January",
     "February",
@@ -69,22 +70,10 @@ function Clock(props) {
     "November",
     "December"
   ];
-  const month = months[date.getMonth()];
-  const dateNumber = date.getDate();
+  const month = months[timer.getMonth()];
+  const dateNumber = timer.getDate();
   const days = ["Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."];
-  const day = days[date.getDay()];
-
-  useEffect(() => {
-    let timerID = setInterval(() => tick(), 1000);
-  
-    return function cleanup() {
-      clearInterval(timerID);
-    };
-  });
-  
-  function tick() {
-    setDate(new Date());
-  }
+  const day = days[timer.getDay()];
 
   return (
     <div className={props.className}>
