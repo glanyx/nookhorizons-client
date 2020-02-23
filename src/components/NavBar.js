@@ -137,22 +137,10 @@ function NavBar({
       <div className={classes.root}>
         <Grid container className={classes.padding} alignItems="center">
           <Button className={classes.button} component={RouterLink} to="/">
-            News
+            Home
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/marketplace">
-            Market
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/collections">
-            Collections
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/guides">
-            Guides
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} href="https://discord.gg/YM29Fxb">
+          <Button className={classes.button} href="https://discord.gg/3NPBpZh">
             <Icon className={`fab fa-discord`} />
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
@@ -161,50 +149,11 @@ function NavBar({
           container
           className={classes.padding}
           alignItems="center"
-          alignContent="flex-end"
           justify="flex-end"
         >
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search.."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
-          {userProps.isAuthenticated ? (
-            <>
-              <Button className={classes.button} onClick={handleClick}>
-                <Icon className={`fas fa-user-circle`} />
-              </Button>
-              <Menu
-                id='user-menu'
-                className={classes.menu}
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <>
-              <Button className={classes.button} component={RouterLink} to="/register">
-                Register
-              </Button>
-              <Divider className={classes.divider} orientation="vertical" />
-              <Button className={classes.button} component={RouterLink} to="/login">
-                Login
-              </Button>
-            </>
-          )}
+          <Button className={classes.button} component={RouterLink} to="/register">
+            Register
+          </Button>
         </Grid>
       </div>
     );
