@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link as RouterLink, withRouter } from "react-router-dom";
 
 import {
@@ -6,15 +6,9 @@ import {
   Divider,
   Grid,
   makeStyles,
-  InputBase,
-  Icon,
-  fade,
-  Fade,
-  Menu,
-  MenuItem
+  Icon
 } from "@material-ui/core";
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
-import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,7 +29,6 @@ const useStyles = makeStyles(theme => ({
       boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
       color: theme.palette.primary.light,
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
-
     }
   },
   padding: {
@@ -49,54 +42,6 @@ const useStyles = makeStyles(theme => ({
     height: "15px",
     borderRadius: 50
   },
-  search: {
-    color: fade("#000000", 0.7),
-    margin: theme.spacing(1),
-    position: "relative",
-    borderRadius: 20,
-    backgroundColor: fade(theme.palette.common.white, 0.6),
-    boxShadow: '0px 0px 2px 2px rgba(120,70,20,.8)',
-    "&:hover": {
-      backgroundImage: `url(${process.env.PUBLIC_URL + '/searchBackground.png'})`,
-    },
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto"
-    }
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  inputRoot: {
-    color: "inherit",
-    display: "block"
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: 120,
-      "&:focus": {
-        width: 200
-      }
-    }
-  },
-  menu: {
-    '& .MuiMenu-paper': {
-      backgroundImage: 'none',
-      backgroundColor: fade(theme.palette.common.black, 0.8),
-      color: theme.palette.common.white
-    }
-  },
 }));
 
 function NavBar({
@@ -106,21 +51,6 @@ function NavBar({
 }) {
 
   const classes = useStyles();
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget);
-  };
-
-  function handleClose() {
-    setAnchorEl(null);
-  }
-
-  async function handleLogout() {
-    setAnchorEl(null);
-    onLogout();
-  }
 
   if (isWidthDown('md', props.width)) {
     return(

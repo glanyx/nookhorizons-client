@@ -20,7 +20,8 @@ const useStyles = makeStyles(() => ({
   backdrop: {
     backgroundImage: `url(${process.env.PUBLIC_URL + "/backdrop13.png"})`,
     backgroundSize: '500px',
-    height: "100%"
+    height: "100%",
+    display: 'block'
   },
   banner: {
     width: "100%",
@@ -77,7 +78,7 @@ function App(props) {
     !isAuthenticating && (
       <MuiThemeProvider theme={theme}>
         <div className={classes.wrapper}>
-          <div className={`App-header container ${classes.backdrop}`}>
+          <div className={`App-header container ${classes.backdrop}`} id='test'>
             <div className={classes.banner}>
               <div className={classes.clockWrapper}>
                 <Clock className={classes.clock} />
