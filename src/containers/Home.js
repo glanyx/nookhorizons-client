@@ -4,30 +4,40 @@ import { Grid, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     gridwrapper: {
-        padding: theme.spacing(5),
+        padding: theme.spacing(3),
         width: '100%',
         height: '100%',
     },
-    grid: {
-        display: 'flex'
+    topwrapper: {
+        display: 'flex',
+        flexWrap: 'wrap'
     },
-    leftwrapper: {
-    },
-    rightwrapper: {
+    bottomwrapper: {
         display: 'flex'
     },
     logo: {
-        width: 500,
-        height: 270
+        width: 400,
+        height: 210,
+        zIndex: 200
     },
     soon: {
-        width: 500,
-        height: 270,
-        marginTop: theme.spacing(-2)
+        width: 200,
+        height: 110,
+        marginTop: theme.spacing(-3),
+        zIndex: 8,
+        marginBottom: theme.spacing(2),
+        marginLeft: 'auto',
+        marginRight: 'auto'
     },
     lineup: {
-        height: 400,
-        width: 240
+        height: 380,
+        width: 250,
+    },
+    lineupwrapper: {
+        display: 'inline-flex'
+    },
+    sidewrapper: {
+        marginTop: theme.spacing(-10)
     }
 }));
 
@@ -39,45 +49,48 @@ function Home(props) {
         <>
             <Grid
                 container
-                direction='row'
+                direction='column'
+                justify='center'
+                alignItems='center'
                 className={classes.gridwrapper}
             >
                 <Grid
                     item
-                    className={classes.leftwrapper}
-                    xs={5}
+                    xs={12}
+                    direction='column'
+                    justify='center'
+                    className={classes.topwrapper}
                 >
-                    <Grid item className={classes.grid}>
-                        <Img
-                            className={classes.logo}
-                            src={`${process.env.PUBLIC_URL + "/WoodLogoTease.png"}`}
-                        />
-                    </Grid>
-                    <Grid item className={classes.grid}>
-                        <Img
-                            className={classes.soon}
-                            src={`${process.env.PUBLIC_URL + "/comingsoon.png"}`}
-                        />
-                    </Grid>
+                    <Img
+                        className={classes.logo}
+                        src={`${process.env.PUBLIC_URL + "/WoodLogoTease.png"}`}
+                    />
+                    <Img
+                        className={classes.soon}
+                        src={`${process.env.PUBLIC_URL + "/comingsoon.png"}`}
+                    />
                 </Grid>
                 <Grid
-                    item
-                    className={classes.rightwrapper}
-                    xs={7}
+                    container
+                    direction='row'
+                    className={classes.bottomwrapper}
+                    justify='center'
+                    alignContent='center'
+                    xs={12}
                 >
-                    <Grid item>
+                    <Grid item xs={3} justify='center' className={`${classes.lineupwrapper} ${classes.sidewrapper}`}>
                         <Img
                             className={classes.lineup}
                             src={`${process.env.PUBLIC_URL + "/Lineup1.png"}`}
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={3} justify='center' className={classes.lineupwrapper}>
                         <Img
                             className={classes.lineup}
                             src={`${process.env.PUBLIC_URL + "/Lineup2.png"}`}
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={3} justify='center' className={`${classes.lineupwrapper} ${classes.sidewrapper}`}>
                         <Img
                             className={classes.lineup}
                             src={`${process.env.PUBLIC_URL + "/Lineup3.png"}`}
