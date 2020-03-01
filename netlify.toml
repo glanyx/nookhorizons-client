@@ -13,11 +13,6 @@
   command = "REACT_APP_STAGE=dev npm run build"
 
 [[redirects]]
-    from    = "/*"
-    to      = "/index.html"
-    status  = 200
-
-[[redirects]]
     from    = "https://auth.nookhorizons.com/*"
     to      = "https://nookhorizons.com/auth/:splat"
     status  = 301
@@ -26,3 +21,8 @@
     from    = "https://auth.dev.nookhorizons.com/*"
     to      = "https://dev.nookhorizons.com/auth/:splat"
     status  = 301
+
+[[redirects]]
+  from    = "/*"
+  to      = "/index.html"
+  status  = 200
