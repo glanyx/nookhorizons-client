@@ -4,7 +4,7 @@ const dev = {
         BUCKET: 'nookhorizons-api-dev-uploadsbucket-l06e9jeiug2l'
     },
     apiGateway: {
-        REGION: 'eu-west-2',
+        REGION: 'eu-central-1',
         URL: 'https://xdclomolaf.execute-api.eu-west-2.amazonaws.com/dev'
     },
     cognito: {
@@ -17,18 +17,18 @@ const dev = {
 
 const prod = {
     s3: {
-        REGION: '',
-        BUCKET: ''
+        REGION: 'eu-central-1',
+        BUCKET: 'nookhorizons-api-prod-uploadsbucket-19lzrk1d2gith'
     },
     apiGateway: {
-        REGION: '',
-        URL: ''
+        REGION: 'eu-central-1',
+        URL: 'https://zzal3tz7a7.execute-api.eu-central-1.amazonaws.com/prod'
     },
     cognito: {
-        REGION: '',
-        USER_POOL_ID: '',
-        APP_CLIENT_ID: '',
-        IDENTITY_POOL_ID: ''
+        REGION: 'eu-central-1',
+        USER_POOL_ID: 'eu-central-1_miT0CUFS8',
+        APP_CLIENT_ID: '1d3ob1q63bote4326lajc92cl7',
+        IDENTITY_POOL_ID: 'eu-central-1:35a39f7f-813c-4e8d-af51-2cc5c3e27cad'
     }
 }
 
