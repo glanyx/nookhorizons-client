@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     bottom: 0,
     left: 0,
-    width: "100%",
     height: 50,
     display: 'inline-flex',
     backgroundColor: fade(theme.palette.common.black, .85)
