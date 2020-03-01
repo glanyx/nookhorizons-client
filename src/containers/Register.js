@@ -55,6 +55,7 @@ function Register(props) {
         >
           <RegisterForm
             onTos={handleTos}
+            {...props}
           />
         </NoticeBoard>
       </Grid>

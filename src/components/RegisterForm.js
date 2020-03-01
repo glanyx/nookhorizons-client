@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { Auth } from 'aws-amplify';
 import { Box, Grid, Link, Typography, Snackbar, fade, makeStyles } from "@material-ui/core";
@@ -59,12 +60,12 @@ function Alert(props) {
 function RegisterForm({
   onSubmit,
   onTos,
-  props
+  ...props
 }) {
   const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+  const [user, setUser] = useState(null);
   const [snackbar, setSnackbar] = useState({
     state: false,
     type: 'warning',
@@ -78,7 +79,8 @@ function RegisterForm({
     email: '',
     confirmEmail: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    code: ''
   });
 
   function validateForm() {
@@ -91,6 +93,10 @@ function RegisterForm({
       termsAndConditions &&
       singleAccount
     )
+  }
+
+  function validateConfirmForm() {
+    return fields.code.length > 0;
   }
 
   function validateEmail() {
@@ -109,22 +115,38 @@ function RegisterForm({
     setLoading(true);
     
     try {
-      setConfirm(
-        await Auth.signUp({
-          username: fields.username,
-          password: fields.password,
-          attributes: {
-            email: fields.email
-          }
-        })
-      );
+      const newUser = await Auth.signUp({
+        username: fields.username,
+        password: fields.password,
+        attributes: {
+          email: fields.email
+        }
+      });
       setSnackbar({
         type: 'success',
-        message: 'Success! Nice! Check your email!',
+        message: `We've sent you a confirmation code! Check your email!`,
         state: true
       });
       setLoading(false);
+      setUser(newUser);
     } catch(e) {
+      setSnackbar({
+        type: 'error',
+        message: e.message,
+        state: true
+      });
+      setLoading(false);
+    }
+  }
+
+  async function handleConfirmationSubmit(event) {
+
+    event.preventDefault();
+    setLoading(true);
+    try {
+      await Auth.confirmSignUp(fields.username, fields.code);
+      props.history.push("/registered");
+    } catch (e) {
       setSnackbar({
         type: 'error',
         message: e.message,
@@ -144,7 +166,7 @@ function RegisterForm({
 
   return (
     <>
-      {!confirm
+      {user === null
         ? <form onSubmit={onSubmit || handleSubmit}>
             <Box className={classes.wrapper}>
               <Grid container className={classes.root}>
@@ -264,8 +286,23 @@ function RegisterForm({
               Hey there, thanks for registering!
             </Typography>
             <Typography>
-              You should have a confirmation email in your inbox! Use this to verify your account. Don't forget to check your SPAM folder in case you can't see it.
+              You should have a confirmation code in your inbox! Use this to verify your account. Don't forget to check your SPAM folder in case you can't see it.
             </Typography>
+            <form onSubmit={handleConfirmationSubmit}>
+              <StyledTextbox
+                autoFocus
+                id='code'
+                className={classes.textbox}
+                placeholder='Confirmation Code'
+                variant='outlined'
+                color='primary'
+                value={fields.code}
+                onChange={handleFieldChange}   
+              />
+              <LoaderButton className={classes.button} disabled={!validateConfirmForm() || loading} type='submit' loading={loading} >
+                Confirm
+              </LoaderButton>
+            </form>
           </div>
       }
       <Snackbar
@@ -288,4 +325,4 @@ RegisterForm.propTypes = {
   onTos: PropTypes.func
 }
 
-export default RegisterForm;
+export default withRouter(RegisterForm);
