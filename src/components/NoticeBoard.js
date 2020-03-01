@@ -5,11 +5,15 @@ import { makeStyles, Paper, Typography, Grid } from "@material-ui/core";
 const useStyles = makeStyles(theme => ({
   outer: {
     display: 'inline-block',
-    padding: theme.spacing(0, 3, 6, 3)
+    padding: theme.spacing(0, 3, 6, 3),
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/board.png'})`,
+    backgroundColor: 'transparent',
+    backgroundSize: '100% 100%'
   },
   inner: {
       position: 'relative',
-      backgroundImage: `url(${process.env.PUBLIC_URL + '/PaperMidRegisterFull.png'})`,
+      backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/PaperMidRegisterFull.png'})`,
+      backgroundColor: 'transparent',
       backgroundSize: '100% 105%',
       backgroundRepeat: 'no-repeat',
       paddingTop: theme.spacing(0.2),

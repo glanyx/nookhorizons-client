@@ -7,27 +7,27 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
 import Routes from "./Routes";
-import { Clock, NavBar } from "./components";
+import { Clock, NavBar, MediaBar } from "./components";
 import { Auth } from "aws-amplify";
 
 const useStyles = makeStyles(() => ({
   wrapper: {
     background: `linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url(${process
-      .env.PUBLIC_URL + "/grass1.png"})`,
+      .env.PUBLIC_URL + "/assets/grass1.png"})`,
     backgroundSize: '150px',
-    backgroundColor: theme.palette.secondary.dark
+    backgroundColor: theme.palette.secondary.dark,
   },
   backdrop: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/backdrop13.png"})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/backdrop13.png"})`,
     backgroundSize: '500px',
     height: "100%",
-    display: 'block'
+    display: 'flex'
   },
   banner: {
     width: "100%",
     height: "150px",
     display: "table",
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/banner2.png"})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/banner2.png"})`,
     backgroundSize: 'cover'
   },
   clock: {
@@ -78,7 +78,7 @@ function App(props) {
     !isAuthenticating && (
       <MuiThemeProvider theme={theme}>
         <div className={classes.wrapper}>
-          <div className={`App-header container ${classes.backdrop}`} id='test'>
+          <div className={`App-header container ${classes.backdrop}`}>
             <div className={classes.banner}>
               <div className={classes.clockWrapper}>
                 <Clock className={classes.clock} />
@@ -89,6 +89,7 @@ function App(props) {
               onLogout={handleLogout}
             />
             <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
+            <MediaBar />
           </div>
         </div>
       </MuiThemeProvider>

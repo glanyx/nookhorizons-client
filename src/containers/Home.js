@@ -1,23 +1,46 @@
 import React from 'react';
 import Img from 'react-image';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Link as RouterLink, withRouter } from "react-router-dom";
+import { Grid, makeStyles, Button, fade } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
+    button: {
+        borderRadius: 20,
+        display: 'inline-flex',
+    },
+    buttongrid: {
+        position: 'absolute',
+        bottom: 100
+    },
+    outerwrapper: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
+    },
     gridwrapper: {
-        padding: theme.spacing(3),
+        position: 'relative',
+        display: 'block',
         width: '100%',
         height: '100%',
+        backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/background-island2.png"})`,
+        backgroundSize: 'cover',
     },
     topwrapper: {
-        display: 'flex',
-        flexWrap: 'wrap'
+        display: 'inline-flex',
+        flexWrap: 'wrap',
+        width: '100%',
+        paddingTop: theme.spacing(5),
+        paddingBottom: theme.spacing(5)
     },
     bottomwrapper: {
-        display: 'flex'
+        display: 'flex',
+        width: '60%',
+        marginLeft: 'auto',
+        marginRight: 'auto'
     },
     logo: {
-        width: 400,
-        height: 210,
+        width: 360,
+        height: 200,
         zIndex: 200
     },
     soon: {
@@ -30,14 +53,64 @@ const useStyles = makeStyles(theme => ({
         marginRight: 'auto'
     },
     lineup: {
-        height: 380,
-        width: 250,
+        position: 'sticky',
+        height: 350,
+        width: 230,
+        transition: theme.transitions.create("all"),
+        '&:hover': {
+            height: 400,
+            width: 270,
+        }
+    },
+    imagewrapper: {
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center'
+    },
+    animation: {
+        position: 'absolute',
+        marginTop: theme.spacing(9),
+        width: '50%',
+        paddingRight: theme.spacing(1)
     },
     lineupwrapper: {
         display: 'inline-flex'
     },
+    midwrapper: {
+        marginTop: theme.spacing(-3)
+    },
     sidewrapper: {
-        marginTop: theme.spacing(-10)
+        marginTop: theme.spacing(10)
+    },
+    arrowne: {
+        width: 120,
+        height: 80,
+        top: 140,
+        position: 'relative',
+        '-webkit-transform': 'rotate(340deg)',
+        '-moz-transform': 'rotate(340deg)',
+        '-ms-transform': 'rotate(340deg)',
+        '-o-transform': 'rotate(340deg)',
+        transform: 'rotate(340deg)',
+    },
+    arrowse: {
+        width: 120,
+        height: 80,
+        top: 140,
+        position: 'relative',
+        '-webkit-transform': 'rotate(20deg)',
+        '-moz-transform': 'rotate(20deg)',
+        '-ms-transform': 'rotate(20deg)',
+        '-o-transform': 'rotate(20deg)',
+        transform: 'rotate(20deg)',
+    },
+    button: {
+        padding: theme.spacing(2),
+        backgroundColor: fade(theme.palette.primary.main, .85),
+        color: theme.palette.common.white,
+        '&:hover': {
+            backgroundColor: theme.palette.primary.dark
+        }
     }
 }));
 
@@ -46,29 +119,39 @@ function Home(props) {
     const classes = useStyles();
 
     return (
-        <>
+        <div className={classes.outerwrapper}>
             <Grid
                 container
                 direction='column'
                 justify='center'
                 alignItems='center'
                 className={classes.gridwrapper}
+                xs={12}
             >
                 <Grid
-                    item
-                    xs={12}
-                    direction='column'
+                    container
+                    direction='row'
+                    alignItems='center'
                     justify='center'
-                    className={classes.topwrapper}
+                    className={classes.buttonwrapper}
                 >
-                    <Img
-                        className={classes.logo}
-                        src={`${process.env.PUBLIC_URL + "/WoodLogoTease.png"}`}
-                    />
-                    <Img
-                        className={classes.soon}
-                        src={`${process.env.PUBLIC_URL + "/comingsoon.png"}`}
-                    />
+                    <Grid
+                        item
+                        xs={2}
+                        direction='column'
+                        justify='center'
+                        alignItems='center'
+                        className={classes.topwrapper}
+                    >
+                        <Img
+                            className={classes.logo}
+                            src={`${process.env.PUBLIC_URL + "/assets/WoodLogoTease.png"}`}
+                        />
+                        <Img
+                            className={classes.soon}
+                            src={`${process.env.PUBLIC_URL + "/assets/comingsoon.png"}`}
+                        />
+                    </Grid>
                 </Grid>
                 <Grid
                     container
@@ -81,25 +164,54 @@ function Home(props) {
                     <Grid item xs={3} justify='center' className={`${classes.lineupwrapper} ${classes.sidewrapper}`}>
                         <Img
                             className={classes.lineup}
-                            src={`${process.env.PUBLIC_URL + "/Lineup1.png"}`}
+                            src={`${process.env.PUBLIC_URL + "/assets/Lineup1.png"}`}
                         />
                     </Grid>
-                    <Grid item xs={3} justify='center' className={classes.lineupwrapper}>
+                    <Grid item xs={1} justify='center' className={`${classes.lineupwrapper} ${classes.sidewrapper}`}>
                         <Img
-                            className={classes.lineup}
-                            src={`${process.env.PUBLIC_URL + "/Lineup2.png"}`}
+                            className={classes.arrowne}
+                            src={`${process.env.PUBLIC_URL + "/assets/arrow.png"}`}
+                        />
+                    </Grid>
+                    <Grid item xs={3} justify='center' className={`${classes.lineupwrapper} ${classes.midwrapper}`}>
+                        <div className={classes.imagewrapper}>
+                            <Img
+                                className={classes.lineup}
+                                src={`${process.env.PUBLIC_URL + "/assets/LineupEmpty.png"}`}
+                            />
+                            <Img
+                                className={classes.animation}
+                                src={`${process.env.PUBLIC_URL + "/assets/TransactionAnim.png"}`}
+                            />
+                        </div>
+                    </Grid>
+                    <Grid item xs={1} justify='center' className={`${classes.lineupwrapper} ${classes.sidewrapper}`}>
+                        <Img
+                            className={classes.arrowse}
+                            src={`${process.env.PUBLIC_URL + "/assets/arrow.png"}`}
                         />
                     </Grid>
                     <Grid item xs={3} justify='center' className={`${classes.lineupwrapper} ${classes.sidewrapper}`}>
                         <Img
                             className={classes.lineup}
-                            src={`${process.env.PUBLIC_URL + "/Lineup3.png"}`}
+                            src={`${process.env.PUBLIC_URL + "/assets/Lineup3.png"}`}
                         />
                     </Grid>
                 </Grid>
+                
             </Grid>
-        </>
+            <Grid
+                container
+                alignItems='center'
+                justify='center'
+                className={classes.buttongrid}
+            >
+                <Button className={classes.button} component={RouterLink} to="/register">
+                    Pre-Register
+                </Button>
+            </Grid>
+        </div>
     );
 }
 
-export default Home;
+export default withRouter(Home);

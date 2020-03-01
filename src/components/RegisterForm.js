@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import { Auth } from 'aws-amplify';
-import { Box, Grid, Link, Typography, fade, makeStyles } from "@material-ui/core";
+import { Box, Grid, Link, Typography, Snackbar, fade, makeStyles } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
@@ -22,28 +23,12 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(6),
     paddingBottom: theme.spacing(5),
-    justify: 'center'
-  },
-  title: {
-    color: fade(theme.palette.common.black, 0.8),
-    textShadow: '1px 2px 2px rgba(210,170,110,.7)',
-    position: 'relative',
-    padding: theme.spacing(2),
-    transform: 'translateY(-50%)',
-    marginBottom: theme.spacing(-5),
-    backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
-    backgroundSize: 'cover',
-    borderRadius: 20,
-    boxShadow: '2px 4px 4px 2px rgba(0,0,0,.8)',
+    justify: 'center',
   },
   textbox: {
     margin: theme.spacing(1),
     width: '100%',
     backgroundColor: fade(theme.palette.common.white, 0.15),
-    borderRadius: 50,
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.black, 0.15),
-    }
   },
   checkbox: {
     marginLeft: theme.spacing(1),
@@ -67,6 +52,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
+
 function RegisterForm({
   onSubmit,
   onTos,
@@ -76,8 +65,14 @@ function RegisterForm({
 
   const [loading, setLoading] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    state: false,
+    type: 'warning',
+    message: 'message'
+  });
 
   const [termsAndConditions, setTermsAndConditions] = useState(false);
+  const [singleAccount, setSingleAccount] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
     username: '',
     email: '',
@@ -89,13 +84,25 @@ function RegisterForm({
   function validateForm() {
     return (
       fields.username.length > 0 &&
-      fields.email.length > 0 &&
-      fields.password.length > 0 &&
+      validateEmail() &&
+      validatePassword() &&
       fields.email === fields.confirmEmail &&
       fields.password === fields.confirmPassword &&
-      termsAndConditions
+      termsAndConditions &&
+      singleAccount
     )
   }
+
+  function validateEmail() {
+    let regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(fields.email.toLowerCase());
+  }
+
+  function validatePassword() {
+    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})");
+    return regex.test(fields.password);
+  }
+
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -111,11 +118,28 @@ function RegisterForm({
           }
         })
       );
+      setSnackbar({
+        type: 'success',
+        message: 'Success! Nice! Check your email!',
+        state: true
+      });
       setLoading(false);
     } catch(e) {
-      alert(e.message);
+      setSnackbar({
+        type: 'error',
+        message: e.message,
+        state: true
+      });
       setLoading(false);
     }
+  }
+
+  const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbar({ ...snackbar, state: false });
   }
 
   return (
@@ -134,7 +158,7 @@ function RegisterForm({
                     variant='outlined'
                     color='primary'
                     value={fields.username}
-                    onChange={handleFieldChange}
+                    onChange={handleFieldChange}        
                   >
                     <AccountCircleIcon />
                   </StyledTextbox>
@@ -149,6 +173,8 @@ function RegisterForm({
                     color='primary'
                     value={fields.email}
                     onChange={handleFieldChange}
+                    error={!validateEmail() && fields.email.length > 0}
+                    helperText={(!validateEmail() && fields.email.length > 0) && 'Please enter a valid email'}
                   >
                     <MailIcon />
                   </StyledTextbox>
@@ -163,6 +189,8 @@ function RegisterForm({
                     color='primary'
                     value={fields.confirmEmail}
                     onChange={handleFieldChange}
+                    error={fields.email !== fields.confirmEmail && fields.confirmEmail.length > 0}
+                    helperText={(fields.email !== fields.confirmEmail && fields.confirmEmail.length > 0) && 'Emails must match'}
                   >
                     <MailIcon />
                   </StyledTextbox>
@@ -177,7 +205,18 @@ function RegisterForm({
                     color='primary'
                     value={fields.password}
                     onChange={handleFieldChange}
-                  >
+                    error={!validatePassword() && fields.password.length > 0}
+                    helperText={(!validatePassword() && fields.password.length > 0) && (
+                      <>
+                        <span>Password requires the following:</span>
+                          <li>At least 8 characters long</li>
+                          <li>At least 1 lowercase character</li>
+                          <li>At least 1 uppercase character</li>
+                          <li>At least 1 numerical character</li>
+                          <li>At least 1 special character</li>
+                      </>
+                      )}
+                    >
                     <LockIcon />
                   </StyledTextbox>
                 </Grid>
@@ -191,9 +230,17 @@ function RegisterForm({
                     color='primary'
                     value={fields.confirmPassword}
                     onChange={handleFieldChange}
+                    error={fields.password !== fields.confirmPassword && fields.confirmPassword.length > 0}
+                    helperText={(fields.password !== fields.confirmPassword && fields.confirmPassword.length > 0) && 'Passwords must match'}
                   >
                     <LockIcon />
                   </StyledTextbox>
+                </Grid>
+                <Grid container item>
+                  <StyledCheckbox id='singleAccount' checked={singleAccount} onChange={e => setSingleAccount(e.target.checked)} className={classes.checkbox} />
+                  <Typography variant='body2' className={classes.typography}>
+                    I understand and agree that I am only allowed a single account
+                  </Typography>
                 </Grid>
                 <Grid container item>
                   <StyledCheckbox id='termsAndConditions' checked={termsAndConditions} onChange={e => setTermsAndConditions(e.target.checked)} className={classes.checkbox} />
@@ -217,10 +264,21 @@ function RegisterForm({
               Hey there, thanks for registering!
             </Typography>
             <Typography>
-              You should have a confirmation email in your inbox! Don't forget to check your SPAM folder in case you can't see it.
+              You should have a confirmation email in your inbox! Use this to verify your account. Don't forget to check your SPAM folder in case you can't see it.
             </Typography>
           </div>
       }
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={snackbar.state}
+        autoHideDuration={5000}
+        onClose={handleSnackClose}
+      >
+        <Alert severity={snackbar.type}>{snackbar.message}</Alert>
+      </Snackbar>
     </>
   );
 }

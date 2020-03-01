@@ -69,11 +69,6 @@ const theme = createMuiTheme({
       }
     },
     MuiPaper: {
-      root: {
-        backgroundColor: 'transparent',
-        backgroundImage: `url(${process.env.PUBLIC_URL + '/board.png'})`,
-        backgroundSize: '100% 100%'
-      },
       elevation1: {
         boxShadow: 'none'
       },
