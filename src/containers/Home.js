@@ -7,6 +7,12 @@ const useStyles = makeStyles(theme => ({
     button: {
         borderRadius: 20,
         display: 'inline-flex',
+        padding: theme.spacing(2),
+        backgroundColor: fade(theme.palette.primary.main, .85),
+        color: theme.palette.common.white,
+        '&:hover': {
+            backgroundColor: theme.palette.primary.dark
+        }
     },
     buttongrid: {
         position: 'absolute',
@@ -104,14 +110,6 @@ const useStyles = makeStyles(theme => ({
         '-o-transform': 'rotate(20deg)',
         transform: 'rotate(20deg)',
     },
-    button: {
-        padding: theme.spacing(2),
-        backgroundColor: fade(theme.palette.primary.main, .85),
-        color: theme.palette.common.white,
-        '&:hover': {
-            backgroundColor: theme.palette.primary.dark
-        }
-    }
 }));
 
 function Home(props) {

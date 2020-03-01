@@ -17,12 +17,12 @@
     to      = "/index.html"
     status  = 200
 
-[[redirect]]
+[[redirects]]
     from    = "https://auth.nookhorizons.com/*"
     to      = "https://nookhorizons.com/auth/:splat"
     status  = 301
 
-[[redirect]]
+[[redirects]]
     from    = "https://auth.dev.nookhorizons.com/*"
     to      = "https://dev.nookhorizons.com/auth/:splat"
     status  = 301
