@@ -15,12 +15,14 @@
 [[redirects]]
     from    = "https://auth.nookhorizons.com/*"
     to      = "https://nookhorizons.com/auth/:splat"
-    status  = 301
+    status  = 302
+    force   = true
 
 [[redirects]]
     from    = "https://auth.dev.nookhorizons.com/*"
     to      = "https://dev.nookhorizons.com/auth/:splat"
-    status  = 301
+    status  = 302
+    force   = true
 
 [[redirects]]
   from    = "/*"
