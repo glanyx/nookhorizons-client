@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import { FormControl, InputAdornment, OutlinedInput, makeStyles, fade } from "@material-ui/core";
+import { FormControl, InputAdornment, TextField, makeStyles, fade } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -23,7 +23,7 @@ function StyledTextbox({
 
   return (
     <FormControl variant='outlined' className={classes.wrapper}>
-      <OutlinedInput
+      <TextField
         className={classes.textbox}
         color={color}
         placeholder={placeholder}

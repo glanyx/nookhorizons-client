@@ -6,7 +6,6 @@ export function useFormFields(initialState) {
   return [
     fields,
     function(event) {
-      console.log(event);
       setValues({
         ...fields,
         [event.target.id]: event.target.value

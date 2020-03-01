@@ -9,6 +9,9 @@ const theme = createMuiTheme({
     secondary: {
       main: "#4AC948",
       contrastText: "#000000"
+    },
+    tertiary: {
+      main: '#0e4d92'
     }
   },
   status: {
@@ -33,6 +36,13 @@ const theme = createMuiTheme({
       h1: {
         color: "#000000"
       },
+      h2: {
+        textTransform: 'uppercase',
+        textAlign: 'center',
+        fontWeight: 700,
+        color: 'rgba(0, 0, 0, 0.75)',
+        textShadow: "1px 2px 2px rgba(210,170,110,.7)",
+      },
       body2: {
         fontSize: 12
       }
@@ -56,6 +66,14 @@ const theme = createMuiTheme({
       root: {
         color: '#76531e',
         fontWeight: 'bold'
+      }
+    },
+    MuiPaper: {
+      elevation1: {
+        boxShadow: 'none'
+      },
+      rounded: {
+        borderRadius: '0px'
       }
     }
   }

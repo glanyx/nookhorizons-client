@@ -46,9 +46,9 @@ function StyledMultiSelect({
           input={<Input />}
           value={choices}
           renderValue={selected => (
-              <div className={classes.chips}>
+              <div className={classes.chips} key={selected.tagId}>
                   {selected.map(value => (
-                      <StyledChip key={value.id} label={value.name} className={classes.chip} />
+                      <StyledChip key={value.tagId} label={value.name} className={classes.chip} />
                   ))}
               </div>
             )}
@@ -61,7 +61,7 @@ function StyledMultiSelect({
             </MenuItem>
         ))}
         {allowAdd && <MenuItem key='new'>
-            <AddIcon />
+            <AddIcon onClick={onAdd} />
             <ListItemText primary='Add New' onClick={onAdd} className={classes.addMargin} />
         </MenuItem>}
       </Select>

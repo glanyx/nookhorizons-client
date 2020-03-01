@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import { Auth } from 'aws-amplify';
-import { Box, Grid, Link, Typography, fade, makeStyles } from "@material-ui/core";
+import { Box, Grid, Link, Typography, Snackbar, fade, makeStyles } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
@@ -14,38 +16,19 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     width: '500px',
     borderRadius: '20px',
-    backgroundColor: theme.palette.primary.light,
-    borderColor: theme.palette.primary.dark,
-    marginTop: theme.spacing(7)
+    height: '100%'
   },
   root: {
     display: 'flex',
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(6),
     paddingBottom: theme.spacing(5),
-    justify: 'center'
-  },
-  title: {
-    color: fade(theme.palette.common.black, 0.8),
-    textShadow: '1px 2px 2px rgba(210,170,110,.7)',
-    position: 'relative',
-    padding: theme.spacing(2),
-    transform: 'translateY(-50%)',
-    marginBottom: theme.spacing(-5),
-    backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
-    backgroundSize: 'cover',
-    borderRadius: 20,
-    boxShadow: '2px 4px 4px 2px rgba(0,0,0,.8)',
+    justify: 'center',
   },
   textbox: {
     margin: theme.spacing(1),
     width: '100%',
     backgroundColor: fade(theme.palette.common.white, 0.15),
-    borderRadius: 50,
-    boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    }
   },
   checkbox: {
     marginLeft: theme.spacing(1),
@@ -57,19 +40,39 @@ const useStyles = makeStyles(theme => ({
   typography: {
     marginTop: 'auto',
     marginBottom: 'auto',
+  },
+  confirmationWrapper: {
+    marginLeft: theme.spacing(4),
+    marginRight: theme.spacing(10),
+    maxWidth: '600px',
+    height: '300px'
+  },
+  confirmation: {
+    marginBottom: theme.spacing(2)
   }
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
+
 function RegisterForm({
   onSubmit,
+  onTos,
   props
 }) {
   const classes = useStyles();
-  const preventDefault = event => event.preventDefault();
 
   const [loading, setLoading] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    state: false,
+    type: 'warning',
+    message: 'message'
+  });
 
   const [termsAndConditions, setTermsAndConditions] = useState(false);
+  const [singleAccount, setSingleAccount] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
     username: '',
     email: '',
@@ -81,131 +84,208 @@ function RegisterForm({
   function validateForm() {
     return (
       fields.username.length > 0 &&
-      fields.email.length > 0 &&
-      fields.password.length > 0 &&
+      validateEmail() &&
+      validatePassword() &&
       fields.email === fields.confirmEmail &&
       fields.password === fields.confirmPassword &&
-      termsAndConditions
+      termsAndConditions &&
+      singleAccount
     )
   }
+
+  function validateEmail() {
+    let regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(fields.email.toLowerCase());
+  }
+
+  function validatePassword() {
+    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})");
+    return regex.test(fields.password);
+  }
+
 
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     
     try {
-      await Auth.signUp({
-        username: fields.username,
-        password: fields.password,
-        attributes: {
-          email: fields.email
-        }
+      setConfirm(
+        await Auth.signUp({
+          username: fields.username,
+          password: fields.password,
+          attributes: {
+            email: fields.email
+          }
+        })
+      );
+      setSnackbar({
+        type: 'success',
+        message: 'Success! Nice! Check your email!',
+        state: true
       });
       setLoading(false);
     } catch(e) {
-      alert(e.message);
+      setSnackbar({
+        type: 'error',
+        message: e.message,
+        state: true
+      });
       setLoading(false);
     }
   }
 
+  const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbar({ ...snackbar, state: false });
+  }
+
   return (
-    <form onSubmit={onSubmit || handleSubmit}>
-      <Box border={5} className={classes.wrapper}>
-        <Grid container className={classes.root} border={5}>
-          <Box className={classes.title}>
-            <Typography variant='h2'>
-                Register
+    <>
+      {!confirm
+        ? <form onSubmit={onSubmit || handleSubmit}>
+            <Box className={classes.wrapper}>
+              <Grid container className={classes.root}>
+                <Grid container item>
+                  <StyledTextbox
+                    autoFocus
+                    id='username'
+                    className={classes.textbox}
+                    placeholder='Username'
+                    type='username'
+                    variant='outlined'
+                    color='primary'
+                    value={fields.username}
+                    onChange={handleFieldChange}        
+                  >
+                    <AccountCircleIcon />
+                  </StyledTextbox>
+                </Grid>
+                <Grid container item>
+                  <StyledTextbox
+                    id='email'
+                    className={classes.textbox}
+                    placeholder='Email address'
+                    type='email'
+                    variant='outlined'
+                    color='primary'
+                    value={fields.email}
+                    onChange={handleFieldChange}
+                    error={!validateEmail() && fields.email.length > 0}
+                    helperText={(!validateEmail() && fields.email.length > 0) && 'Please enter a valid email'}
+                  >
+                    <MailIcon />
+                  </StyledTextbox>
+                </Grid>
+                <Grid container item>
+                  <StyledTextbox
+                    id='confirmEmail'
+                    className={classes.textbox}
+                    placeholder='Confirm Email address'
+                    type='email'
+                    variant='outlined'
+                    color='primary'
+                    value={fields.confirmEmail}
+                    onChange={handleFieldChange}
+                    error={fields.email !== fields.confirmEmail && fields.confirmEmail.length > 0}
+                    helperText={(fields.email !== fields.confirmEmail && fields.confirmEmail.length > 0) && 'Emails must match'}
+                  >
+                    <MailIcon />
+                  </StyledTextbox>
+                </Grid>
+                <Grid container item>
+                  <StyledTextbox
+                    id='password'
+                    className={classes.textbox}
+                    placeholder='Password'
+                    type='password'
+                    variant='outlined'
+                    color='primary'
+                    value={fields.password}
+                    onChange={handleFieldChange}
+                    error={!validatePassword() && fields.password.length > 0}
+                    helperText={(!validatePassword() && fields.password.length > 0) && (
+                      <>
+                        <span>Password requires the following:</span>
+                          <li>At least 8 characters long</li>
+                          <li>At least 1 lowercase character</li>
+                          <li>At least 1 uppercase character</li>
+                          <li>At least 1 numerical character</li>
+                          <li>At least 1 special character</li>
+                      </>
+                      )}
+                    >
+                    <LockIcon />
+                  </StyledTextbox>
+                </Grid>
+                <Grid container item>
+                  <StyledTextbox
+                    id='confirmPassword'
+                    className={classes.textbox}
+                    placeholder='Confirm Password'
+                    type='password'
+                    variant='outlined'
+                    color='primary'
+                    value={fields.confirmPassword}
+                    onChange={handleFieldChange}
+                    error={fields.password !== fields.confirmPassword && fields.confirmPassword.length > 0}
+                    helperText={(fields.password !== fields.confirmPassword && fields.confirmPassword.length > 0) && 'Passwords must match'}
+                  >
+                    <LockIcon />
+                  </StyledTextbox>
+                </Grid>
+                <Grid container item>
+                  <StyledCheckbox id='singleAccount' checked={singleAccount} onChange={e => setSingleAccount(e.target.checked)} className={classes.checkbox} />
+                  <Typography variant='body2' className={classes.typography}>
+                    I understand and agree that I am only allowed a single account
+                  </Typography>
+                </Grid>
+                <Grid container item>
+                  <StyledCheckbox id='termsAndConditions' checked={termsAndConditions} onChange={e => setTermsAndConditions(e.target.checked)} className={classes.checkbox} />
+                  <Typography variant='body2' className={classes.typography}>
+                    {`I accept the `}
+                    <Link href='#' onClick={onTos}>
+                      Terms and Conditions
+                    </Link>
+                  </Typography>
+                </Grid>
+                <Grid container item>
+                  <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} >
+                    Register
+                  </LoaderButton>
+                </Grid>
+              </Grid>
+            </Box>
+          </form>
+        : <div className={classes.confirmationWrapper}>
+            <Typography className={classes.confirmation}>
+              Hey there, thanks for registering!
             </Typography>
-          </Box>
-          <Grid container item>
-            <StyledTextbox
-              autoFocus
-              id='username'
-              className={classes.textbox}
-              placeholder='Username'
-              type='username'
-              variant='outlined'
-              color='primary'
-              value={fields.username}
-              onChange={handleFieldChange}
-            >
-              <AccountCircleIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='email'
-              className={classes.textbox}
-              placeholder='Email address'
-              type='email'
-              variant='outlined'
-              color='primary'
-              value={fields.email}
-              onChange={handleFieldChange}
-            >
-              <MailIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='confirmEmail'
-              className={classes.textbox}
-              placeholder='Confirm Email address'
-              type='email'
-              variant='outlined'
-              color='primary'
-              value={fields.confirmEmail}
-              onChange={handleFieldChange}
-            >
-              <MailIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='password'
-              className={classes.textbox}
-              placeholder='Password'
-              type='password'
-              variant='outlined'
-              color='primary'
-              value={fields.password}
-              onChange={handleFieldChange}
-            >
-              <LockIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledTextbox
-              id='confirmPassword'
-              className={classes.textbox}
-              placeholder='Confirm Password'
-              type='password'
-              variant='outlined'
-              color='primary'
-              value={fields.confirmPassword}
-              onChange={handleFieldChange}
-            >
-              <LockIcon />
-            </StyledTextbox>
-          </Grid>
-          <Grid container item>
-            <StyledCheckbox id='termsAndConditions' checked={termsAndConditions} onChange={e => setTermsAndConditions(e.target.checked)} className={classes.checkbox} />
-            <Typography variant='body2' className={classes.typography}>
-              {`I accept the `}
-              <Link href='#' onClick={preventDefault}>
-                Terms and Conditions
-              </Link>
+            <Typography>
+              You should have a confirmation email in your inbox! Use this to verify your account. Don't forget to check your SPAM folder in case you can't see it.
             </Typography>
-          </Grid>
-          <Grid container item>
-            <LoaderButton className={classes.button} disabled={!validateForm() || loading} type='submit' loading={loading} >
-              Register
-            </LoaderButton>
-          </Grid>
-        </Grid>
-      </Box>
-    </form>
+          </div>
+      }
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={snackbar.state}
+        autoHideDuration={5000}
+        onClose={handleSnackClose}
+      >
+        <Alert severity={snackbar.type}>{snackbar.message}</Alert>
+      </Snackbar>
+    </>
   );
+}
+
+RegisterForm.propTypes = {
+  onSubmit: PropTypes.func,
+  onTos: PropTypes.func
 }
 
 export default RegisterForm;

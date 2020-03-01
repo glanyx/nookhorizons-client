@@ -1,0 +1,28 @@
+[build]
+  base    = ""
+  publish = "build"
+  command = "REACT_APP_STAGE=dev npm run build"
+
+[context.production]
+  command = "REACT_APP_STAGE=prod npm run build"
+
+[context.deploy-preview]
+  command = "REACT_APP_STAGE=dev npm run build"
+
+[context.branch-deploy]
+  command = "REACT_APP_STAGE=dev npm run build"
+
+[[redirects]]
+    from    = "/*"
+    to      = "/index.html"
+    status  = 200
+
+[[redirect]]
+    from    = "https://auth.nookhorizons.com/*"
+    to      = "https://nookhorizons.com/auth/:splat"
+    status  = 301
+
+[[redirect]]
+    from    = "https://auth.dev.nookhorizons.com/*"
+    to      = "https://dev.nookhorizons.com/auth/:splat"
+    status  = 301
