@@ -16,33 +16,46 @@ const useStyles = makeStyles(theme => ({
     },
     buttongrid: {
         position: 'absolute',
-        bottom: 100
+        bottom: 100,
+        maxWidth: '100%',
+        maxHeight: '100%',
+        [theme.breakpoints.down('sm')]: {
+            position: 'fixed',
+            bottom: 60
+        }
     },
     outerwrapper: {
         position: 'absolute',
+        minWidth: 400,
         width: '100%',
-        height: '100%'
+        maxHeight: '100%',
     },
     gridwrapper: {
         position: 'relative',
-        display: 'block',
-        width: '100%',
-        height: '100%',
+        minWidth: 400,
+        display: 'grid',
+        maxWidth: '100%',
+        maxHeight: '100%',
         backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/background-island2.png"})`,
         backgroundSize: 'cover',
+        backgroundPosition: 'center'
     },
     topwrapper: {
         display: 'inline-flex',
         flexWrap: 'wrap',
-        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
         paddingTop: theme.spacing(5),
         paddingBottom: theme.spacing(5)
     },
     bottomwrapper: {
         display: 'flex',
-        width: '60%',
-        marginLeft: 'auto',
-        marginRight: 'auto'
+        maxWidth: '100%',
+        maxHeight: '100%',
+        [theme.breakpoints.down('sm')]: {
+            display: 'grid',
+            paddingBottom: theme.spacing(10)
+        }
     },
     logo: {
         width: 360,
@@ -59,7 +72,6 @@ const useStyles = makeStyles(theme => ({
         marginRight: 'auto'
     },
     lineup: {
-        position: 'sticky',
         height: 350,
         width: 230,
         transition: theme.transitions.create("all"),
@@ -80,13 +92,21 @@ const useStyles = makeStyles(theme => ({
         paddingRight: theme.spacing(1)
     },
     lineupwrapper: {
-        display: 'inline-flex'
+        display: 'inline-flex',
+        maxWidth: '100%',
+        maxHeight: '100%',
     },
     midwrapper: {
-        marginTop: theme.spacing(-3)
+        marginTop: theme.spacing(-3),
+        [theme.breakpoints.down('sm')]: {
+            marginTop: 0
+        }
     },
     sidewrapper: {
-        marginTop: theme.spacing(10)
+        marginTop: theme.spacing(10),
+        [theme.breakpoints.down('sm')]: {
+            marginTop: 0
+        }
     },
     arrowne: {
         width: 120,
@@ -98,6 +118,16 @@ const useStyles = makeStyles(theme => ({
         '-ms-transform': 'rotate(340deg)',
         '-o-transform': 'rotate(340deg)',
         transform: 'rotate(340deg)',
+        [theme.breakpoints.down('sm')]: {
+            top: -10,
+            paddingTop: theme.spacing(4),
+            paddingBottom: theme.spacing(4),
+            '-webkit-transform': 'rotate(90deg)',
+            '-moz-transform': 'rotate(90deg)',
+            '-ms-transform': 'rotate(90deg)',
+            '-o-transform': 'rotate(90deg)',
+            transform: 'rotate(90deg)',
+        }
     },
     arrowse: {
         width: 120,
@@ -109,6 +139,16 @@ const useStyles = makeStyles(theme => ({
         '-ms-transform': 'rotate(20deg)',
         '-o-transform': 'rotate(20deg)',
         transform: 'rotate(20deg)',
+        [theme.breakpoints.down('sm')]: {
+            top: -10,
+            paddingTop: theme.spacing(4),
+            paddingBottom: theme.spacing(4),
+            '-webkit-transform': 'rotate(90deg)',
+            '-moz-transform': 'rotate(90deg)',
+            '-ms-transform': 'rotate(90deg)',
+            '-o-transform': 'rotate(90deg)',
+            transform: 'rotate(90deg)',
+        }
     },
 }));
 
@@ -134,8 +174,7 @@ function Home(props) {
                     className={classes.buttonwrapper}
                 >
                     <Grid
-                        item
-                        xs={2}
+                        container
                         direction='column'
                         justify='center'
                         alignItems='center'

@@ -44,7 +44,7 @@ function MediaBar({
         <Grid
           container
           alignItems='center'
-          xs={2}
+          xs={3}
           className={classes.root}
         >
           <Typography variant='body2' className={classes.typography}>
@@ -56,7 +56,7 @@ function MediaBar({
         </Grid>
         <Grid
           container
-          xs={10}
+          xs={9}
           justify='flex-end'
           alignItems='center'
         >
