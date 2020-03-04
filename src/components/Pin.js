@@ -12,7 +12,15 @@ const useStyles = makeStyles(theme => ({
 
 const pins = [
     'TurnipPin',
-    'BellBag'
+    'BellBag',
+    'TentPin',
+    'PearPin',
+    'PeachPin',
+    'OrangePin',
+    'DodoPin',
+    'Coconut',
+    'Cherry',
+    'apple'
 ]
 
 function Pin() {
