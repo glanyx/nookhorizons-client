@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { Auth } from 'aws-amplify';
-import { Box, Grid, Link, Typography, Snackbar, fade, makeStyles } from "@material-ui/core";
+import { Box, Grid, Link, Typography, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, fade, makeStyles } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -44,9 +44,16 @@ const useStyles = makeStyles(theme => ({
   confirmationWrapper: {
     marginLeft: theme.spacing(4),
     marginRight: theme.spacing(10),
+    maxWidth: 500
   },
   confirmation: {
     marginBottom: theme.spacing(2)
+  },
+  code: {
+    maxWidth: 200
+  },
+  link: {
+    marginLeft: theme.spacing(1)
   }
 }));
 
@@ -68,6 +75,7 @@ function RegisterForm({
     type: 'warning',
     message: 'message'
   });
+  const [open, setOpen] = useState(false);
 
   const [termsAndConditions, setTermsAndConditions] = useState(false);
   const [singleAccount, setSingleAccount] = useState(false);
@@ -77,7 +85,8 @@ function RegisterForm({
     confirmEmail: '',
     password: '',
     confirmPassword: '',
-    code: ''
+    code: '',
+    resendUsername: ''
   });
 
   function validateForm() {
@@ -103,7 +112,7 @@ function RegisterForm({
 
   function validatePassword() {
     let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!?@#$%^&*])(?=.{8,})");
-    return regex.test(fields.password);
+    return regex.test(fields.password) && fields.password !== fields.username;
   }
 
 
@@ -127,6 +136,37 @@ function RegisterForm({
       setLoading(false);
       setUser(newUser);
     } catch(e) {
+      setSnackbar({
+        type: 'error',
+        message: e.message,
+        state: true
+      });
+      setLoading(false);
+    }
+  }
+
+  const openDialog = () => {
+    setOpen(true);
+  }
+
+  const handleDialogClose = () => {
+    setOpen(false);
+  }
+
+  async function resendCode(event) {
+    event.preventDefault();
+    setOpen(false);
+
+    try {
+      const newUser = await Auth.resendSignUp(fields.resendUsername);
+      setSnackbar({
+        type: 'success',
+        message: `We've sent you a new confirmation code! Check your email!`,
+        state: true
+      });
+      setLoading(false);
+      setUser(newUser);
+    } catch (e) {
       setSnackbar({
         type: 'error',
         message: e.message,
@@ -233,6 +273,7 @@ function RegisterForm({
                           <li>At least 1 uppercase character</li>
                           <li>At least 1 numerical character</li>
                           <li>At least 1 special character - {`Accepted are ! ? @ # $ % ^ & *`}</li>
+                          <li>Must not be the same as your Username</li>
                       </>
                       )}
                     >
@@ -254,6 +295,13 @@ function RegisterForm({
                   >
                     <LockIcon />
                   </StyledTextbox>
+                </Grid>
+                <Grid item>
+                  <Typography variant='body2' className={classes.link}>
+                    <Link href='#' onClick={openDialog}>
+                      Need a new confirmation code?
+                    </Link>
+                  </Typography>
                 </Grid>
                 <Grid container item>
                   <StyledCheckbox id='singleAccount' checked={singleAccount} onChange={e => setSingleAccount(e.target.checked)} className={classes.checkbox} />
@@ -289,7 +337,7 @@ function RegisterForm({
               <StyledTextbox
                 autoFocus
                 id='code'
-                className={classes.textbox}
+                className={`${classes.textbox} ${classes.code}`}
                 placeholder='Confirmation Code'
                 variant='outlined'
                 color='primary'
@@ -313,6 +361,31 @@ function RegisterForm({
       >
         <Alert severity={snackbar.type}>{snackbar.message}</Alert>
       </Snackbar>
+      <Dialog className={classes.dialog} open={open} onClose={handleDialogClose} aria-labelledby='resend-code-dialog' maxWidth={'xl'}>
+        <DialogTitle id='resend-code-dialog-title'>Resend Confirmation Code</DialogTitle>
+        <DialogContent className={classes.dialogcontent}>
+          <DialogContentText>
+            Please enter your username:
+          </DialogContentText>
+          <StyledTextbox
+            autoFocus
+            id='resendUsername'
+            label='Username'
+            type='text'
+            value={fields.resendUsername}
+            onChange={handleFieldChange}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} className={classes.dialogbutton}>
+            Cancel
+          </Button>
+          <Button onClick={resendCode} className={classes.dialogbutton}>
+            Send
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

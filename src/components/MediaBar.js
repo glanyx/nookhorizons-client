@@ -61,13 +61,13 @@ function MediaBar({
           alignItems='center'
         >
             <Grid item>
-              <Button className={classes.buttonTwitter} href="https://twitter.com/NookHorizons">
+              <Button className={classes.buttonTwitter} href="https://twitter.com/NookHorizons" target="_blank">
                   <Icon className={`fab fa-twitter-square`} />
                   Twitter
               </Button>
             </Grid>
             <Grid item>
-              <Button className={classes.buttonDiscord} href="https://discord.gg/3NPBpZh">
+              <Button className={classes.buttonDiscord} href="https://discord.gg/3NPBpZh" target="_blank">
                   <Icon className={`fab fa-discord`} />
                   Discord
               </Button>

@@ -37,8 +37,10 @@ const useStyles = makeStyles(theme => ({
   },
   stamp: {
     position: 'absolute',
+    display: 'flex',
+    maxWidth: 80,
     bottom: 60,
-    left: '25%'
+    right: '15%'
   }
 }));
 
@@ -66,7 +68,7 @@ function NoticeBoard({
             <div className={classes.contentWrapper}>
                 {props.children}
             </div>
-            {pin 
+            {sticker 
             ? <Grid container justify='center' className={classes.stamp}>
                     {sticker}
                 </Grid>
