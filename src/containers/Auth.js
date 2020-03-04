@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles, Typography, Grid, Button, Icon } from "@material-ui/core";
-import { NoticeBoard, Pin } from "../components";
+import { NoticeBoard, Pin, Sticker } from "../components";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -45,6 +45,9 @@ function Auth() {
                 pin={
                     <Pin />
                 }
+                sticker={
+                    <Sticker />
+                }
             >
                 <div className={classes.outerwrapper}>
                     <Typography className={classes.message}>
@@ -61,7 +64,7 @@ function Auth() {
                     </Typography>
                 </div>
                 <Grid container justify='center'>
-                    <Button className={classes.button} href="https://discord.gg/3NPBpZh">
+                    <Button className={classes.button} href="https://discord.gg/3NPBpZh" target="_blank">
                         <Icon className={`fab fa-discord`} />
                         Join Discord
                     </Button>

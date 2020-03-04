@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RegisterForm, NoticeBoard, Pin, Tos } from '../components';
+import { RegisterForm, NoticeBoard, Pin, Sticker, Tos } from '../components';
 import { Grid, makeStyles, Dialog, DialogContent, DialogContentText, DialogActions, Button, fade } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
@@ -46,6 +46,9 @@ function Register(props) {
           title='Register'
           pin={
             <Pin />
+          }
+          sticker={
+            <Sticker />
           }
         >
           <RegisterForm
