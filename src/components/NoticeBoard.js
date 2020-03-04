@@ -8,7 +8,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3, 6, 3),
     backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/board.png'})`,
     backgroundColor: 'transparent',
-    backgroundSize: '100% 100%'
+    backgroundSize: '100% 100%',
+    overflowX: 'hidden'
   },
   inner: {
       position: 'relative',
@@ -23,8 +24,9 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(-3)
   },
   title: {
-      margin: theme.spacing(2, 1, 1, 1),
-      letterSpacing: theme.spacing(1)
+      margin: theme.spacing(3, 0, 1, 0),
+      letterSpacing: theme.spacing(1),
+      fontSize: 40
   },
   pin: {
     marginTop: theme.spacing(-2),
@@ -34,11 +36,9 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(3)
   },
   stamp: {
-    display: 'inline-block',
-    flexWrap: 'wrap',
     position: 'absolute',
-    left: '65%',
-    bottom: '12%'
+    bottom: 60,
+    left: '25%'
   }
 }));
 

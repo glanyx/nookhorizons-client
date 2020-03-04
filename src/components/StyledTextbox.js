@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import { FormControl, InputAdornment, TextField, makeStyles, fade } from "@material-ui/core";
+import { FormControl, TextField, makeStyles, fade } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -29,11 +29,11 @@ function StyledTextbox({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        startAdornment={
-          <InputAdornment position='start' className={classes.adornment}>
-            {props.children ? props.children : ''}
-          </InputAdornment>
-        }
+        // startAdornment={
+        //   <InputAdornment position='start' className={classes.adornment}>
+        //     {props.children ? props.children : ''}
+        //   </InputAdornment>
+        // }
         {...props}
       />
     </FormControl>

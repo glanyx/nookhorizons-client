@@ -16,42 +16,39 @@ const useStyles = makeStyles(theme => ({
     },
     buttongrid: {
         position: 'absolute',
-        bottom: 100,
+        bottom: 20,
         maxWidth: '100%',
-        maxHeight: '100%',
+        marginBottom: theme.spacing(5),
         [theme.breakpoints.down('sm')]: {
+            bottom: 20,
             position: 'fixed',
-            bottom: 60
         }
     },
     outerwrapper: {
+        left: 0,
+        top: 0,
         position: 'absolute',
-        minWidth: 400,
         width: '100%',
-        maxHeight: '100%',
-    },
-    gridwrapper: {
-        position: 'relative',
-        minWidth: 400,
-        display: 'grid',
-        maxWidth: '100%',
-        maxHeight: '100%',
+        minHeight: '100%',
         backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/background-island2.png"})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
     },
+    gridwrapper: {
+        position: 'relative',
+        display: 'flex',
+        maxWidth: '100%',
+        maxHeight: '100%',
+    },
     topwrapper: {
         display: 'inline-flex',
         flexWrap: 'wrap',
-        maxWidth: '100%',
-        maxHeight: '100%',
         paddingTop: theme.spacing(5),
         paddingBottom: theme.spacing(5)
     },
     bottomwrapper: {
         display: 'flex',
         maxWidth: '100%',
-        maxHeight: '100%',
         [theme.breakpoints.down('sm')]: {
             display: 'grid',
             paddingBottom: theme.spacing(10)
@@ -164,7 +161,6 @@ function Home(props) {
                 justify='center'
                 alignItems='center'
                 className={classes.gridwrapper}
-                xs={12}
             >
                 <Grid
                     container

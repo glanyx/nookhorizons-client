@@ -6,8 +6,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     marginTop: 'auto',
     marginBottom: 'auto',
-    width: '100%',
-    height: '100%',
     display: 'flex',
   },
   backdrop: {
@@ -59,7 +57,7 @@ function Register(props) {
           />
         </NoticeBoard>
       </Grid>
-      <Dialog className={classes.backdrop} open={open} onClose={handleClose} aria-labelledby='tos-dialog' maxWidth={960}>
+      <Dialog className={classes.backdrop} open={open} onClose={handleClose} aria-labelledby='tos-dialog' maxWidth={'xl'}>
         <DialogContent className={classes.content}>
           <DialogContentText>
             <Tos onClickAway={handleClose} />

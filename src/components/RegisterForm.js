@@ -15,9 +15,7 @@ import LoaderButton from './LoaderButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    width: '500px',
     borderRadius: '20px',
-    height: '100%'
   },
   root: {
     display: 'flex',
@@ -25,11 +23,12 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(6),
     paddingBottom: theme.spacing(5),
     justify: 'center',
+    maxWidth: 500
   },
   textbox: {
     margin: theme.spacing(1),
-    width: '100%',
     backgroundColor: fade(theme.palette.common.white, 0.15),
+    width: '100%'
   },
   checkbox: {
     marginLeft: theme.spacing(1),
@@ -45,8 +44,6 @@ const useStyles = makeStyles(theme => ({
   confirmationWrapper: {
     marginLeft: theme.spacing(4),
     marginRight: theme.spacing(10),
-    maxWidth: '600px',
-    height: '300px'
   },
   confirmation: {
     marginBottom: theme.spacing(2)
@@ -105,7 +102,7 @@ function RegisterForm({
   }
 
   function validatePassword() {
-    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})");
+    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!?@#$%^&*])(?=.{8,})");
     return regex.test(fields.password);
   }
 
@@ -235,7 +232,7 @@ function RegisterForm({
                           <li>At least 1 lowercase character</li>
                           <li>At least 1 uppercase character</li>
                           <li>At least 1 numerical character</li>
-                          <li>At least 1 special character</li>
+                          <li>At least 1 special character - {`Accepted are ! ? @ # $ % ^ & *`}</li>
                       </>
                       )}
                     >
