@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles, Typography, Grid, Button, Icon } from "@material-ui/core";
-import { NoticeBoard, Pin, Sticker } from "../components";
+import { NoticeBoard, Pin } from "../components";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -44,9 +44,6 @@ function Auth() {
                 title='Success!'
                 pin={
                     <Pin />
-                }
-                sticker={
-                    <Sticker />
                 }
             >
                 <div className={classes.outerwrapper}>
