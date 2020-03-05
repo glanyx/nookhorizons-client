@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import { RegisterForm, NoticeBoard, Pin, Sticker, Tos } from '../components';
-import { Grid, makeStyles, Dialog, DialogContent, DialogContentText, DialogActions, Button } from "@material-ui/core";
+import { Grid, makeStyles, Dialog, DialogContent, DialogContentText, DialogActions, Button, fade } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: 'auto',
     marginBottom: 'auto',
-    width: '100%',
-    height: '100%'
+    display: 'flex',
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    '& .MuiPaper-root': {
+      backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/board.png'})`,
+      backgroundColor: 'transparent',
+      backgroundSize: '100% 100%'
+    }
   },
   button: {
     color: 'rgba(0, 0, 0, 0.75)',
     textShadow: "1px 2px 2px rgba(210,170,110,.7)",
     fontSize: 36,
-    fontWeight: 900
+    fontWeight: 900,
+    backgroundColor: fade(theme.palette.common.white, 0.35)
   }
 }));
 
@@ -48,11 +53,12 @@ function Register(props) {
         >
           <RegisterForm
             onTos={handleTos}
+            {...props}
           />
         </NoticeBoard>
       </Grid>
-      <Dialog className={classes.backdrop} open={open} onClose={handleClose} aria-labelledby='tos-dialog' maxWidth={960}>
-        <DialogContent>
+      <Dialog className={classes.backdrop} open={open} onClose={handleClose} aria-labelledby='tos-dialog' maxWidth={'xl'}>
+        <DialogContent className={classes.content}>
           <DialogContentText>
             <Tos onClickAway={handleClose} />
           </DialogContentText>

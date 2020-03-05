@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   root: (props) => ({
-    backgroundImage: `url(${process.env.PUBLIC_URL + `/${props.sticker}.png`})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + `/assets/${props.sticker}.png`})`,
     backgroundSize: 'cover',
     width: '80px',
     height: '80px'

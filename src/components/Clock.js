@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: "auto",
     marginBottom: "4px",
     marginRight: "auto",
-    marginLeft: theme.spacing(-3)
+    marginLeft: theme.spacing(-1)
   },
   dateWrapper: {
     color: props => props.color,

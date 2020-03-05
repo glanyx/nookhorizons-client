@@ -1,28 +1,53 @@
 import React from "react";
-import { Typography, makeStyles } from "@material-ui/core";
+import Img from 'react-image';
+import { makeStyles, Typography, fade, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     wrapper: {
-        marginTop: theme.spacing(7),
+        marginTop: 'auto',
         display: 'inline-block',
         textAlign: 'center'
+    },
+    innerwrapper: {
+      display: 'inline-flex'
+    },
+    image: {
+      height: 700,
+      width: 700
+    },
+    textwrapper: {
+      display: 'inline-table',
+      width: 350,
+      backgroundColor: fade(theme.palette.common.black, .85),
+      color: theme.palette.common.white,
+      padding: theme.spacing(3),
+      borderRadius: 10,
+      right: '25%'
+    },
+    text: {
+      fontSize: 24
     }
 }));
 
-function Guides(props) {
+function NotFound(props) {
 
   const classes = useStyles();
 
   return (
-    <div className={classes.wrapper}>
-      <Typography variant='h3'>
-        Oh oh, that's not right!
-      </Typography>
-      <Typography variant='subtitle1'>
-        Looks like Rosetti couldn't dig up that page for you.
-      </Typography>
-    </div>
+    <Grid container direction='column' justify='center' alignItems='center' className={classes.wrapper}>
+      <Grid item className={classes.innerwrapper}>
+        <Img
+          className={classes.image}
+          src={`${process.env.PUBLIC_URL + "/assets/resetti.png"}`}
+        />
+        <div className={classes.textwrapper}>
+          <Typography className={classes.text}>
+            WHAT??! I have no idea where to find that page, punk! You gotta type the link in right. See?
+          </Typography>
+        </div>
+      </Grid>
+    </Grid>
   );
 }
 
-export default Guides;
+export default NotFound;

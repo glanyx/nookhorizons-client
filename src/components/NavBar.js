@@ -19,7 +19,7 @@ import SearchIcon from "@material-ui/icons/Search";
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    backgroundImage: `url(${process.env.PUBLIC_URL + '/MenuBar_back.png'})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/MenuBar_back.png'})`,
     backgroundSize: 'cover',
     display: "flex",
     boxShadow: '0px 0px 2px 0px rgba(0,0,0,.8)',
@@ -31,11 +31,10 @@ const useStyles = makeStyles(theme => ({
     height: '80%',
     '&:hover': {
       background: `linear-gradient(rgba(255,200,200,.1),rgba(255,200,200,.1)),url(${process
-        .env.PUBLIC_URL + "/buttonBackground.png"})`,
+        .env.PUBLIC_URL + "/assets/buttonBackground.png"})`,
       boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
       color: theme.palette.primary.light,
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
-
     }
   },
   padding: {
@@ -152,7 +151,7 @@ function NavBar({
             Guides
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} href="https://discord.gg/YM29Fxb">
+          <Button className={classes.button} href="https://discord.gg/3NPBpZh" target="_blank">
             <Icon className={`fab fa-discord`} />
           </Button>
           <Divider className={classes.divider} orientation="vertical" />

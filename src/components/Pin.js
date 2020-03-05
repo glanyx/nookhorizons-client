@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   root: (props) => ({
-    backgroundImage: `url(${process.env.PUBLIC_URL + `/${props.pin}.png`})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + `/assets/${props.pin}.png`})`,
     backgroundSize: 'cover',
     width: '50px',
     height: '50px'
@@ -12,7 +12,15 @@ const useStyles = makeStyles(theme => ({
 
 const pins = [
     'TurnipPin',
-    'BellBag'
+    'BellBag',
+    'TentPin',
+    'PearPin',
+    'PeachPin',
+    'OrangePin',
+    'DodoPin',
+    'Coconut',
+    'Cherry',
+    'apple'
 ]
 
 function Pin() {

@@ -12,6 +12,7 @@ export { default as Tos } from './TermsOfService';
 
 export { default as Clock } from './Clock';
 
+export { default as MediaBar } from './MediaBar';
 export { default as NavBar } from "./NavBar";
 export { default as LoginForm } from './LoginForm';
 export { default as RegisterForm } from './RegisterForm';
