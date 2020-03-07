@@ -1,71 +1,85 @@
 import React from 'react';
+import { Link as RouterLink } from "react-router-dom";
 import PropTypes from 'prop-types';
-import { Card, Typography, Grid, makeStyles, fade, CardMedia } from '@material-ui/core';
+import { Card, Typography, Grid, makeStyles, fade, CardMedia, CardHeader, CardContent, CardActions, CardActionArea } from '@material-ui/core';
 
 import { StyledChip } from '../components';
 
 const useStyles = makeStyles(theme => ({
     wrapper: {
-        display: 'inline-flex',
-        padding: theme.spacing(2),
-        backgroundColor: fade(theme.palette.common.black, .65),
+        backgroundColor: theme.palette.common.white,
         boxShadow: '1px 2px 2px 1px rgba(0,0,0,.8)',
         width: '100%',
-        color: theme.palette.common.white
+        color: theme.palette.primary.main,
+        borderRadius: 25,
+    },
+    header: {
+        color: theme.palette.primary.main,
+        '& .MuiTypography-root': {
+            letterSpacing: '1px'
+        }
+    },
+    content: {
+        backgroundColor: fade(theme.palette.primary.light, .5),
+        padding: theme.spacing(1),
+        borderRadius: '0px 0px 20px 20px',
+        margin: theme.spacing(0, 1, -1, 1)
     },
     tags: {
         display: 'flex',
         flexWrap: 'wrap'
     },
     chip: {
-        marginLeft: theme.spacing(1)
+        marginLeft: theme.spacing(.5)
+    },
+    test: {
+        paddingRight: theme.spacing(-10)
     }
 }));
 
 function ItemCard({
-    item: {
-        itemId,
-        name,
-        category,
-        tags = [],
-        description,
-        saleCount
-    },
-    onSelect
+    item,
+    to,
+    onSelling
 }){
 
     const classes = useStyles();
 
     return (
-        <Card className={classes.wrapper} key={itemId}>
-            <Grid container>
-                <Grid item xs={4}>
-                    <CardMedia>
-                        Image
-                    </CardMedia>
+        <Card className={classes.wrapper} key={item.itemId}>
+            <CardActionArea component={RouterLink} to={to} className={classes.test}>
+                <Grid container direction='row' justify='center'>
+                    <CardHeader
+                        title={item.name}
+                        className={classes.header}
+                    />
                 </Grid>
-                <Grid item xs={8}>
-                    <Typography variant='h4'>
-                        {name}
-                    </Typography>
-                    <Typography variant='h5'>
-                        {category.name}
-                    </Typography>
-                    <Typography variant='body1'>
-                        {description}
-                    </Typography>
-                    <div className={classes.tags}>
-                        {tags.map((tag, i) =>
-                            <StyledChip className={classes.chip} label={tag.name} key={i} />
-                        )}
-                    </div>
-                    <Grid container justify='flex-end' item>
-                        <Typography variant='body1'>
-                            {`${saleCount} selling..`}
+                <CardMedia>
+                </CardMedia>
+                <Grid item className={classes.content}>
+                    <CardContent>
+                        <Typography variant='h5'>
+                            {item.category.name}
                         </Typography>
-                    </Grid>
+                        <Typography variant='body1'>
+                            {item.description}
+                        </Typography>
+                        <div className={classes.tags}>
+                            {item.tags.map((tag, i) =>
+                                <StyledChip className={classes.chip} label={tag.name} key={i} />
+                            )}
+                        </div>
+                        <Grid container justify='flex-end' item>
+                            <Typography variant='body1'>
+                                {`${item.saleCount} selling..`}
+                            </Typography>
+                        </Grid>
+                    </CardContent>
                 </Grid>
-            </Grid>
+                <CardActions>
+
+                </CardActions>
+            </CardActionArea>
         </Card>
     )
 }
@@ -82,7 +96,8 @@ ItemCard.propTypes = {
         description: PropTypes.string.isRequired,
         saleCount: PropTypes.number
     }),
-    onSelect: PropTypes.func
+    to: PropTypes.string,
+    onSelling: PropTypes.func
 }
 
 export default ItemCard;

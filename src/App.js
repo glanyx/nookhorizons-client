@@ -19,7 +19,6 @@ const useStyles = makeStyles(() => ({
     backgroundColor: theme.palette.secondary.dark,
     minWidth: '100%',
     minHeight: '100%',
-    height: '100%'
   },
   backdrop: {
     backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/backdrop13.png"})`,
@@ -32,7 +31,9 @@ const useStyles = makeStyles(() => ({
   fill: {
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1
+    flexGrow: 1,
+    height: '100%',
+    paddingBottom: 50
   },
   banner: {
     width: "100%",

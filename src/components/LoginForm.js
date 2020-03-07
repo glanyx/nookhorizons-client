@@ -83,7 +83,6 @@ function LoginForm({ onSubmit, ...props }) {
       props.userHasAuthenticated(true);
       props.history.push("/");
     } catch (e) {
-      console.log(e);
       alert(e.message);
       setLoading(false);
     }
