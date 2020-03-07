@@ -4,5 +4,6 @@ export { default as Register } from "./Register";
 export { default as Auth } from './Auth';
 export { default as Privacy } from './Privacy';
 export { default as Market } from "./Market";
+export { default as Item } from './Item';
 export { default as Collections } from "./Collections";
 export { default as Guides } from "./Guides";

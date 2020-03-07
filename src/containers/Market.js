@@ -214,8 +214,8 @@ function Market(props) {
       {props.isAuthenticated && !loading &&
         <Box border={5} className={classes.wrapper}>
           <form onSubmit={handleNewItem}>
-            <Grid container spacing={6}>
-              <Grid item xs={6} className={classes.blockWrapper}>
+            <Grid container spacing={2}>
+              <Grid item xs={4} className={classes.blockWrapper}>
                 <Grid item>
                   <ItemCard item={addItemMock} />
                 </Grid>
@@ -225,7 +225,7 @@ function Market(props) {
                   </LoaderButton>
                 </Grid>
               </Grid>
-              <Grid container item xs={6} spacing={1} direction='column'>
+              <Grid container item xs={8} spacing={1} direction='column'>
                 <Grid container item spacing={1} direction='row'>
                   <Grid item xs={6}>
                     <StyledTextbox
@@ -295,10 +295,10 @@ function Market(props) {
           </form>
         </Box>
       }
-      <Grid container spacing={6} className={classes.itemList}>
+      <Grid container spacing={1} className={classes.itemList}>
         {items.map(item =>
           <Grid item xs={4} key={item.itemId}>
-            <ItemCard item={item} />
+            <ItemCard item={item} to={`/items/${item.itemId}`} />
           </Grid>
         )}
       </Grid>
