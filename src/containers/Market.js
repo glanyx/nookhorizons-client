@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
 import { makeStyles, Box, Grid, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core';
-import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton } from '../components';
+import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton } from '../components';
 import { API } from "aws-amplify";
+
+import { s3Upload } from '../libs/storageLib';
+import config from "../config";
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    marginTop: theme.spacing(7),
+    marginTop: theme.spacing(4),
     padding: theme.spacing(4),
     backgroundColor: theme.palette.primary.light,
     borderRadius: 20,
@@ -19,8 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   itemList: {
     width: '100%',
-    padding: theme.spacing(2),
-    marginLeft: theme.spacing(-6)
+    padding: theme.spacing(2)
   }
 }));
 
@@ -31,6 +33,7 @@ function Market(props) {
   const [submitting, setSubmitting] = useState(false);
 
   const [items, setItems] = useState([]);
+  const [file, setFile] = useState(null);
 
   const [openTagInput, setOpenTagInput] = useState(false);
   const [openCatInput, setOpenCatInput] = useState(false);
@@ -41,11 +44,22 @@ function Market(props) {
   async function handleNewItem(event) {
     event.preventDefault();
 
+    if (file !== null && file.size > config.MAX_ATTACHMENT_SIZE) {
+      alert(`Maximum file size is ${config.MAX_ATTACHMENT_SIZE/ 1000000} MB.`);
+      return;
+    }
+
     setSubmitting(true);
 
     try{
-      await createItem({ 
+
+      const attachment = file
+        ? await s3Upload(file, 'protected')
+        : null;
+
+      await createItem({
         name: fields.name,
+        image: attachment,
         description: fields.description,
         source: fields.source,
         category: categoryChoice.categoryId,
@@ -59,6 +73,7 @@ function Market(props) {
       setCategoryChoice('');
       setTags([]);
       setPrice('');
+      setFile(null);
     } catch(e) {
       alert(e);
     }
@@ -72,7 +87,7 @@ function Market(props) {
     });
   }
 
-  function validateForm() {
+  function validateItemForm() {
     return fields.name.length > 0 && fields.description.length > 0 && categoryChoice
   }
 
@@ -150,6 +165,10 @@ function Market(props) {
     }
   }
 
+  function handleFileChange(event) {
+    setFile(event.target.files[0]);
+  }
+
   useEffect(() => {
     async function onLoad() {
       if (!props.isAuthenticated) {
@@ -170,7 +189,7 @@ function Market(props) {
     onLoad();
   }, [props.isAuthenticated]);
 
-  const handleClose = event => {
+  const handleClose = () => {
     setOpenTagInput(false);
     setOpenCatInput(false);
   }
@@ -187,6 +206,7 @@ function Market(props) {
   const addItemMock = {
     itemId: 'mock-id-1234',
     name: fields.name,
+    image: file !== null ? URL.createObjectURL(file) : '',
     category: categoryChoice,
     description: fields.description,
     tags: tags,
@@ -211,97 +231,113 @@ function Market(props) {
 
   return (
     <>
-      {props.isAuthenticated && !loading &&
-        <Box border={5} className={classes.wrapper}>
-          <form onSubmit={handleNewItem}>
-            <Grid container spacing={2}>
-              <Grid item xs={4} className={classes.blockWrapper}>
-                <Grid item>
-                  <ItemCard item={addItemMock} />
+      <Grid container justify='center' alignItems='center'>
+        {props.isAuthenticated && !loading &&
+          <Box border={5} className={classes.wrapper}>
+            <form onSubmit={handleNewItem}>
+              <Grid container spacing={2}>
+                <Grid item xs={5} className={classes.blockWrapper}>
+                  <Grid item>
+                    <ItemCard item={addItemMock} />
+                  </Grid>
+                  <Grid item>
+                    <LoaderButton disabled={!validateItemForm()} type='submit' loading={submitting}>
+                      Add
+                    </LoaderButton>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <LoaderButton disabled={!validateForm()} type='submit' loading={submitting}>
-                    Add
-                  </LoaderButton>
-                </Grid>
-              </Grid>
-              <Grid container item xs={8} spacing={1} direction='column'>
-                <Grid container item spacing={1} direction='row'>
-                  <Grid item xs={6}>
+                <Grid container item xs={7} spacing={1} direction='column'>
+                  <Grid container item spacing={1} direction='row'>
+                    <Grid item xs={6}>
+                      <StyledTextbox
+                        id='name'
+                        placeholder='Name'
+                        variant='outlined'
+                        color='primary'
+                        value={fields.name}
+                        onChange={handleFieldChange}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <StyledTextbox
+                        id='price'
+                        placeholder='Retail Price'
+                        type='number'
+                        variant='outlined'
+                        color='primary'
+                        value={price}
+                        onChange={e => setPrice(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid item>
                     <StyledTextbox
-                      id='name'
-                      placeholder='Name'
+                      id='description'
+                      placeholder='Description'
                       variant='outlined'
                       color='primary'
-                      value={fields.name}
+                      multiline
+                      rows='4'
+                      value={fields.description}
                       onChange={handleFieldChange}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item>
                     <StyledTextbox
-                      id='price'
-                      placeholder='Retail Price'
-                      type='number'
+                      id='source'
+                      placeholder='Source'
                       variant='outlined'
                       color='primary'
-                      value={price}
-                      onChange={e => setPrice(e.target.value)}
+                      multiline
+                      rows='4'
+                      value={fields.source}
+                      onChange={handleFieldChange}
                     />
                   </Grid>
-                </Grid>
-                <Grid item>
-                  <StyledTextbox
-                    id='description'
-                    placeholder='Description'
-                    variant='outlined'
+                  <Grid item>
+                    <StyledSingleSelect
+                      id='category'
+                      color='primary'
+                      label='Category'
+                      {...categoryData}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <StyledMultiSelect
+                      id='tags'
+                      color='primary'
+                      variant='outlined'
+                      label='Tags'
+                      {...tagData}
+                    />
+                  </Grid>
+                  <StyledButton
                     color='primary'
-                    multiline
-                    rows='4'
-                    value={fields.description}
-                    onChange={handleFieldChange}
-                  />
-                </Grid>
-                <Grid item>
-                  <StyledTextbox
-                    id='source'
-                    placeholder='Source'
-                    variant='outlined'
-                    color='primary'
-                    multiline
-                    rows='4'
-                    value={fields.source}
-                    onChange={handleFieldChange}
-                  />
-                </Grid>
-                <Grid item>
-                  <StyledSingleSelect
-                    id='category'
-                    color='primary'
-                    label='Category'
-                    {...categoryData}
-                  />
-                </Grid>
-                <Grid item>
-                  <StyledMultiSelect
-                    id='tags'
-                    color='primary'
-                    variant='outlined'
-                    label='Tags'
-                    {...tagData}
-                  />
+                    variant='contained'
+                    component='label'
+                  >
+                    Add Image
+                    <input
+                      type='file'
+                      onChange={handleFileChange}
+                      style={{ display: 'none' }}
+                    />
+                  </StyledButton>
                 </Grid>
               </Grid>
-            </Grid>
-          </form>
-        </Box>
-      }
-      <Grid container spacing={1} className={classes.itemList}>
-        {items.map(item =>
-          <Grid item xs={4} key={item.itemId}>
-            <ItemCard item={item} to={`/items/${item.itemId}`} />
+            </form>
+          </Box>
+          }
+          <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
+            {items.map(item =>
+              <Grid item xs={4} key={item.itemId}>
+                <Grid container alignItems='center' justify='center'>
+                  <ItemCard item={item} to={`/items/${item.itemId}`} />
+                </Grid>
+              </Grid>
+            )}
           </Grid>
-        )}
-      </Grid>
+        </Grid>
       <Dialog open={openTagInput} onClose={handleClose} aria-labelledby='tag-input'>
         <DialogTitle id='tag-dialog-title'>New Tag</DialogTitle>
         <DialogContent>
