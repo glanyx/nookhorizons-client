@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from "react-router-dom";
 import PropTypes from 'prop-types';
-import { Card, Typography, Grid, makeStyles, fade, CardMedia, CardHeader, CardContent, CardActions, CardActionArea } from '@material-ui/core';
+import { Card, Typography, Grid, makeStyles, fade, CardMedia, CardHeader, CardContent, CardActionArea } from '@material-ui/core';
 
 import { StyledChip } from '../components';
 
@@ -12,6 +12,8 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         color: theme.palette.primary.main,
         borderRadius: 25,
+        padding: theme.spacing(0, 1, 1, 1),
+        maxWidth: 300
     },
     header: {
         color: theme.palette.primary.main,
@@ -23,7 +25,6 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: fade(theme.palette.primary.light, .5),
         padding: theme.spacing(1),
         borderRadius: '0px 0px 20px 20px',
-        margin: theme.spacing(0, 1, -1, 1)
     },
     tags: {
         display: 'flex',
@@ -32,8 +33,29 @@ const useStyles = makeStyles(theme => ({
     chip: {
         marginLeft: theme.spacing(.5)
     },
-    test: {
-        paddingRight: theme.spacing(-10)
+    image: {
+        height: 200,
+        maxWidth: '100%'
+    },
+    descriptionWrapper: {
+        position: 'relative'
+    },
+    description: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        color: 'transparent',
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.black, .6),
+            color: theme.palette.common.white
+        }
+    },
+    descriptionText: {
+        margin: theme.spacing(2),
+        fontSize: 16,
+        fontWeight: 400
     }
 }));
 
@@ -44,25 +66,37 @@ function ItemCard({
 }){
 
     const classes = useStyles();
+    const [image, setImage] = useState(null);
+
+    useEffect(() => {
+        console.log(item);
+        setImage(item.image);
+    }, [item]);
 
     return (
         <Card className={classes.wrapper} key={item.itemId}>
-            <CardActionArea component={RouterLink} to={to} className={classes.test}>
+            <CardActionArea component={RouterLink} to={to}>
                 <Grid container direction='row' justify='center'>
                     <CardHeader
                         title={item.name}
                         className={classes.header}
                     />
                 </Grid>
-                <CardMedia>
-                </CardMedia>
+                <div className={classes.descriptionWrapper}>
+                    <div className={classes.description}>
+                        <Typography variant='body2' className={classes.descriptionText}>
+                            {item.description}
+                        </Typography>
+                    </div>
+                    <CardMedia
+                        className={classes.image}
+                        image={image}
+                    />
+                </div>
                 <Grid item className={classes.content}>
                     <CardContent>
                         <Typography variant='h5'>
                             {item.category.name}
-                        </Typography>
-                        <Typography variant='body1'>
-                            {item.description}
                         </Typography>
                         <div className={classes.tags}>
                             {item.tags.map((tag, i) =>
@@ -76,9 +110,6 @@ function ItemCard({
                         </Grid>
                     </CardContent>
                 </Grid>
-                <CardActions>
-
-                </CardActions>
             </CardActionArea>
         </Card>
     )
@@ -88,6 +119,7 @@ ItemCard.propTypes = {
     item: PropTypes.shape({
         itemId: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
+        image: PropTypes.any,
         category: PropTypes.oneOfType([
             PropTypes.object,
             PropTypes.string

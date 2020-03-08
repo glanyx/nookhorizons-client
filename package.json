@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^7.2.1",
     "aws-amplify": "^2.2.2",
     "clsx": "^1.0.4",
+    "material-ui-dropzone": "^2.4.8",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
