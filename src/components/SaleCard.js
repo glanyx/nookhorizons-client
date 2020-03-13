@@ -18,15 +18,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SaleCard({
-    sale: {
-        saleId,
-        price,
-        user: {
-            userId,
-            username
-        }
-    },
-    onSelect
+    sale,
+    onPurchase
 }){
 
     const classes = useStyles();
@@ -34,23 +27,20 @@ function SaleCard({
     return (
         <Card className={classes.wrapper}>
             <Typography variant='h3'>
-                {username}
             </Typography>
             <Typography variant='h4'>
-                {`$${price}`}
+                {`$${sale.price}`}
             </Typography>
         </Card>
     )
 }
 
 SaleCard.propTypes = {
-    saleId: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    user: PropTypes.shape({
-        userId: PropTypes.string.isRequired,
-        username: PropTypes.string.isRequired
-    }),
-    onSelect: PropTypes.func
+    sale: PropTypes.shape({
+        saleId: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+    }).isRequired,
+    onPurchase: PropTypes.func
 }
 
 export default SaleCard;

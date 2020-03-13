@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link as RouterLink } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { Card, Typography, Grid, makeStyles, fade, CardMedia, CardHeader, CardContent, CardActionArea } from '@material-ui/core';
@@ -66,12 +66,6 @@ function ItemCard({
 }){
 
     const classes = useStyles();
-    const [image, setImage] = useState(null);
-
-    useEffect(() => {
-        console.log(item);
-        setImage(item.image);
-    }, [item]);
 
     return (
         <Card className={classes.wrapper} key={item.itemId}>
@@ -90,7 +84,7 @@ function ItemCard({
                     </div>
                     <CardMedia
                         className={classes.image}
-                        image={image}
+                        image={item.image}
                     />
                 </div>
                 <Grid item className={classes.content}>

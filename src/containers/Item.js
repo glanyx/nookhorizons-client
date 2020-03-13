@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { API } from "aws-amplify";
-import { Card, Typography, Grid, makeStyles, fade, CardMedia, CardHeader, CardContent } from '@material-ui/core';
+import {
+    makeStyles,
+    fade,
+    Typography,
+    Grid,
+    Card,
+    CardMedia,
+    CardHeader,
+    CardContent,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    TextField
+} from '@material-ui/core';
 
-import { StyledChip } from '../components';
+import { StyledChip, SaleCard } from '../components';
 
 const useStyles = makeStyles(theme => ({
+    fullwrapper: {
+        width: `calc(100% - ${theme.spacing(4)}px)`,
+        margin: theme.spacing(2)
+    },
     wrapper: {
         backgroundColor: theme.palette.common.white,
         boxShadow: '1px 2px 2px 1px rgba(0,0,0,.8)',
@@ -31,28 +51,79 @@ const useStyles = makeStyles(theme => ({
     chip: {
         marginLeft: theme.spacing(.5)
     },
-    test: {
-        paddingRight: theme.spacing(-10)
-    }
+    dialogTextfield: {
+        width: 300
+    },
+
 }));
 
 function Item(props){
 
     const classes = useStyles();
-
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [open, setOpen] = useState(false);
+
     const [item, setItem] = useState([]);
+    const [sales, setSales] = useState([]);
+
+    const [price, setPrice] = useState('');
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleCreateSale = async (event) => {
+
+        event.preventDefault();
+        setSubmitting(true);
+
+        try{
+            await createSale({
+                itemId: item.itemId,
+                price: price,
+                featured: false,
+            });
+            setSales(await loadSales());
+            setPrice('');
+        } catch(e) {
+            alert(e);
+        }
+
+        setSubmitting(false);
+        setOpen(false);
+    }
+
+    function loadItem() {
+        return API.get('nh', `/items/${props.match.params.id}`);
+    }
+
+    function loadSales() {
+        return API.get('nh', `/items/${props.match.params.id}/sales`);
+    }
+
+    function createSale(sale) {
+        return API.post('nh', '/sales', {
+          body: sale
+        });
+      }
 
     useEffect(() => {
 
-        function loadItem() {
-            return API.get('nh', `/items/${props.match.params.id}`);
+        if (!props.isAuthenticated) {
+            return;
         }
 
         async function onLoad() {
           try{
             const item = await loadItem();
             setItem(item);
+            const sales = await loadSales();
+            setSales(sales);
           } catch(e) {
             alert(e);
           }
@@ -63,36 +134,95 @@ function Item(props){
 
     return (
         !loading &&
-        <Card className={classes.wrapper} key={item.itemId}>
-            <Grid container direction='row' justify='center'>
-                <CardHeader
-                    title={item.name}
-                    className={classes.header}
-                />
+        <>
+            <Grid container direction='row' spacing={4} className={classes.fullwrapper}>
+                <Grid item xs={8}>
+                    <Button variant='contained' onClick={handleOpen}>
+                        Sell this item
+                    </Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Card className={classes.wrapper} key={item.itemId}>
+                        <Grid container direction='row' justify='center'>
+                            <CardHeader
+                                title={item.name}
+                                className={classes.header}
+                            />
+                        </Grid>
+                        <CardMedia>
+                        </CardMedia>
+                        <Grid item className={classes.content}>
+                            <CardContent>
+                                <Typography variant='h5'>
+                                    {item.category.name}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    {item.description}
+                                </Typography>
+                                <div className={classes.tags}>
+                                    {item.tags.map((tag, i) =>
+                                        <StyledChip className={classes.chip} label={tag.name} key={i} />
+                                    )}
+                                </div>
+                                <Grid container justify='flex-end' item>
+                                    <Typography variant='body1'>
+                                        {`${item.saleCount} selling..`}
+                                    </Typography>
+                                </Grid>
+                            </CardContent>
+                        </Grid>
+                    </Card>
+                </Grid>
             </Grid>
-            <CardMedia>
-            </CardMedia>
-            <Grid item className={classes.content}>
-                <CardContent>
-                    <Typography variant='h5'>
-                        {item.category.name}
-                    </Typography>
-                    <Typography variant='body1'>
-                        {item.description}
-                    </Typography>
-                    <div className={classes.tags}>
-                        {item.tags.map((tag, i) =>
-                            <StyledChip className={classes.chip} label={tag.name} key={i} />
-                        )}
-                    </div>
-                    <Grid container justify='flex-end' item>
-                        <Typography variant='body1'>
-                            {`${item.saleCount} selling..`}
-                        </Typography>
+            <Grid container direction='row' spacing={2}>
+                {sales.map(sale =>
+                    <Grid item xs={4}>
+                        <SaleCard
+                            sale={sale}
+                        />
                     </Grid>
-                </CardContent>
+                )}
             </Grid>
-        </Card>
+            <Dialog open={open} onClose={handleClose} aria-labelledby='sale-input'>
+                <DialogTitle id='sell-item-dialog-title'>Create a Sale</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Please create your sale.
+                    </DialogContentText>
+                    <Grid container direction='column'>
+                        <Grid item>
+                            <TextField
+                                disabled
+                                margin='normal'
+                                id='item'
+                                label='Item'
+                                value={item.name}
+                                className={classes.dialogTextfield}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <TextField
+                                autoFocus
+                                margin='normal'
+                                id='price'
+                                label='Price'
+                                value={price}
+                                onChange={event => setPrice(event.target.value)}
+                                className={classes.dialogTextfield}
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleClose}>
+                    Cancel
+                </Button>
+                <Button onClick={handleCreateSale}>
+                    Create
+                </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     )
 }
 
