@@ -44,6 +44,7 @@ function LoaderButton({
   type,
   loading,
   success,
+  onSubmit,
   ...props
 }) {
   const classes = useStyles();
@@ -61,6 +62,7 @@ function LoaderButton({
           className={buttonClassname}
           disabled={loading}
           type={type}
+          onClick={onSubmit}
           {...props}
         >
           {success
@@ -78,7 +80,8 @@ function LoaderButton({
 
 LoaderButton.propTypes = {
   loading: PropTypes.bool,
-  success: PropTypes.bool
+  success: PropTypes.bool,
+  onSubmit: PropTypes.func,
 }
 
 export default LoaderButton;

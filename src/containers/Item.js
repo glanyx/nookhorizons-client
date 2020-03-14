@@ -18,7 +18,7 @@ import {
     TextField
 } from '@material-ui/core';
 
-import { StyledChip, SaleCard } from '../components';
+import { StyledChip, SaleCard, LoaderButton } from '../components';
 
 const useStyles = makeStyles(theme => ({
     fullwrapper: {
@@ -77,9 +77,14 @@ function Item(props){
         setOpen(false);
     }
 
+    function loadSales() {
+        return API.get('nh', `/items/${props.match.params.id}/sales`);
+    }
+
     const handleCreateSale = async (event) => {
 
         event.preventDefault();
+        console.log('test');
         setSubmitting(true);
 
         try{
@@ -98,14 +103,6 @@ function Item(props){
         setOpen(false);
     }
 
-    function loadItem() {
-        return API.get('nh', `/items/${props.match.params.id}`);
-    }
-
-    function loadSales() {
-        return API.get('nh', `/items/${props.match.params.id}/sales`);
-    }
-
     function createSale(sale) {
         return API.post('nh', '/sales', {
           body: sale
@@ -113,6 +110,14 @@ function Item(props){
       }
 
     useEffect(() => {
+
+        function loadItem() {
+            return API.get('nh', `/items/${props.match.params.id}`);
+        }
+    
+        function loadSales() {
+            return API.get('nh', `/items/${props.match.params.id}/sales`);
+        }
 
         if (!props.isAuthenticated) {
             return;
@@ -130,7 +135,7 @@ function Item(props){
           setLoading(false);
         }
         onLoad();
-      }, [props.match.params.id]);
+      }, [props.match.params.id, props.isAuthenticated]);
 
     return (
         !loading &&
@@ -177,9 +182,15 @@ function Item(props){
             <Grid container direction='row' spacing={2}>
                 {sales.map(sale =>
                     <Grid item xs={4}>
-                        <SaleCard
-                            sale={sale}
-                        />
+                        <Grid container justify='center'>
+                            <Grid item>
+                                <SaleCard
+                                    key={sale.saleid}
+                                    sale={sale}
+                                    item={item}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
                 )}
             </Grid>
@@ -214,12 +225,17 @@ function Item(props){
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleClose}>
-                    Cancel
-                </Button>
-                <Button onClick={handleCreateSale}>
-                    Create
-                </Button>
+                    <Button onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <LoaderButton
+                        onSubmit={handleCreateSale}
+                        disabled={submitting}
+                        loading={submitting}
+                        type='button'
+                    >
+                        Create
+                    </LoaderButton>
                 </DialogActions>
             </Dialog>
         </>
