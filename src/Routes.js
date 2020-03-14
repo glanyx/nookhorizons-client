@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import AppliedRoute from './AppliedRoute';
 import {
   Home,
+  User,
   Login,
   Register,
   Auth,
@@ -18,6 +19,7 @@ function Routes({ appProps }) {
   return (
     <Switch>
       <AppliedRoute path="/" exact component={Home} appProps={appProps} />
+      <AppliedRoute path="/user" exact component={User} appProps={appProps} />
       <AppliedRoute path="/login" exact component={Login} appProps={appProps} />
       <AppliedRoute path="/register" exact component={Register} appProps={appProps} />
       <AppliedRoute path="/registered" exact component={Auth} appProps={appProps} />
