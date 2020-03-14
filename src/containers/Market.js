@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
 import { makeStyles, Box, Grid, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core';
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton } from '../components';
-import { API } from "aws-amplify";
+import { API, Storage } from "aws-amplify";
 
 import { s3Upload } from '../libs/storageLib';
 import config from "../config";
@@ -170,6 +170,20 @@ function Market(props) {
   }
 
   useEffect(() => {
+
+    async function setImages(items) {
+      return Promise.all(items.map(item => setImage(item)));
+    }
+
+    async function setImage(item) {
+      if (item.image) {
+        item.imageUrl = await Storage.get(item.image, {
+          level: 'protected',
+          identityId: 'eu-central-1:387ac1b3-2518-4eb8-92ba-31c6f39b4370'
+        });
+      }
+    }
+
     async function onLoad() {
       if (!props.isAuthenticated) {
         return;
@@ -180,7 +194,11 @@ function Market(props) {
         const categories = await loadCategories();
         setCategoryOptions(categories);
         const items = await loadItems();
+        
+        await setImages(items);
+
         setItems(items);
+
       } catch(e) {
         alert(e);
       }
@@ -206,7 +224,7 @@ function Market(props) {
   const addItemMock = {
     itemId: 'mock-id-1234',
     name: fields.name,
-    image: file !== null ? URL.createObjectURL(file) : '',
+    imageUrl: file !== null ? URL.createObjectURL(file) : '',
     category: categoryChoice,
     description: fields.description,
     tags: tags,
@@ -329,13 +347,13 @@ function Market(props) {
           </Box>
           }
           <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
-            {items.map(item =>
-              <Grid item xs={4} key={item.itemId}>
+            {items.map(item => (
+              <Grid item xs={3} key={item.itemId}>
                 <Grid container alignItems='center' justify='center'>
                   <ItemCard item={item} to={`/items/${item.itemId}`} />
                 </Grid>
               </Grid>
-            )}
+            ))}
           </Grid>
         </Grid>
       <Dialog open={openTagInput} onClose={handleClose} aria-labelledby='tag-input'>
