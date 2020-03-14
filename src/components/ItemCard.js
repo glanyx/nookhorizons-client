@@ -84,7 +84,7 @@ function ItemCard({
                     </div>
                     <CardMedia
                         className={classes.image}
-                        image={item.image}
+                        image={item.imageUrl}
                     />
                 </div>
                 <Grid item className={classes.content}>
@@ -113,7 +113,7 @@ ItemCard.propTypes = {
     item: PropTypes.shape({
         itemId: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        image: PropTypes.any,
+        imageUrl: PropTypes.any,
         category: PropTypes.oneOfType([
             PropTypes.object,
             PropTypes.string

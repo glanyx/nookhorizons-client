@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { API } from "aws-amplify";
+import { API, Storage } from "aws-amplify";
 import {
     makeStyles,
     fade,
-    Typography,
     Grid,
-    Card,
-    CardMedia,
-    CardHeader,
-    CardContent,
     Button,
     Dialog,
     DialogTitle,
@@ -18,7 +13,7 @@ import {
     TextField
 } from '@material-ui/core';
 
-import { StyledChip, SaleCard, LoaderButton } from '../components';
+import { SaleCard, LoaderButton, ItemCard } from '../components';
 
 const useStyles = makeStyles(theme => ({
     fullwrapper: {
@@ -37,6 +32,10 @@ const useStyles = makeStyles(theme => ({
         '& .MuiTypography-root': {
             letterSpacing: '1px'
         }
+    },
+    image: {
+        height: 200,
+        maxWidth: '100%'
     },
     content: {
         backgroundColor: fade(theme.palette.primary.light, .5),
@@ -84,7 +83,6 @@ function Item(props){
     const handleCreateSale = async (event) => {
 
         event.preventDefault();
-        console.log('test');
         setSubmitting(true);
 
         try{
@@ -94,6 +92,7 @@ function Item(props){
                 featured: false,
             });
             setSales(await loadSales());
+            item.saleCount++;
             setPrice('');
         } catch(e) {
             alert(e);
@@ -127,8 +126,18 @@ function Item(props){
           try{
             const item = await loadItem();
             setItem(item);
+
+            if (item.image) {
+                item.imageUrl = await Storage.get(item.image, {
+                    level: 'protected',
+                    identityId: 'eu-central-1:387ac1b3-2518-4eb8-92ba-31c6f39b4370'
+                });
+            }
+
             const sales = await loadSales();
             setSales(sales);
+
+            item.saleCount = sales.length;
           } catch(e) {
             alert(e);
           }
@@ -147,36 +156,7 @@ function Item(props){
                     </Button>
                 </Grid>
                 <Grid item xs={4}>
-                    <Card className={classes.wrapper} key={item.itemId}>
-                        <Grid container direction='row' justify='center'>
-                            <CardHeader
-                                title={item.name}
-                                className={classes.header}
-                            />
-                        </Grid>
-                        <CardMedia>
-                        </CardMedia>
-                        <Grid item className={classes.content}>
-                            <CardContent>
-                                <Typography variant='h5'>
-                                    {item.category.name}
-                                </Typography>
-                                <Typography variant='body1'>
-                                    {item.description}
-                                </Typography>
-                                <div className={classes.tags}>
-                                    {item.tags.map((tag, i) =>
-                                        <StyledChip className={classes.chip} label={tag.name} key={i} />
-                                    )}
-                                </div>
-                                <Grid container justify='flex-end' item>
-                                    <Typography variant='body1'>
-                                        {`${item.saleCount} selling..`}
-                                    </Typography>
-                                </Grid>
-                            </CardContent>
-                        </Grid>
-                    </Card>
+                    <ItemCard item={item} />
                 </Grid>
             </Grid>
             <Grid container direction='row' spacing={2}>
