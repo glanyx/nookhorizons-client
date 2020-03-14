@@ -5,6 +5,12 @@ import {
   Grid,
   Typography,
   Link,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   fade,
   makeStyles
 } from "@material-ui/core";
@@ -61,14 +67,24 @@ function LoginForm({ onSubmit, ...props }) {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
+  const [open, setOpen] = useState(false);
+
+  const [user, setUser] = useState(null);
   const [fields, handleFieldChange] = useFormFields({
     username: "",
-    password: ""
+    password: "",
+    changePassword: '',
   });
 
   function validateForm() {
     return fields.username.length > 0 && fields.password.length > 0;
+  }
+
+  function validatePassword() {
+    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!?@#$%^&*])(?=.{8,})");
+    return regex.test(fields.changePassword) && fields.changePassword !== fields.username;
   }
 
   async function handleSubmit(event) {
@@ -76,16 +92,50 @@ function LoginForm({ onSubmit, ...props }) {
     setLoading(true);
 
     try {
-      await Auth.signIn(fields.username, fields.password, {
+      const user = await Auth.signIn(fields.username, fields.password, {
         "form-name": "login"
       });
+
+      if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+        setUser(user);
+        setOpen(true);
+        return;
+      };
+
       setSuccess(true);
       props.userHasAuthenticated(true);
       props.history.push("/");
+
     } catch (e) {
       alert(e.message);
       setLoading(false);
     }
+  }
+
+  async function handleForcePassword(event) {
+
+    event.preventDefault();
+    setSubmitting(true);
+
+    try {
+      
+      await Auth.completeNewPassword(
+        user,
+        fields.changePassword
+      );
+
+      setSubmitting(false);
+      props.userHasAuthenticated(true);
+      props.history.push('/');
+
+    } catch (e) {
+      setSubmitting(false);
+      alert(e.message);
+    }
+  }
+
+  const handleClose = () => {
+    setOpen(false);
   }
 
   return (
@@ -147,6 +197,45 @@ function LoginForm({ onSubmit, ...props }) {
           </Grid>
         </Box>
       </form>
+      <Dialog open={open} onClose={handleClose} aria-labelledby='force-change-password'>
+        <DialogTitle id='change-password-title'>Change your Password</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter a new password.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin='normal'
+            id='changePassword'
+            label='Password'
+            type='password'
+            value={fields.changePassword}
+            onChange={handleFieldChange}
+            error={!validatePassword() && fields.changePassword.length > 0}
+            helperText={(!validatePassword() && fields.changePassword.length > 0) && (
+              <>
+                <span>Password requires the following:</span>
+                  <li>At least 8 characters long</li>
+                  <li>At least 1 lowercase character</li>
+                  <li>At least 1 uppercase character</li>
+                  <li>At least 1 numerical character</li>
+                  <li>At least 1 special character - {`Accepted are ! ? @ # $ % ^ & *`}</li>
+                  <li>Must not be the same as your Username</li>
+              </>
+              )}
+            />
+        </DialogContent>
+        <DialogActions>
+          <LoaderButton
+            onClick={handleForcePassword}
+            disabled={!validatePassword() || submitting}
+            loading={submitting}
+            type='button'
+          >
+            Confirm
+          </LoaderButton>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
