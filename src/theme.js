@@ -80,7 +80,7 @@ const theme = createMuiTheme({
       title: {
         fontFamily: "'Varela Round', sans-serif",
         fontWeight: 500
-      }
+      },
     },
   }
 });

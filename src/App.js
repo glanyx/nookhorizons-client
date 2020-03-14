@@ -33,7 +33,8 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     flexGrow: 1,
     height: '100%',
-    paddingBottom: 50
+    paddingBottom: 50,
+    width: '100%',
   },
   banner: {
     width: "100%",

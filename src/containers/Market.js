@@ -241,7 +241,7 @@ function Market(props) {
                     <ItemCard item={addItemMock} />
                   </Grid>
                   <Grid item>
-                    <LoaderButton disabled={!validateItemForm()} type='submit' loading={submitting}>
+                    <LoaderButton disabled={!validateItemForm() || submitting} type='submit' loading={submitting}>
                       Add
                     </LoaderButton>
                   </Grid>

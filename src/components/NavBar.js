@@ -190,6 +190,8 @@ function NavBar({
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
+                <MenuItem className={classes.menuitem} component={RouterLink} to='/user'>My Account</MenuItem>
+                <MenuItem className={classes.menuitem} component={RouterLink} to='/user/sales'>My Sales</MenuItem>
                 <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
