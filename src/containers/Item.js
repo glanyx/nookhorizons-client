@@ -91,6 +91,12 @@ function Item(props){
         note: '',
       });
 
+    const validateForm = () => {
+        return (
+            fields.quantity > 0 && fields.price > 0
+        )
+    }
+
     const handleOpen = () => {
         setOpen(true);
     }
@@ -111,10 +117,10 @@ function Item(props){
         try{
             await createSale({
                 itemId: item.itemId,
-                variant: fields.variant,
+                variant: fields.variant.length > 0 ? fields.variant : null,
                 quantity: fields.quantity,
                 price: fields.price,
-                note: fields.note,
+                note: fields.note.length > 0 ? fields.note : null,
                 featured: false,
             });
             setSales(await loadSales());
@@ -124,6 +130,7 @@ function Item(props){
             fields.quantity = '1';
             fields.variant = '';
         } catch(e) {
+            console.log(e);
             alert(e.message);
         }
 
@@ -139,7 +146,6 @@ function Item(props){
 
     const handlePurchase = async (event, sale) => {
 
-        console.log('test');
         event.preventDefault();
         setBuying(true);
 
@@ -183,7 +189,7 @@ function Item(props){
             if (item.image) {
                 item.imageUrl = await Storage.get(item.image, {
                     level: 'protected',
-                    identityId: 'eu-central-1:387ac1b3-2518-4eb8-92ba-31c6f39b4370'
+                    identityId: item.createdBy
                 });
             }
 
@@ -192,6 +198,7 @@ function Item(props){
 
             item.saleCount = sales.length;
           } catch(e) {
+            console.log(e);
             alert(e);
           }
           setLoading(false);
@@ -323,7 +330,7 @@ function Item(props){
                     </Button>
                     <LoaderButton
                         onSubmit={handleCreateSale}
-                        disabled={submitting}
+                        disabled={!validateForm() || submitting}
                         loading={submitting}
                         type='button'
                     >
