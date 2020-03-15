@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
-import { makeStyles, Box, Grid, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core';
-import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton } from '../components';
+import { makeStyles, Box, Grid, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel } from '@material-ui/core';
+import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
 import { API, Storage } from "aws-amplify";
 
 import { s3Upload } from '../libs/storageLib';
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.light,
     borderRadius: 20,
     borderColor: theme.palette.primary.dark,
-    width: '800px'
+    width: '90%'
   },
   blockwrapper: {
     display: 'block',
@@ -23,7 +23,12 @@ const useStyles = makeStyles(theme => ({
   itemList: {
     width: '100%',
     padding: theme.spacing(2)
-  }
+  },
+  block: {
+    '& .MuiFormGroup-root': {
+      display: 'block'
+    }
+  },
 }));
 
 function Market(props) {
@@ -64,7 +69,11 @@ function Market(props) {
         source: fields.source,
         category: categoryChoice.categoryId,
         tags: tags.map(tag => tag.tagId),
-        retailPrice: price
+        currency: currency,
+        retailPrice: price,
+        craftable: craftable,
+        recipe: fields.recipe,
+        recipeSource: fields.recipeSource,
       });
       setItems(await loadItems());
       fields.name = '';
@@ -72,7 +81,11 @@ function Market(props) {
       fields.source = '';
       setCategoryChoice('');
       setTags([]);
+      setCurrency('Bells');
       setPrice('');
+      setCraftable(false);
+      fields.recipe = '';
+      fields.recipeSource = '';
       setFile(null);
     } catch(e) {
       alert(e);
@@ -217,9 +230,15 @@ function Market(props) {
     description: "",
     source: "",
     newTag: "",
-    newCategory: ""
+    newCategory: "",
+    width: '',
+    height: '',
+    recipe: '',
+    recipeSource: '',
   });
   const [price, setPrice] = useState('');
+  const [currency, setCurrency] = useState('Bells');
+  const [craftable, setCraftable] = useState(false);
 
   const addItemMock = {
     itemId: 'mock-id-1234',
@@ -254,19 +273,28 @@ function Market(props) {
           <Box border={5} className={classes.wrapper}>
             <form onSubmit={handleNewItem}>
               <Grid container spacing={2}>
-                <Grid item xs={5} className={classes.blockWrapper}>
+                <Grid item xs={4} className={classes.blockWrapper}>
                   <Grid item>
                     <ItemCard item={addItemMock} />
                   </Grid>
                   <Grid item>
-                    <LoaderButton disabled={!validateItemForm() || submitting} type='submit' loading={submitting}>
-                      Add
-                    </LoaderButton>
+                    <StyledButton
+                      color='primary'
+                      variant='contained'
+                      component='label'
+                    >
+                      Add Image
+                      <input
+                        type='file'
+                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                      />
+                    </StyledButton>
                   </Grid>
                 </Grid>
-                <Grid container item xs={7} spacing={1} direction='column'>
-                  <Grid container item spacing={1} direction='row'>
-                    <Grid item xs={6}>
+                <Grid item xs={4} spacing={1}>
+                  <Grid container spacing={1} direction='row'>
+                    <Grid item xs={12}>
                       <StyledTextbox
                         id='name'
                         placeholder='Name'
@@ -276,7 +304,60 @@ function Market(props) {
                         onChange={handleFieldChange}
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
+                      <StyledTextbox
+                        id='description'
+                        placeholder='Description'
+                        variant='outlined'
+                        color='primary'
+                        multiline
+                        rows='3'
+                        value={fields.description}
+                        onChange={handleFieldChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <StyledTextbox
+                        id='source'
+                        placeholder='Source'
+                        variant='outlined'
+                        color='primary'
+                        multiline
+                        rows='3'
+                        value={fields.source}
+                        onChange={handleFieldChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <StyledSingleSelect
+                        id='category'
+                        color='primary'
+                        label='Category'
+                        {...categoryData}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <StyledMultiSelect
+                        id='tags'
+                        color='primary'
+                        variant='outlined'
+                        label='Tags'
+                        {...tagData}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={4}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <FormControl component='fieldset' className={classes.block}>
+                        <RadioGroup aria-label='currency' value={currency} onChange={event => setCurrency(event.target.value)}>
+                          <FormControlLabel value='Bells' control={<Radio />} label='Bells' />
+                          <FormControlLabel value='Nook Miles' control={<Radio />} label='Nook Miles' />
+                        </RadioGroup>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
                       <StyledTextbox
                         id='price'
                         placeholder='Retail Price'
@@ -287,60 +368,44 @@ function Market(props) {
                         onChange={e => setPrice(e.target.value)}
                       />
                     </Grid>
+                    <Grid item>
+                      <FormControlLabel
+                        control={
+                          <StyledCheckbox checked={craftable} onChange={event => setCraftable(event.target.checked)} />
+                        }
+                        label='Craftable?'
+                      />
+                    </Grid>
+                    {craftable &&
+                      <>
+                        <Grid item xs={12}>
+                          <StyledTextbox
+                            id='recipe'
+                            placeholder='Recipe'
+                            type='text'
+                            variant='outlined'
+                            color='primary'
+                            value={fields.recipe}
+                            onChange={handleFieldChange}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <StyledTextbox
+                            id='recipeSource'
+                            placeholder='Recipe Source'
+                            type='text'
+                            variant='outlined'
+                            color='primary'
+                            value={fields.recipeSource}
+                            onChange={handleFieldChange}
+                          />
+                        </Grid>
+                      </>
+                    }
                   </Grid>
-                  <Grid item>
-                    <StyledTextbox
-                      id='description'
-                      placeholder='Description'
-                      variant='outlined'
-                      color='primary'
-                      multiline
-                      rows='4'
-                      value={fields.description}
-                      onChange={handleFieldChange}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <StyledTextbox
-                      id='source'
-                      placeholder='Source'
-                      variant='outlined'
-                      color='primary'
-                      multiline
-                      rows='4'
-                      value={fields.source}
-                      onChange={handleFieldChange}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <StyledSingleSelect
-                      id='category'
-                      color='primary'
-                      label='Category'
-                      {...categoryData}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <StyledMultiSelect
-                      id='tags'
-                      color='primary'
-                      variant='outlined'
-                      label='Tags'
-                      {...tagData}
-                    />
-                  </Grid>
-                  <StyledButton
-                    color='primary'
-                    variant='contained'
-                    component='label'
-                  >
-                    Add Image
-                    <input
-                      type='file'
-                      onChange={handleFileChange}
-                      style={{ display: 'none' }}
-                    />
-                  </StyledButton>
+                  <LoaderButton disabled={!validateItemForm() || submitting} type='submit' loading={submitting}>
+                    Add
+                  </LoaderButton>
                 </Grid>
               </Grid>
             </form>
