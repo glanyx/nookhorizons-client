@@ -192,7 +192,7 @@ function Market(props) {
       if (item.image) {
         item.imageUrl = await Storage.get(item.image, {
           level: 'protected',
-          identityId: 'eu-central-1:387ac1b3-2518-4eb8-92ba-31c6f39b4370'
+          identityId: item.createdBy
         });
       }
     }

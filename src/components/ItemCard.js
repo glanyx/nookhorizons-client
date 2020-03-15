@@ -97,11 +97,14 @@ function ItemCard({
                                 <StyledChip className={classes.chip} label={tag.name} key={i} />
                             )}
                         </div>
-                        <Grid container justify='flex-end' item>
-                            <Typography variant='body1'>
-                                {`${item.saleCount} selling..`}
-                            </Typography>
-                        </Grid>
+                        {item.saleCount
+                            ? <Grid container justify='flex-end' item>
+                                <Typography variant='body1'>
+                                    {`${item.saleCount} selling..`}
+                                </Typography>
+                            </Grid>
+                            : null
+                        }
                     </CardContent>
                 </Grid>
             </CardActionArea>

@@ -6,7 +6,6 @@ import {
   Divider,
   Grid,
   makeStyles,
-  InputBase,
   Icon,
   fade,
   Fade,
@@ -14,7 +13,6 @@ import {
   MenuItem
 } from "@material-ui/core";
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
-import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,47 +45,6 @@ const useStyles = makeStyles(theme => ({
     width: "3px",
     height: "15px",
     borderRadius: 50
-  },
-  search: {
-    color: fade("#000000", 0.7),
-    margin: theme.spacing(1),
-    position: "relative",
-    borderRadius: 20,
-    backgroundColor: fade(theme.palette.common.white, 0.6),
-    boxShadow: '0px 0px 2px 2px rgba(120,70,20,.8)',
-    "&:hover": {
-      backgroundImage: `url(${process.env.PUBLIC_URL + '/searchBackground.png'})`,
-    },
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto"
-    }
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  inputRoot: {
-    color: "inherit",
-    display: "block"
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: 120,
-      "&:focus": {
-        width: 200
-      }
-    }
   },
   menu: {
     '& .MuiMenu-paper': {
@@ -160,22 +117,9 @@ function NavBar({
           container
           className={classes.padding}
           alignItems="center"
-          alignContent="flex-end"
+          alignContent="center"
           justify="flex-end"
         >
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search.."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
           {userProps.isAuthenticated ? (
             <>
               <Button className={classes.button} onClick={handleClick}>

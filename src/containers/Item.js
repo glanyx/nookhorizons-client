@@ -10,10 +10,17 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField
+    TextField,
+    Paper,
+    TableContainer,
+    Table,
+    TableHead,
+    TableBody,
+    TableRow,
+    TableCell
 } from '@material-ui/core';
-
-import { SaleCard, LoaderButton, ItemCard } from '../components';
+import { useFormFields } from '../libs/hooksLib';
+import { StyledButton, LoaderButton, ItemCard } from '../components';
 
 const useStyles = makeStyles(theme => ({
     fullwrapper: {
@@ -50,10 +57,20 @@ const useStyles = makeStyles(theme => ({
     chip: {
         marginLeft: theme.spacing(.5)
     },
-    dialogTextfield: {
-        width: 300
+    salestable: {
+        width: '90% !important'
     },
-
+    buybutton: {
+        '& .MuiButton-label': {
+            fontSize: 12
+        }
+    },
+    dialogTextfield: {
+        width: '100%'
+    },
+    dialogadjust: {
+        marginTop: 12
+    }
 }));
 
 function Item(props){
@@ -61,12 +78,18 @@ function Item(props){
     const classes = useStyles();
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [buying, setBuying] = useState(false);
     const [open, setOpen] = useState(false);
 
     const [item, setItem] = useState([]);
     const [sales, setSales] = useState([]);
 
-    const [price, setPrice] = useState('');
+    const [fields, handleFieldChange] = useFormFields({
+        variant: '',
+        price: '',
+        quantity: '1',
+        note: '',
+      });
 
     const handleOpen = () => {
         setOpen(true);
@@ -88,14 +111,20 @@ function Item(props){
         try{
             await createSale({
                 itemId: item.itemId,
-                price: price,
+                variant: fields.variant,
+                quantity: fields.quantity,
+                price: fields.price,
+                note: fields.note,
                 featured: false,
             });
             setSales(await loadSales());
             item.saleCount++;
-            setPrice('');
+            fields.price = '';
+            fields.note = '';
+            fields.quantity = '1';
+            fields.variant = '';
         } catch(e) {
-            alert(e);
+            alert(e.message);
         }
 
         setSubmitting(false);
@@ -107,6 +136,30 @@ function Item(props){
           body: sale
         });
       }
+
+    const handlePurchase = async (event, sale) => {
+
+        console.log('test');
+        event.preventDefault();
+        setBuying(true);
+
+        try{
+            await makeSale({
+                sale: sale
+            });
+        } catch (e) {
+            console.log(e);
+            alert(e.message);
+        }
+
+        setBuying(false);
+    }
+
+    function makeSale(purchase) {
+        return API.put("nh", `/sales/${purchase.sale.saleId}/buy`, {
+            body: purchase
+        });
+    }
 
     useEffect(() => {
 
@@ -144,7 +197,7 @@ function Item(props){
           setLoading(false);
         }
         onLoad();
-      }, [props.match.params.id, props.isAuthenticated]);
+      }, [props.match.params.id, props.isAuthenticated, buying]);
 
     return (
         !loading &&
@@ -159,29 +212,49 @@ function Item(props){
                     <ItemCard item={item} />
                 </Grid>
             </Grid>
-            <Grid container direction='row' spacing={2}>
-                {sales.map(sale =>
-                    <Grid item xs={4}>
-                        <Grid container justify='center'>
-                            <Grid item>
-                                <SaleCard
-                                    key={sale.saleid}
-                                    sale={sale}
-                                    item={item}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                )}
+            
+            <Grid container justify='center'>
+                <TableContainer component={Paper} className={classes.salestable}>
+                    <Table aria-label='sales'>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align='right'>Variant</TableCell>
+                                <TableCell align='right'>Quantity</TableCell>
+                                <TableCell align='right'>Price</TableCell>
+                                <TableCell align='right'>Note</TableCell>
+                                <TableCell align='right'>Feedback</TableCell>
+                                <TableCell />
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            {sales.map(sale =>
+                                <TableRow key={sale.saleId}>
+                                    <TableCell align='right'>{sale.variant}</TableCell>
+                                    <TableCell align='right'>{sale.quantity}</TableCell>
+                                    <TableCell align='right'>{sale.price}</TableCell>
+                                    <TableCell align='right'>{sale.note}</TableCell>
+                                    <TableCell align='right'>U Suk</TableCell>
+                                    <TableCell align='center'>
+                                        <StyledButton color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
+                                            Buy
+                                        </StyledButton>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Grid>
+
             <Dialog open={open} onClose={handleClose} aria-labelledby='sale-input'>
                 <DialogTitle id='sell-item-dialog-title'>Create a Sale</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Please create your sale.
                     </DialogContentText>
-                    <Grid container direction='column'>
-                        <Grid item>
+                    <Grid container direction='row' spacing={2}>
+                        <Grid item xs={7}>
                             <TextField
                                 disabled
                                 margin='normal'
@@ -191,14 +264,54 @@ function Item(props){
                                 className={classes.dialogTextfield}
                             />
                         </Grid>
-                        <Grid item>
+                        <Grid item xs={5}>
                             <TextField
-                                autoFocus
+                                autofocus
                                 margin='normal'
-                                id='price'
-                                label='Price'
-                                value={price}
-                                onChange={event => setPrice(event.target.value)}
+                                type='text'
+                                id='variant'
+                                label='Variant'
+                                value={fields.variant}
+                                onChange={handleFieldChange}
+                                className={classes.dialogTextfield}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Grid container direction='column' spacing={1}>
+                                <Grid item>
+                                    <TextField
+                                        margin='normal'
+                                        type='number'
+                                        id='price'
+                                        label='Price'
+                                        value={fields.price}
+                                        onChange={handleFieldChange}
+                                        className={classes.dialogTextfield}
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <TextField
+                                        margin='normal'
+                                        type='number'
+                                        id='quantity'
+                                        label='Quantity'
+                                        value={fields.quantity}
+                                        onChange={handleFieldChange}
+                                        className={`${classes.dialogTextfield} ${classes.dialogadjust}`}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <TextField
+                                multiline
+                                margin='normal'
+                                type='text'
+                                id='note'
+                                label='Note'
+                                rows={5}
+                                value={fields.note}
+                                onChange={handleFieldChange}
                                 className={classes.dialogTextfield}
                             />
                         </Grid>
