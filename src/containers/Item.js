@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(.5)
     },
     salestable: {
-        width: '90% !important'
+        width: '90%'
     },
     buybutton: {
         '& .MuiButton-label': {

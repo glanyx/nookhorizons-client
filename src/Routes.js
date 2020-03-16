@@ -4,6 +4,7 @@ import AppliedRoute from './AppliedRoute';
 import {
   Home,
   User,
+  UserSales,
   Login,
   Register,
   Auth,
@@ -20,6 +21,7 @@ function Routes({ appProps }) {
     <Switch>
       <AppliedRoute path="/" exact component={Home} appProps={appProps} />
       <AppliedRoute path="/user" exact component={User} appProps={appProps} />
+      <AppliedRoute path="/user/sales" exact component={UserSales} appProps={appProps} />
       <AppliedRoute path="/login" exact component={Login} appProps={appProps} />
       <AppliedRoute path="/register" exact component={Register} appProps={appProps} />
       <AppliedRoute path="/registered" exact component={Auth} appProps={appProps} />
