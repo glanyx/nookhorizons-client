@@ -203,20 +203,23 @@ function Market(props) {
 
       if (props.isAuthenticated) {
         const session = await Auth.currentSession();
-        const admin = session.getIdToken().payload['cognito:groups'].indexOf('Admin') !== -1;
 
-        if (admin) {
-          try {
-            const tags = await loadTags();
-            setTagOptions(tags);
-            const categories = await loadCategories();
-            setCategoryOptions(categories);
-          } catch(e) {
-            alert(e);
+        if (session.getIdToken().payload['cognito:groups']){
+          const admin = session.getIdToken().payload['cognito:groups'].indexOf('Admin') !== -1;
+
+          if (admin) {
+            try {
+              const tags = await loadTags();
+              setTagOptions(tags);
+              const categories = await loadCategories();
+              setCategoryOptions(categories);
+            } catch(e) {
+              alert(e);
+            }
           }
-        }
 
-        setIsAdmin(admin);
+          setIsAdmin(admin);
+        }
       }
 
       try{
