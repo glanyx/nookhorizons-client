@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
 import { makeStyles, Box, Grid, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel } from '@material-ui/core';
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
-import { API, Storage } from "aws-amplify";
+import { Auth, API, Storage } from "aws-amplify";
 
 import { s3Upload } from '../libs/storageLib';
 import config from "../config";
@@ -36,6 +36,8 @@ function Market(props) {
   const classes = useStyles()
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [items, setItems] = useState([]);
   const [file, setFile] = useState(null);
@@ -198,14 +200,26 @@ function Market(props) {
     }
 
     async function onLoad() {
-      if (!props.isAuthenticated) {
-        return;
+
+      if (props.isAuthenticated) {
+        const session = await Auth.currentSession();
+        const admin = session.getIdToken().payload['cognito:groups'].indexOf('Admin') !== -1;
+
+        if (admin) {
+          try {
+            const tags = await loadTags();
+            setTagOptions(tags);
+            const categories = await loadCategories();
+            setCategoryOptions(categories);
+          } catch(e) {
+            alert(e);
+          }
+        }
+
+        setIsAdmin(admin);
       }
+
       try{
-        const tags = await loadTags();
-        setTagOptions(tags);
-        const categories = await loadCategories();
-        setCategoryOptions(categories);
         const items = await loadItems();
         
         await setImages(items);
@@ -269,7 +283,7 @@ function Market(props) {
   return (
     <>
       <Grid container justify='center' alignItems='center'>
-        {props.isAuthenticated && !loading &&
+        {!loading && isAdmin &&
           <Box border={5} className={classes.wrapper}>
             <form onSubmit={handleNewItem}>
               <Grid container spacing={2}>
@@ -411,15 +425,17 @@ function Market(props) {
             </form>
           </Box>
           }
-          <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
-            {items.map(item => (
-              <Grid item xs={3} key={item.itemId}>
-                <Grid container alignItems='center' justify='center'>
-                  <ItemCard item={item} to={`/items/${item.itemId}`} />
+          {!loading &&
+            <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
+              {items.map(item => (
+                <Grid item xs={3} key={item.itemId}>
+                  <Grid container alignItems='center' justify='center'>
+                    <ItemCard item={item} to={`/items/${item.itemId}`} />
+                  </Grid>
                 </Grid>
-              </Grid>
-            ))}
-          </Grid>
+              ))}
+            </Grid>
+          }
         </Grid>
       <Dialog open={openTagInput} onClose={handleClose} aria-labelledby='tag-input'>
         <DialogTitle id='tag-dialog-title'>New Tag</DialogTitle>

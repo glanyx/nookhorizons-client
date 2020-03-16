@@ -37,6 +37,8 @@ function User(props) {
 
       const user = await Auth.currentUserInfo();
 
+      console.log(await Auth.currentSession());
+
       try {
         const sales = await loadSales(user);
         setSales(sales);
