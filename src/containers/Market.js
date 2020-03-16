@@ -72,8 +72,8 @@ function Market(props) {
         currency: currency,
         retailPrice: price,
         craftable: craftable,
-        recipe: fields.recipe,
-        recipeSource: fields.recipeSource,
+        recipe: fields.recipe.length > 0 ? fields.recipe : null,
+        recipeSource: fields.recipeSource.length > 0 ? fields.recipeSource : null,
       });
       setItems(await loadItems());
       fields.name = '';
@@ -361,7 +361,7 @@ function Market(props) {
                       <StyledTextbox
                         id='price'
                         placeholder='Retail Price'
-                        type='number'
+                        type='text'
                         variant='outlined'
                         color='primary'
                         value={price}

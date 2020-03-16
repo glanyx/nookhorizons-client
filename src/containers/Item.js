@@ -162,7 +162,7 @@ function Item(props){
     }
 
     function makeSale(purchase) {
-        return API.put("nh", `/sales/${purchase.sale.saleId}/buy`, {
+        return API.put("nh", `/sales/buy`, {
             body: purchase
         });
     }
