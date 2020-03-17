@@ -37,8 +37,6 @@ function User(props) {
 
       const user = await Auth.currentUserInfo();
 
-      console.log(await Auth.currentSession());
-
       try {
         const sales = await loadSales(user);
         setSales(sales);
@@ -108,7 +106,7 @@ function User(props) {
                               <TableCell align='right'>{sale.note}</TableCell>
                               <TableCell align='right'>{sale.status}</TableCell>
                               <TableCell align='center'>
-                                  {sale.status !== 'Sold' && sale.status !== 'Cancelled' &&
+                                  {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Fulfilled' &&
                                     <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
                                         Cancel Sale
                                     </StyledButton>

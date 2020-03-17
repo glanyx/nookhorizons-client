@@ -10,7 +10,8 @@ import {
   fade,
   Fade,
   Menu,
-  MenuItem
+  MenuItem,
+  Typography
 } from "@material-ui/core";
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
@@ -53,6 +54,16 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.common.white
     }
   },
+  comingsoon: {
+    position: 'relative'
+  },
+  soontext: {
+    position: 'absolute',
+    fontSize: 10,
+    fontWeight: 500,
+    top: -4,
+    color: theme.palette.common.white
+  }
 }));
 
 function NavBar({
@@ -100,12 +111,14 @@ function NavBar({
             Market
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/collections">
+          <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/collections">
             Collections
+            <Typography className={classes.soontext}>Coming Soon!</Typography>
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/guides">
+          <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/guides">
             Guides
+            <Typography className={classes.soontext}>Coming Soon!</Typography>
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
           <Button className={classes.button} href="https://discord.gg/3NPBpZh" target="_blank">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API, Storage } from "aws-amplify";
+import { Auth, API, Storage } from "aws-amplify";
 import {
     makeStyles,
     fade,
@@ -17,7 +17,8 @@ import {
     TableHead,
     TableBody,
     TableRow,
-    TableCell
+    TableCell,
+    Tooltip
 } from '@material-ui/core';
 import { useFormFields } from '../libs/hooksLib';
 import { StyledButton, LoaderButton, ItemCard } from '../components';
@@ -83,6 +84,8 @@ function Item(props){
 
     const [item, setItem] = useState([]);
     const [sales, setSales] = useState([]);
+
+    const [user, setUser] = useState('');
 
     const [fields, handleFieldChange] = useFormFields({
         variant: '',
@@ -183,6 +186,9 @@ function Item(props){
 
         async function onLoad() {
           try{
+
+            setUser(await Auth.currentUserInfo());
+
             const item = await loadItem();
             setItem(item);
 
@@ -229,7 +235,6 @@ function Item(props){
                                 <TableCell align='right'>Quantity</TableCell>
                                 <TableCell align='right'>Price</TableCell>
                                 <TableCell align='right'>Note</TableCell>
-                                <TableCell align='right'>Feedback</TableCell>
                                 <TableCell />
                             </TableRow>
                         </TableHead>
@@ -241,11 +246,14 @@ function Item(props){
                                     <TableCell align='right'>{sale.quantity}</TableCell>
                                     <TableCell align='right'>{sale.price}</TableCell>
                                     <TableCell align='right'>{sale.note}</TableCell>
-                                    <TableCell align='right'>U Suk</TableCell>
                                     <TableCell align='center'>
-                                        <StyledButton color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
-                                            Buy
-                                        </StyledButton>
+                                        <Tooltip placement='top-end' title={sale.userId === user.id ? `You can't buy your own items!` : ''}>
+                                            <span>
+                                                <StyledButton disabled={sale.userId === user.id} color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
+                                                    Buy
+                                                </StyledButton>
+                                            </span>
+                                        </Tooltip>
                                     </TableCell>
                                 </TableRow>
                             )}
