@@ -133,7 +133,7 @@ function Item(props){
             fields.quantity = '1';
             fields.variant = '';
         } catch(e) {
-            alert(e);
+            alert(e.response.data.error);
         }
 
         setSubmitting(false);
@@ -156,8 +156,7 @@ function Item(props){
                 sale: sale
             });
         } catch (e) {
-            console.log(e);
-            alert(e.message);
+            alert(e.response.data.error);
         }
 
         setBuying(false);

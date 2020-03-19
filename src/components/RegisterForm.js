@@ -233,7 +233,7 @@ function RegisterForm({
                     value={fields.email}
                     onChange={handleFieldChange}
                     error={!validateEmail() && fields.email.length > 0}
-                    helperText={(!validateEmail() && fields.email.length > 0) && 'Please enter a valid email'}
+                    helperText={(!validateEmail() && fields.email.length > 0) && 'Please enter a valid email address'}
                   >
                     <MailIcon />
                   </StyledTextbox>

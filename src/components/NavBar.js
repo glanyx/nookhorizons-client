@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link as RouterLink, withRouter } from "react-router-dom";
 
 import {
@@ -75,6 +75,7 @@ function NavBar({
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [username, setUsername] = useState('');
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -86,8 +87,15 @@ function NavBar({
 
   async function handleLogout() {
     setAnchorEl(null);
+    userProps.setUser(null);
     onLogout();
   }
+
+  useEffect(() => {
+    if (userProps.user) {
+      setUsername(userProps.user.username);
+    }
+  }, [userProps.user]);
 
   if (isWidthDown('md', props.width)) {
     return(
@@ -137,7 +145,7 @@ function NavBar({
             <>
               <Button className={classes.button} onClick={handleClick}>
                 <Icon className={`fas fa-user-circle`} />&nbsp;
-                {userProps.user.username}
+                {username}
               </Button>
               <Menu
                 id='user-menu'
@@ -148,8 +156,8 @@ function NavBar({
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <MenuItem className={classes.menuitem} component={RouterLink} to='/user'>My Account</MenuItem>
-                <MenuItem className={classes.menuitem} component={RouterLink} to='/user/sales'>My Sales</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user'>My Account</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user/sales'>My Sales</MenuItem>
                 <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>

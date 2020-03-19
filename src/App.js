@@ -106,7 +106,7 @@ function App(props) {
               onLogout={handleLogout}
             />
             <div className={classes.fill}>
-              <Routes appProps={{ isAuthenticated, userHasAuthenticated, user }} />
+              <Routes appProps={{ isAuthenticated, userHasAuthenticated, user, setUser }} />
             </div>
             <MediaBar />
           </div>
