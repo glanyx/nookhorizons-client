@@ -66,12 +66,15 @@ function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
 
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     onLoad();
   }, []);
 
   async function onLoad() {
     try {
+      setUser(await Auth.currentUserInfo());
       await Auth.currentSession();
       userHasAuthenticated(true);
     } catch (e) {
@@ -99,11 +102,11 @@ function App(props) {
               </div>
             </div>
             <NavBar
-              userProps={{ isAuthenticated, userHasAuthenticated }}
+              userProps={{ isAuthenticated, userHasAuthenticated, user, setUser }}
               onLogout={handleLogout}
             />
             <div className={classes.fill}>
-              <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
+              <Routes appProps={{ isAuthenticated, userHasAuthenticated, user }} />
             </div>
             <MediaBar />
           </div>

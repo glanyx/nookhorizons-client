@@ -22,19 +22,19 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: 'cover',
     display: "flex",
     boxShadow: '0px 0px 2px 0px rgba(0,0,0,.8)',
-    paddingTop: theme.spacing(.25),
-    paddingBottom: theme.spacing(.25)
+    paddingTop: theme.spacing(.5),
+    paddingBottom: theme.spacing(.5)
   },
   button: {
     textShadow: '1px 2px 2px rgba(210,170,110,.7)',
-    height: '80%',
+    height: '100%',
     '&:hover': {
       background: `linear-gradient(rgba(255,200,200,.1),rgba(255,200,200,.1)),url(${process
         .env.PUBLIC_URL + "/assets/buttonBackground.png"})`,
       boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
       color: theme.palette.primary.light,
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
-    }
+    },
   },
   padding: {
     paddingLeft: theme.spacing(1),
@@ -136,7 +136,8 @@ function NavBar({
           {userProps.isAuthenticated ? (
             <>
               <Button className={classes.button} onClick={handleClick}>
-                <Icon className={`fas fa-user-circle`} />
+                <Icon className={`fas fa-user-circle`} />&nbsp;
+                {userProps.user.username}
               </Button>
               <Menu
                 id='user-menu'

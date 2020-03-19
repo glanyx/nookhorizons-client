@@ -133,8 +133,7 @@ function Item(props){
             fields.quantity = '1';
             fields.variant = '';
         } catch(e) {
-            console.log(e);
-            alert(e.message);
+            alert(e);
         }
 
         setSubmitting(false);
@@ -281,7 +280,6 @@ function Item(props){
                         </Grid>
                         <Grid item xs={5}>
                             <TextField
-                                autofocus
                                 margin='normal'
                                 type='text'
                                 id='variant'
@@ -295,6 +293,7 @@ function Item(props){
                             <Grid container direction='column' spacing={1}>
                                 <Grid item>
                                     <TextField
+                                        autofocus
                                         margin='normal'
                                         type='number'
                                         id='price'
@@ -321,6 +320,7 @@ function Item(props){
                             <TextField
                                 multiline
                                 margin='normal'
+                                placeholder='What times are you available? Timezone? Any other restrictions?'
                                 type='text'
                                 id='note'
                                 label='Note'

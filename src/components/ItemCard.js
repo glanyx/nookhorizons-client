@@ -34,8 +34,8 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(.5)
     },
     image: {
-        height: 200,
-        maxWidth: '100%'
+        paddingTop: '100%',
+        width: '100%'
     },
     descriptionWrapper: {
         position: 'relative'

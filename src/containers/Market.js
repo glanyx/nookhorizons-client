@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     float: 'left'
   },
   itemList: {
-    width: '100%',
+    width: '90%',
     padding: theme.spacing(2)
   },
   block: {
@@ -48,6 +48,7 @@ function Market(props) {
   function loadItems() {
     return API.get('nh', '/items');
   }
+  
   async function handleNewItem(event) {
     event.preventDefault();
 
@@ -77,7 +78,6 @@ function Market(props) {
         recipe: fields.recipe.length > 0 ? fields.recipe : null,
         recipeSource: fields.recipeSource.length > 0 ? fields.recipeSource : null,
       });
-      setItems(await loadItems());
       fields.name = '';
       fields.description = '';
       fields.source = '';
@@ -235,7 +235,7 @@ function Market(props) {
       setLoading(false);
     }
     onLoad();
-  }, [props.isAuthenticated]);
+  }, [props.isAuthenticated, submitting]);
 
   const handleClose = () => {
     setOpenTagInput(false);

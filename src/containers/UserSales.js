@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Auth, API } from 'aws-amplify';
-import { makeStyles, Grid, Paper, Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { makeStyles, Grid, Paper, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography } from '@material-ui/core';
 import { StyledButton } from '../components';
 
 const useStyles = makeStyles((theme) => ({
+  section: {
+    marginTop: theme.spacing(4),
+    background: 'none'
+  },
   salestable: {
-    width: '90% !important'
+    width: '90% !important',
+    borderRadius: 20,
+    border: '1px solid black'
   },
   salesbutton: {
     '& .MuiButton-label': {
@@ -20,11 +26,17 @@ function User(props) {
 
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+  const [completing, setCompleting] = useState(false);
 
   const [sales, setSales] = useState([]);
+  const [purchases, setPurchases] = useState([]);
 
   function loadSales(user) {
     return API.get('nh', `/user/${user.id}/sales`);
+  }
+
+  function loadPurchases(user) {
+    return API.get('nh', `/user/${user.id}/purchases`);
   }
 
   useEffect(() => {
@@ -39,7 +51,9 @@ function User(props) {
 
       try {
         const sales = await loadSales(user);
+        const purchases = await loadPurchases(user);
         setSales(sales);
+        setPurchases(purchases);
       } catch (e) {
         alert(e);
       }
@@ -48,11 +62,10 @@ function User(props) {
 
     onLoad();
 
-  }, [props.isAuthenticated, cancelling]);
+  }, [props.isAuthenticated, cancelling, completing]);
 
   const handleCancelSale = async (event, saleId) => {
 
-    console.log('test');
     event.preventDefault();
     setCancelling(true);
 
@@ -61,7 +74,6 @@ function User(props) {
             saleId: saleId
         });
     } catch (e) {
-        console.log(e);
         alert(e.message);
     }
 
@@ -74,51 +86,117 @@ function User(props) {
       });
   }
 
+  const handleCompleteSale = async (event, sale) => {
+    event.preventDefault();
+    setCompleting(true);
+    
+    try{
+      await completeSale({
+        sale: sale
+      });
+    } catch(e) {
+      alert(e.message);
+    }
+
+    setCompleting(false);
+  }
+
+  function completeSale(sale) {
+    return API.put('nh', '/sales/complete', {
+      body: sale
+    });
+  }
+
   return (
     <>
-      <div>
-        <h1>User Sales</h1>
-      </div>
-
-      {!loading &&
+      <Paper className={classes.section}>
+        <Typography variant='h2'>
+          User Sales
+        </Typography>
         <Grid container justify='center'>
           <TableContainer component={Paper} className={classes.salestable}>
-              <Table aria-label='sales'>
-                  <TableHead>
-                      <TableRow>
-                          <TableCell>Item</TableCell>
-                          <TableCell align='right'>Variant</TableCell>
-                          <TableCell align='right'>Quantity</TableCell>
-                          <TableCell align='right'>Price</TableCell>
-                          <TableCell align='right'>Note</TableCell>
-                          <TableCell align='right'>Status</TableCell>
-                          <TableCell />
-                      </TableRow>
-                  </TableHead>
+            <Table aria-label='sales'>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell align='right'>Variant</TableCell>
+                  <TableCell align='right'>Quantity</TableCell>
+                  <TableCell align='right'>Price</TableCell>
+                  <TableCell align='right'>Note</TableCell>
+                  <TableCell align='right'>Status</TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableHead>
 
-                  <TableBody>
-                      {sales.map(sale =>
-                          <TableRow key={sale.saleId}>
-                              <TableCell>{sale.item.name}</TableCell>
-                              <TableCell align='right'>{sale.variant}</TableCell>
-                              <TableCell align='right'>{sale.quantity}</TableCell>
-                              <TableCell align='right'>{sale.price}</TableCell>
-                              <TableCell align='right'>{sale.note}</TableCell>
-                              <TableCell align='right'>{sale.status}</TableCell>
-                              <TableCell align='center'>
-                                  {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Fulfilled' &&
-                                    <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
-                                        Cancel Sale
-                                    </StyledButton>
-                                  }
-                              </TableCell>
-                          </TableRow>
-                      )}
-                  </TableBody>
-              </Table>
+              {!loading &&
+              <TableBody>
+                {sales.map(sale =>
+                  <TableRow key={sale.saleId}>
+                    <TableCell>{sale.item.name}</TableCell>
+                    <TableCell align='right'>{sale.variant}</TableCell>
+                    <TableCell align='right'>{sale.quantity}</TableCell>
+                    <TableCell align='right'>{sale.price}</TableCell>
+                    <TableCell align='right'>{sale.note}</TableCell>
+                    <TableCell align='right'>{sale.status}</TableCell>
+                    <TableCell align='center'>
+                      {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
+                        <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
+                            Cancel Sale
+                        </StyledButton>
+                      }
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+              }
+            </Table>
           </TableContainer>
-      </Grid>
-    }
+        </Grid>
+      </Paper>
+      <Paper className={classes.section}>
+        <Typography variant='h2'>
+          User Purchases
+        </Typography>
+        <Grid container justify='center'>
+          <TableContainer component={Paper} className={classes.salestable}>
+            <Table aria-label='purchases'>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell align='right'>Variant</TableCell>
+                  <TableCell align='right'>Quantity</TableCell>
+                  <TableCell align='right'>Price</TableCell>
+                  <TableCell align='right'>Note</TableCell>
+                  <TableCell align='right'>Status</TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableHead>
+
+              {!loading &&
+              <TableBody>
+                {purchases.map(purchase =>
+                  <TableRow key={purchase.saleId}>
+                    <TableCell>{purchase.item.name}</TableCell>
+                    <TableCell align='right'>{purchase.variant}</TableCell>
+                    <TableCell align='right'>{purchase.quantity}</TableCell>
+                    <TableCell align='right'>{purchase.price}</TableCell>
+                    <TableCell align='right'>{purchase.note}</TableCell>
+                    <TableCell align='right'>{purchase.status}</TableCell>
+                    <TableCell align='center'>
+                      {purchase.status === 'Sold' &&
+                        <StyledButton error color='primary' variant='outlined' onClick={event => handleCompleteSale(event, purchase)} className={classes.salesbutton}>
+                            Complete
+                        </StyledButton>
+                      }
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+              }
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Paper>
     </>
   );
 }
