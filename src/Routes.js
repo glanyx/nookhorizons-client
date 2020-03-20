@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import AppliedRoute from './AppliedRoute';
+import { RedirectRoute } from './components';
 import {
   Home,
   User,
@@ -22,7 +23,7 @@ function Routes({ appProps }) {
       <AppliedRoute path="/" exact component={Home} appProps={appProps} />
       <AppliedRoute path="/user" exact component={User} appProps={appProps} />
       <AppliedRoute path="/user/sales" exact component={UserSales} appProps={appProps} />
-      <AppliedRoute path="/login" exact component={Login} appProps={appProps} />
+      <RedirectRoute path="/login" exact component={Login} appProps={appProps} />
       <AppliedRoute path="/register" exact component={Register} appProps={appProps} />
       <AppliedRoute path="/registered" exact component={Auth} appProps={appProps} />
       <AppliedRoute path="/privacy" exact component={Privacy} appProps={appProps} />

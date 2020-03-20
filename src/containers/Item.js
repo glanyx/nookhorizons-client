@@ -85,8 +85,6 @@ function Item(props){
     const [item, setItem] = useState([]);
     const [sales, setSales] = useState([]);
 
-    const [user, setUser] = useState('');
-
     const [fields, handleFieldChange] = useFormFields({
         variant: '',
         price: '',
@@ -101,6 +99,15 @@ function Item(props){
     }
 
     const handleOpen = () => {
+
+        // First check if logged in
+        if (!props.isAuthenticated) {
+            props.history.push(`/login?redirect=${props.location.pathname}`);
+        }
+
+        // Check if Discord Tag set
+        console.log(props.user.discordTag);
+
         setOpen(true);
     }
 
@@ -115,6 +122,7 @@ function Item(props){
     const handleCreateSale = async (event) => {
 
         event.preventDefault();
+
         setSubmitting(true);
 
         try{
@@ -149,8 +157,12 @@ function Item(props){
     const handlePurchase = async (event, sale) => {
 
         event.preventDefault();
-        setBuying(true);
 
+        if (!props.isAuthenticated) {
+            props.history.push(`/login?redirect=${props.location.pathname}`);
+            return;
+        }
+        setBuying(true);
         try{
             await makeSale({
                 sale: sale
@@ -158,7 +170,6 @@ function Item(props){
         } catch (e) {
             alert(e.response.data.error);
         }
-
         setBuying(false);
     }
 
@@ -169,7 +180,6 @@ function Item(props){
     }
 
     useEffect(() => {
-
         function loadItem() {
             return API.get('nh', `/items/${props.match.params.id}`);
         }
@@ -178,15 +188,9 @@ function Item(props){
             return API.get('nh', `/items/${props.match.params.id}/sales`);
         }
 
-        if (!props.isAuthenticated) {
-            return;
-        }
-
         async function onLoad() {
+
           try{
-
-            setUser(await Auth.currentUserInfo());
-
             const item = await loadItem();
             setItem(item);
 
@@ -207,6 +211,7 @@ function Item(props){
           }
           setLoading(false);
         }
+
         onLoad();
       }, [props.match.params.id, props.isAuthenticated, buying]);
 
@@ -245,9 +250,9 @@ function Item(props){
                                     <TableCell align='right'>{sale.price}</TableCell>
                                     <TableCell align='right'>{sale.note}</TableCell>
                                     <TableCell align='center'>
-                                        <Tooltip placement='top-end' title={sale.userId === user.id ? `You can't buy your own items!` : ''}>
+                                        <Tooltip placement='top-end' title={props.user ? (sale.userId === props.user.id ? `You can't buy your own items!` : '') : ''}>
                                             <span>
-                                                <StyledButton disabled={sale.userId === user.id} color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
+                                                <StyledButton disabled={props.user ? (sale.userId === props.user.id) : false} color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
                                                     Buy
                                                 </StyledButton>
                                             </span>

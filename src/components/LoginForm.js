@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import {
   Box,
   Grid,
@@ -111,25 +111,44 @@ function LoginForm({ onSubmit, ...props }) {
     return regex.test(fields.newPassword) && fields.newPassword !== fields.username;
   }
 
+  const handleUserStore = async (username) => {
+
+    try{
+        await storeUser({
+          username,
+        });
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  function storeUser(user) {
+    return API.post('nh', '/user', {
+      body: user
+    });
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
 
     try {
-      const user = await Auth.signIn(fields.username, fields.password, {
+      const userLogin = await Auth.signIn(fields.username, fields.password, {
         "form-name": "login"
       });
 
-      if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-        setUser(user);
+      if (userLogin.challengeName === 'NEW_PASSWORD_REQUIRED') {
+        setUser(userLogin);
         setOpen(true);
         return;
       };
 
+      const user = await Auth.currentUserInfo();
+      handleUserStore(user.username);
+
       setSuccess(true);
-      props.setUser(await Auth.currentUserInfo());
+      props.setUser(user);
       props.userHasAuthenticated(true);
-      props.history.push("/");
 
     } catch (e) {
       alert(e.message);

@@ -74,7 +74,8 @@ function App(props) {
 
   async function onLoad() {
     try {
-      setUser(await Auth.currentUserInfo());
+      const user = await Auth.currentUserInfo();
+      setUser(user);
       await Auth.currentSession();
       userHasAuthenticated(true);
     } catch (e) {

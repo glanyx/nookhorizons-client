@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
-import { makeStyles, Box, Grid, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel } from '@material-ui/core';
+import { makeStyles, fade, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
 import { Auth, API, Storage } from "aws-amplify";
 
@@ -29,6 +29,14 @@ const useStyles = makeStyles(theme => ({
       display: 'block'
     }
   },
+  loadWrapper: {
+    display: 'block',
+    color: theme.palette.common.white,
+    marginTop: theme.spacing(4),
+    backgroundColor: fade(theme.palette.common.black, .85),
+    borderRadius: 20,
+    padding: theme.spacing(4)
+  }
 }));
 
 function Market(props) {
@@ -79,12 +87,12 @@ function Market(props) {
         recipeSource: fields.recipeSource.length > 0 ? fields.recipeSource : null,
       });
       fields.name = '';
-      fields.description = '';
-      fields.source = '';
+      fields.description = 'Unknown';
+      fields.source = 'Unknown';
       setCategoryChoice('');
       setTags([]);
       setCurrency('Bells');
-      setPrice('');
+      setPrice('Unknown');
       setCraftable(false);
       fields.recipe = '';
       fields.recipeSource = '';
@@ -244,8 +252,8 @@ function Market(props) {
 
   const [fields, handleFieldChange] = useFormFields({
     name: "",
-    description: "",
-    source: "",
+    description: 'Unknown',
+    source: 'Unknown',
     newTag: "",
     newCategory: "",
     width: '',
@@ -253,7 +261,7 @@ function Market(props) {
     recipe: '',
     recipeSource: '',
   });
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState('Unknown');
   const [currency, setCurrency] = useState('Bells');
   const [craftable, setCraftable] = useState(false);
 
@@ -427,6 +435,16 @@ function Market(props) {
               </Grid>
             </form>
           </Box>
+          }
+          {loading &&
+            <Grid container direction='column' alignContent='center' alignItems='center'>
+              <Grid item className={classes.loadWrapper}>
+                <Grid container direction='column' alignContent='center' alignItems='center'>
+                  <CircularProgress size={80} thickness={6} color='inherit' />
+                  <Typography variant='body'>Loading items..</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
           }
           {!loading &&
             <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
