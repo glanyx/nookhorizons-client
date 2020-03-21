@@ -23,3 +23,4 @@ export { default as Pin } from './Pin';
 export { default as Sticker } from './Sticker';
 
 export { default as RedirectRoute } from './RedirectRoute';
+export { default as AuthenticatedRoute } from './AuthenticatedRoute';

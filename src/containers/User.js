@@ -43,31 +43,38 @@ function User(props) {
   const [success, setSuccess] = useState(false);
   const [discordSuccess, setDiscordSuccess] = useState(false);
 
-  const [user, setUser] = useState(null);
-
   const [fields, handleFieldChange] = useFormFields({
     oldPassword: '',
     newPassword: '',
-    discordTag: '',
   });
+  const [discordTag, setDiscordTag] = useState('');
+
+  const editDiscordTag = () => {
+    setDiscordSuccess(false);
+    setEditing(true);
+  }
 
   const handleDiscordSubmit = async (event) => {
     event.preventDefault();
     setSubmitting(true);
 
     try{
-      await setDiscordTag({
-        discordTag: fields.discordTag
+      await storeDiscordTag({
+        discordTag: discordTag
       });
     } catch(e) {
         alert(e.message);
     }
+    props.setUser({
+      ...props.user,
+      discordTag: discordTag
+    })
     setSubmitting(false);
     setDiscordSuccess(true);
     setEditing(false);
   }
 
-  function setDiscordTag(tag) {
+  function storeDiscordTag(tag) {
     return API.put('nh', '/user', {
       body: tag
     });
@@ -108,33 +115,17 @@ function User(props) {
   
   function validateDiscord() {
     let regex = /([\S ]{2,32}#[0-9]{4,4})$/;
-    return regex.test(fields.discordTag);
+    return regex.test(discordTag);
   }
 
   useEffect(() => {
-
-    function loadUser() {
-      return API.get('nh', `/user`);
-    }
-
-    async function onLoad() {
-
-      try{
-        const user = await loadUser();
-        fields.discordTag = user.discordTag ? user.discordTag : '';
-        setUser(user);
-      } catch(e) {
-        alert(e.response.data.error);
-      }
-    }
-
-    onLoad();
-  }, [submitting]);
+    setDiscordTag(props.user ? props.user.discordTag : '');
+  }, [props]);
 
   return (
     <>
       <Typography variant='h2'>
-        Hi{user ? ` ${user.username}` : null}!
+        Hi{props.user ? ` ${props.user.username}` : null}!
       </Typography>
       <form
         name="discord"
@@ -154,9 +145,9 @@ function User(props) {
                   <Grid container direction='column'spacing={1} className={classes.discordwrapper}>
                     <Typography variant='body1'>Your Discord Tag:</Typography>
                     <Typography variant='body1' className={classes.discordtag}>
-                      {user ? user.discordTag : null}&nbsp;
-                      <Link href='#' onClick={() => setEditing(true)}>
-                        {user ? (user.discordTag ? 'Change' : 'Add') : ''}
+                      {props.user ? props.user.discordTag : null}&nbsp;
+                      <Link href='#' onClick={editDiscordTag}>
+                        {props.user ? (props.user.discordTag ? 'Change' : 'Add') : ''}
                       </Link>
                     </Typography>
                   </Grid>
@@ -169,10 +160,10 @@ function User(props) {
                       type="text"
                       variant="outlined"
                       color="primary"
-                      value={fields.discordTag}
-                      onChange={handleFieldChange}
-                      error={!validateDiscord() && fields.discordTag.length > 0}
-                      helperText={(!validateDiscord() && fields.discordTag.length > 0) && (
+                      value={discordTag}
+                      onChange={event => setDiscordTag(event.target.value)}
+                      error={!validateDiscord() && discordTag.length > 0}
+                      helperText={(!validateDiscord() && discordTag.length > 0) && (
                         <>
                           Discord tags should look like this: <span className={classes.username}>NookHorizons#0001</span>
                         </>
@@ -186,7 +177,7 @@ function User(props) {
                     <Grid container item>
                       <LoaderButton
                         className={classes.button}
-                        disabled={!validateDiscord() || user.discordTag === fields.discordTag || submitting}
+                        disabled={!validateDiscord() || props.user.discordTag === discordTag || submitting}
                         type="submit"
                         loading={submitting}
                         success={discordSuccess}

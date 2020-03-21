@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
-import { makeStyles, fade, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
+import { makeStyles, fade, Paper, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
 import { Auth, API, Storage } from "aws-amplify";
 
@@ -36,7 +36,28 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: fade(theme.palette.common.black, .85),
     borderRadius: 20,
     padding: theme.spacing(4)
-  }
+  },
+  bold: {
+    fontWeight: 700
+  },
+  howitworks: {
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(3),
+    borderRadius: 20,
+    backgroundColor: theme.palette.secondary.light,
+    backgroundImage: `-webkit-gradient(linear, 0 0, 100% 100%,
+        color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+        color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+        color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+        to(transparent))`,
+    backgroundSize: '50px 50px'
+  },
+  howitworksComponent: {
+      backgroundColor: fade(theme.palette.common.white, .45),
+      borderRadius: 20,
+      padding: `${theme.spacing(2)}px !important`,
+      marginBottom: theme.spacing(2),
+  },
 }));
 
 function Market(props) {
@@ -294,6 +315,22 @@ function Market(props) {
   return (
     <>
       <Grid container justify='center' alignItems='center'>
+      <Paper elevation={3} className={classes.howitworks}>
+        <Grid container direction='column' spacing={2}>
+            <Grid item className={classes.howitworksComponent}>
+                <Typography variant='h5'>
+                    Please Note:
+                </Typography>
+                <Typography variant='body2'>
+                    <ul>
+                        <li>Before you use our marketplace, please make sure you have an <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
+                        <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
+                        <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
+                    </ul>
+                </Typography>
+            </Grid>
+        </Grid>
+    </Paper>
         {!loading && isAdmin &&
           <Box border={5} className={classes.wrapper}>
             <form onSubmit={handleNewItem}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Auth, API, Storage } from "aws-amplify";
+import { API, Storage } from "aws-amplify";
 import {
     makeStyles,
     fade,
@@ -18,8 +18,10 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Tooltip
+    Tooltip,
+    Typography
 } from '@material-ui/core';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useFormFields } from '../libs/hooksLib';
 import { StyledButton, LoaderButton, ItemCard } from '../components';
 
@@ -51,6 +53,23 @@ const useStyles = makeStyles(theme => ({
         borderRadius: '0px 0px 20px 20px',
         margin: theme.spacing(0, 1, 1, 1)
     },
+    description: {
+        padding: theme.spacing(3),
+        borderRadius: 20,
+        backgroundColor: theme.palette.primary.light,
+        backgroundImage: `-webkit-gradient(linear, 0 0, 100% 100%,
+            color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+            color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+            color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+            to(transparent))`,
+        backgroundSize: '50px 50px'
+    },
+    descriptionComponent: {
+        backgroundColor: fade(theme.palette.common.white, .45),
+        borderRadius: 20,
+        padding: `${theme.spacing(2)}px !important`,
+        marginBottom: theme.spacing(2),
+    },
     tags: {
         display: 'flex',
         flexWrap: 'wrap'
@@ -71,6 +90,19 @@ const useStyles = makeStyles(theme => ({
     },
     dialogadjust: {
         marginTop: 12
+    },
+    purchaseCompleteDialog: {
+        borderRadius: 20
+    },
+    purchaseCompleteTitle: {
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.common.white,
+        '& > h2': {
+            display: 'flex',
+            justifyContent: 'center',
+            alignContent: 'center',
+            alignItems: 'center',
+        }
     }
 }));
 
@@ -80,10 +112,15 @@ function Item(props){
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [buying, setBuying] = useState(false);
+
     const [open, setOpen] = useState(false);
+    const [purchaseCompleteOpen, setPurchaseCompleteOpen] = useState(false);
 
     const [item, setItem] = useState([]);
     const [sales, setSales] = useState([]);
+    const [seller, setSeller] = useState({
+        discordTag: 'Unknown'
+    });
 
     const [fields, handleFieldChange] = useFormFields({
         variant: '',
@@ -103,16 +140,22 @@ function Item(props){
         // First check if logged in
         if (!props.isAuthenticated) {
             props.history.push(`/login?redirect=${props.location.pathname}`);
+            return;
         }
 
         // Check if Discord Tag set
-        console.log(props.user.discordTag);
+        console.log(props.user);
+        if (!props.user.discordTag) {
+            props.history.push(`/user`);
+            return;
+        }
 
         setOpen(true);
     }
 
     const handleClose = () => {
         setOpen(false);
+        setPurchaseCompleteOpen(false);
     }
 
     function loadSales() {
@@ -164,16 +207,17 @@ function Item(props){
         }
         setBuying(true);
         try{
-            await makeSale({
+            setSeller(await buySale({
                 sale: sale
-            });
+            }));
         } catch (e) {
             alert(e.response.data.error);
         }
         setBuying(false);
+        setPurchaseCompleteOpen(true);
     }
 
-    function makeSale(purchase) {
+    function buySale(purchase) {
         return API.put("nh", `/sales/buy`, {
             body: purchase
         });
@@ -218,14 +262,40 @@ function Item(props){
     return (
         !loading &&
         <>
-            <Grid container direction='row' spacing={4} className={classes.fullwrapper}>
-                <Grid item xs={8}>
-                    <Button variant='contained' onClick={handleOpen}>
-                        Sell this item
-                    </Button>
-                </Grid>
+            <Grid container direction='row' spacing={2} className={classes.fullwrapper}>
                 <Grid item xs={4}>
-                    <ItemCard item={item} />
+                    <Grid container direction='column' alignItems='center' spacing={2}>
+                        <Grid item>
+                        <   ItemCard overlay={false} item={item} />
+                        </Grid>
+                        <Grid item>
+                            <StyledButton color='primary' variant='contained' onClick={handleOpen}>
+                                Sell this item
+                            </StyledButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={8} >
+                    <Paper elevation={3} className={classes.description}>
+                        <Grid container direction='column' spacing={2}>
+                            <Grid item className={classes.descriptionComponent}>
+                                <Typography variant='h4'>
+                                    Item Description:
+                                </Typography>
+                                <Typography variant='body1'>
+                                    {item.description}
+                                </Typography>
+                            </Grid>
+                            <Grid item className={classes.descriptionComponent}>
+                                <Typography variant='h4'>
+                                    Item Source:
+                                </Typography>
+                                <Typography variant='body1'>
+                                    {item.source}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Paper>
                 </Grid>
             </Grid>
             
@@ -238,6 +308,7 @@ function Item(props){
                                 <TableCell align='right'>Quantity</TableCell>
                                 <TableCell align='right'>Price</TableCell>
                                 <TableCell align='right'>Note</TableCell>
+                                <TableCell align='right'>Seller</TableCell>
                                 <TableCell />
                             </TableRow>
                         </TableHead>
@@ -249,10 +320,11 @@ function Item(props){
                                     <TableCell align='right'>{sale.quantity}</TableCell>
                                     <TableCell align='right'>{sale.price}</TableCell>
                                     <TableCell align='right'>{sale.note}</TableCell>
+                                    <TableCell align='right'>{props.user ? (sale.username === props.user.username ? 'YOU' : sale.username) : sale.username}</TableCell>
                                     <TableCell align='center'>
-                                        <Tooltip placement='top-end' title={props.user ? (sale.userId === props.user.id ? `You can't buy your own items!` : '') : ''}>
+                                        <Tooltip placement='top-end' title={props.user ? (sale.userId === props.user.userId ? `You can't buy your own items!` : '') : ''}>
                                             <span>
-                                                <StyledButton disabled={props.user ? (sale.userId === props.user.id) : false} color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
+                                                <StyledButton disabled={props.user ? (sale.userId === props.user.userId) : false} color='primary' variant='outlined' onClick={event => handlePurchase(event, sale)} className={classes.buybutton}>
                                                     Buy
                                                 </StyledButton>
                                             </span>
@@ -348,6 +420,30 @@ function Item(props){
                     >
                         Create
                     </LoaderButton>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={purchaseCompleteOpen} onClose={handleClose} className={classes.purchaseCompleteDialog} aria-labelledby='sale-complete'>
+                <DialogTitle className={classes.purchaseCompleteTitle}>
+                    <CheckCircleIcon />&nbsp;
+                    Purchase Success!
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {`Nice, you just scored yourself a(n) ${item.name}! You can contact the seller on Discord. This is their Tag:`}
+                    </DialogContentText>
+                    <TextField
+                        margin='normal'
+                        type='text'
+                        id='discord-tag'
+                        label='Discord Tag'
+                        value={seller.discordTag}
+                        className={classes.dialogTextfield}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>
+                        Got It
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

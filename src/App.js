@@ -8,7 +8,7 @@ import theme from "./theme";
 
 import Routes from "./Routes";
 import { Clock, NavBar, MediaBar } from "./components";
-import { Auth } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -69,21 +69,27 @@ function App(props) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    onLoad();
-  }, []);
-
-  async function onLoad() {
-    try {
-      const user = await Auth.currentUserInfo();
-      setUser(user);
-      await Auth.currentSession();
-      userHasAuthenticated(true);
-    } catch (e) {
-      if (e !== "No current user") {
-        alert(e);
+    async function onLoad() {
+      try {
+        await Auth.currentSession();
+        userHasAuthenticated(true);
+  
+        if (isAuthenticated) {
+          const user = await loadUser();
+          setUser(user);
+        }
+      } catch (e) {
+        if (e !== "No current user") {
+          alert(e);
+        }
       }
+      setIsAuthenticating(false);
     }
-    setIsAuthenticating(false);
+    onLoad();
+  }, [isAuthenticated]);
+
+  function loadUser() {
+    return API.get('nh', `/user`);
   }
 
   async function handleLogout() {

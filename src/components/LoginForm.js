@@ -128,6 +128,10 @@ function LoginForm({ onSubmit, ...props }) {
     });
   }
 
+  function loadUser() {
+    return API.get('nh', `/user`);
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
@@ -147,7 +151,7 @@ function LoginForm({ onSubmit, ...props }) {
       handleUserStore(user.username);
 
       setSuccess(true);
-      props.setUser(user);
+      props.setUser(await loadUser());
       props.userHasAuthenticated(true);
 
     } catch (e) {
