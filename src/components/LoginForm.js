@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import {
   Box,
   Grid,
@@ -62,24 +62,43 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function LoginForm({ onSubmit, ...props }) {
+
   const classes = useStyles();
-  const preventDefault = event => event.preventDefault();
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [open, setOpen] = useState(false);
+  const [openForget, setOpenForget] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
 
   const [user, setUser] = useState(null);
   const [fields, handleFieldChange] = useFormFields({
     username: "",
     password: "",
     changePassword: '',
+    email: '',
+    code: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   function validateForm() {
     return fields.username.length > 0 && fields.password.length > 0;
+  }
+
+  function validateResetForm() {
+    return (
+      fields.code.length > 0 &&
+      fields.confirmPassword === fields.newPassword &&
+      validateNewPassword()
+    );
+  }
+
+  function validateEmail() {
+    let regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(fields.email.toLowerCase());
   }
 
   function validatePassword() {
@@ -87,24 +106,53 @@ function LoginForm({ onSubmit, ...props }) {
     return regex.test(fields.changePassword) && fields.changePassword !== fields.username;
   }
 
+  function validateNewPassword() {
+    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!?@#$%^&*])(?=.{8,})");
+    return regex.test(fields.newPassword) && fields.newPassword !== fields.username;
+  }
+
+  const handleUserStore = async (username) => {
+
+    try{
+        await storeUser({
+          username,
+        });
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  function storeUser(user) {
+    return API.post('nh', '/user', {
+      body: user
+    });
+  }
+
+  function loadUser() {
+    return API.get('nh', `/user`);
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
 
     try {
-      const user = await Auth.signIn(fields.username, fields.password, {
+      const userLogin = await Auth.signIn(fields.username, fields.password, {
         "form-name": "login"
       });
 
-      if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-        setUser(user);
+      if (userLogin.challengeName === 'NEW_PASSWORD_REQUIRED') {
+        setUser(userLogin);
         setOpen(true);
         return;
       };
 
+      const user = await Auth.currentUserInfo();
+      handleUserStore(user.username);
+
       setSuccess(true);
+      props.setUser(await loadUser());
       props.userHasAuthenticated(true);
-      props.history.push("/");
 
     } catch (e) {
       alert(e.message);
@@ -134,8 +182,138 @@ function LoginForm({ onSubmit, ...props }) {
     }
   }
 
+  async function handleSendCode(event) {
+
+    event.preventDefault();
+    setSubmitting(true);
+
+    try {
+      await Auth.forgotPassword(fields.email);
+    } catch(e) {
+      alert(e);
+    }
+    setCodeSent(true);
+    setSubmitting(false);
+  }
+
+  async function handleForgotPassword(event) {
+
+    event.preventDefault();
+    setSubmitting(true);
+
+    try {
+      await Auth.forgotPasswordSubmit(
+        fields.email,
+        fields.code,
+        fields.newPassword
+      );
+    } catch(e) {
+      alert(e);
+    }
+    setCodeSent(false);
+    setSubmitting(false);
+    handleClose();
+  }
+
   const handleClose = () => {
     setOpen(false);
+    setOpenForget(false);
+  }
+
+  function renderEmailDialog() {
+    return (
+      <form onSubmit={handleSendCode}>
+        <DialogContent>
+          <DialogContentText>
+            Please enter your email address:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin='normal'
+            id='email'
+            label='Email address'
+            type='text'
+            value={fields.email}
+            onChange={handleFieldChange}
+            error={!validateEmail() && fields.email.length > 0}
+            helperText={(!validateEmail() && fields.email.length > 0) && (
+              'Please enter a valid email address'
+            )}
+          />
+        </DialogContent>
+        <DialogActions>
+          <LoaderButton
+            disabled={!validateEmail() || submitting}
+            loading={submitting}
+            type='submit'
+          >
+            Send
+          </LoaderButton>
+        </DialogActions>
+      </form>
+    );
+  }
+
+  function renderResetDialog() {
+    return (
+      <form onSubmit={handleForgotPassword}>
+        <DialogContent>
+          <DialogContentText>
+            Please check your email for the validation code.
+          </DialogContentText>
+          <Grid container direction='column'>
+            <TextField
+              autoFocus
+              margin='normal'
+              id='code'
+              label='Validation Code'
+              type='text'
+              value={fields.code}
+              onChange={handleFieldChange}
+            />
+            <TextField
+              margin='normal'
+              id='newPassword'
+              label='New Password'
+              type='password'
+              value={fields.newPassword}
+              onChange={handleFieldChange}
+              error={!validateNewPassword() && fields.newPassword.length > 0}
+              helperText={(!validateNewPassword() && fields.newPassword.length > 0) && (
+                <>
+                  <span>Password requires the following:</span>
+                    <li>At least 8 characters long</li>
+                    <li>At least 1 lowercase character</li>
+                    <li>At least 1 uppercase character</li>
+                    <li>At least 1 numerical character</li>
+                    <li>At least 1 special character - {`Accepted are ! ? @ # $ % ^ & *`}</li>
+                    <li>Must not be the same as your Username</li>
+                </>
+              )}
+            />
+            <TextField
+              margin='normal'
+              id='confirmPassword'
+              label='Confirm Password'
+              type='password'
+              value={fields.confirmPassword}
+              onChange={handleFieldChange}
+              error={fields.newPassword !== fields.confirmPassword && fields.confirmPassword.length > 0}
+              helperText={(fields.newPassword !== fields.confirmPassword && fields.confirmPassword.length > 0) && 'Passwords must match'}
+            />
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <LoaderButton
+            disabled={!validateResetForm() || submitting}
+            loading={submitting}
+            type='submit'
+          >
+            Set Password
+          </LoaderButton>
+        </DialogActions>
+      </form>
+    );
   }
 
   return (
@@ -178,7 +356,7 @@ function LoginForm({ onSubmit, ...props }) {
             </Grid>
             <Grid container item>
               <Typography variant="body2" className={classes.typography}>
-                <Link href="#" onClick={preventDefault}>
+                <Link href="#" onClick={() => setOpenForget(true)}>
                   Forgotten your password?
                 </Link>
               </Typography>
@@ -235,6 +413,13 @@ function LoginForm({ onSubmit, ...props }) {
             Confirm
           </LoaderButton>
         </DialogActions>
+      </Dialog>
+      <Dialog open={openForget} onClose={handleClose} aria-labelledby='forgot-password'>
+        <DialogTitle>Forgot Password</DialogTitle>
+        {!codeSent
+          ? renderEmailDialog()
+          : renderResetDialog()
+        }
       </Dialog>
     </>
   );

@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme => ({
   outer: {
     display: 'inline-block',
     padding: theme.spacing(0, 3, 6, 3),
-    backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/board.png'})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/WoodBackground.png'})`,
     backgroundColor: 'transparent',
     backgroundSize: '100% 100%',
     overflowX: 'hidden'

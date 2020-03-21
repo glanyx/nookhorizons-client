@@ -8,20 +8,20 @@ import theme from "./theme";
 
 import Routes from "./Routes";
 import { Clock, NavBar, MediaBar } from "./components";
-import { Auth } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 
 const useStyles = makeStyles(() => ({
   wrapper: {
     position: 'absolute',
     background: `linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url(${process
-      .env.PUBLIC_URL + "/assets/grass1.png"})`,
+      .env.PUBLIC_URL + "/assets/grass.png"})`,
     backgroundSize: '150px',
     backgroundColor: theme.palette.secondary.dark,
     minWidth: '100%',
     minHeight: '100%',
   },
   backdrop: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/backdrop13.png"})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/backdrop.png"})`,
     backgroundSize: '500px',
     height: '100%',
     minHeight: "100%",
@@ -66,20 +66,30 @@ function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
 
-  useEffect(() => {
-    onLoad();
-  }, []);
+  const [user, setUser] = useState(null);
 
-  async function onLoad() {
-    try {
-      await Auth.currentSession();
-      userHasAuthenticated(true);
-    } catch (e) {
-      if (e !== "No current user") {
-        alert(e);
+  useEffect(() => {
+    async function onLoad() {
+      try {
+        await Auth.currentSession();
+        userHasAuthenticated(true);
+  
+        if (isAuthenticated) {
+          const user = await loadUser();
+          setUser(user);
+        }
+      } catch (e) {
+        if (e !== "No current user") {
+          alert(e);
+        }
       }
+      setIsAuthenticating(false);
     }
-    setIsAuthenticating(false);
+    onLoad();
+  }, [isAuthenticated]);
+
+  function loadUser() {
+    return API.get('nh', `/user`);
   }
 
   async function handleLogout() {
@@ -99,11 +109,11 @@ function App(props) {
               </div>
             </div>
             <NavBar
-              userProps={{ isAuthenticated, userHasAuthenticated }}
+              userProps={{ isAuthenticated, userHasAuthenticated, user, setUser }}
               onLogout={handleLogout}
             />
             <div className={classes.fill}>
-              <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
+              <Routes appProps={{ isAuthenticated, userHasAuthenticated, user, setUser }} />
             </div>
             <MediaBar />
           </div>

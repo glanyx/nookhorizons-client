@@ -45,6 +45,9 @@ const theme = createMuiTheme({
       },
       body2: {
         fontSize: 12
+      },
+      paragraph: {
+        fontSize: 14
       }
     },
     MuiCheckbox: {

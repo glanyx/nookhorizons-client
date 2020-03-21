@@ -34,8 +34,9 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(.5)
     },
     image: {
-        height: 200,
-        maxWidth: '100%'
+        paddingTop: '100%',
+        maxWidth: '100%',
+        minWidth: 171
     },
     descriptionWrapper: {
         position: 'relative'
@@ -62,6 +63,7 @@ const useStyles = makeStyles(theme => ({
 function ItemCard({
     item,
     to,
+    overlay,
     onSelling
 }){
 
@@ -77,11 +79,13 @@ function ItemCard({
                     />
                 </Grid>
                 <div className={classes.descriptionWrapper}>
-                    <div className={classes.description}>
-                        <Typography variant='body2' className={classes.descriptionText}>
-                            {item.description}
-                        </Typography>
-                    </div>
+                    {overlay &&
+                        <div className={classes.description}>
+                            <Typography variant='body2' className={classes.descriptionText}>
+                                {item.description}
+                            </Typography>
+                        </div>
+                    }
                     <CardMedia
                         className={classes.image}
                         image={item.imageUrl}
@@ -97,11 +101,14 @@ function ItemCard({
                                 <StyledChip className={classes.chip} label={tag.name} key={i} />
                             )}
                         </div>
-                        <Grid container justify='flex-end' item>
-                            <Typography variant='body1'>
-                                {`${item.saleCount} selling..`}
-                            </Typography>
-                        </Grid>
+                        {item.saleCount
+                            ? <Grid container justify='flex-end' item>
+                                <Typography variant='body1'>
+                                    {`${item.saleCount} selling..`}
+                                </Typography>
+                            </Grid>
+                            : null
+                        }
                     </CardContent>
                 </Grid>
             </CardActionArea>
@@ -123,7 +130,12 @@ ItemCard.propTypes = {
         saleCount: PropTypes.number
     }),
     to: PropTypes.string,
+    overlay: PropTypes.bool,
     onSelling: PropTypes.func
+}
+
+ItemCard.defaultProps = {
+    overlay: true
 }
 
 export default ItemCard;

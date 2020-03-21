@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link as RouterLink, withRouter } from "react-router-dom";
 
 import {
@@ -6,15 +6,15 @@ import {
   Divider,
   Grid,
   makeStyles,
-  InputBase,
   Icon,
   fade,
   Fade,
   Menu,
-  MenuItem
+  MenuItem,
+  Typography,
+  Drawer
 } from "@material-ui/core";
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
-import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,19 +23,33 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: 'cover',
     display: "flex",
     boxShadow: '0px 0px 2px 0px rgba(0,0,0,.8)',
-    paddingTop: theme.spacing(.25),
-    paddingBottom: theme.spacing(.25)
+    paddingTop: theme.spacing(.5),
+    paddingBottom: theme.spacing(.5)
   },
   button: {
     textShadow: '1px 2px 2px rgba(210,170,110,.7)',
-    height: '80%',
+    height: '100%',
     '&:hover': {
       background: `linear-gradient(rgba(255,200,200,.1),rgba(255,200,200,.1)),url(${process
         .env.PUBLIC_URL + "/assets/buttonBackground.png"})`,
       boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
       color: theme.palette.primary.light,
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
-    }
+    },
+  },
+  drawerbutton: {
+    height: '100%',
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.light,
+      backgroundImage: `-webkit-gradient(linear, 0 0, 100% 100%,
+        color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+        color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+        color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+        to(transparent))`,
+      backgroundSize: '50px 50px',
+      color: theme.palette.common.black,
+    },
   },
   padding: {
     paddingLeft: theme.spacing(1),
@@ -48,47 +62,6 @@ const useStyles = makeStyles(theme => ({
     height: "15px",
     borderRadius: 50
   },
-  search: {
-    color: fade("#000000", 0.7),
-    margin: theme.spacing(1),
-    position: "relative",
-    borderRadius: 20,
-    backgroundColor: fade(theme.palette.common.white, 0.6),
-    boxShadow: '0px 0px 2px 2px rgba(120,70,20,.8)',
-    "&:hover": {
-      backgroundImage: `url(${process.env.PUBLIC_URL + '/searchBackground.png'})`,
-    },
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto"
-    }
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  inputRoot: {
-    color: "inherit",
-    display: "block"
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: 120,
-      "&:focus": {
-        width: 200
-      }
-    }
-  },
   menu: {
     '& .MuiMenu-paper': {
       backgroundImage: 'none',
@@ -96,6 +69,34 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.common.white
     }
   },
+  drawerwrapper: {
+    display: 'grid',
+    backgroundColor: theme.palette.primary.light,
+    backgroundImage: `-webkit-gradient(linear, 0 0, 100% 100%,
+      color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+      color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+      color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+      to(transparent))`,
+    backgroundSize: '50px 50px',
+    height: '100vh'
+  },
+  drawersoontext: {
+    position: 'absolute',
+    fontSize: 10,
+    fontWeight: 500,
+    top: '25%',
+    color: theme.palette.common.white
+  },
+  comingsoon: {
+    position: 'relative'
+  },
+  soontext: {
+    position: 'absolute',
+    fontSize: 10,
+    fontWeight: 500,
+    top: -4,
+    color: theme.palette.common.white
+  }
 }));
 
 function NavBar({
@@ -107,6 +108,8 @@ function NavBar({
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [username, setUsername] = useState('');
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -114,22 +117,53 @@ function NavBar({
 
   function handleClose() {
     setAnchorEl(null);
+    setOpenDrawer(false);
   }
 
   async function handleLogout() {
     setAnchorEl(null);
+    userProps.setUser(null);
     onLogout();
   }
 
+  useEffect(() => {
+    if (userProps.user) {
+      setUsername(userProps.user.username);
+    }
+  }, [userProps.user]);
+
   if (isWidthDown('md', props.width)) {
     return(
-      <div className={classes.root}>
-        <Grid container className={classes.padding} alignItems="center">
-          <Button className={classes.button}>
-            <Icon className={`fas fa-bars`} />
-          </Button>
-        </Grid>
-      </div>
+      <>
+        <div className={classes.root}>
+          <Grid container className={classes.padding} alignItems="center">
+            <Button className={classes.button} onClick={() => setOpenDrawer(true)}>
+              <Icon className={`fas fa-bars`} />
+            </Button>
+          </Grid>
+        </div>
+        <Drawer anchor='left' open={openDrawer} onClose={handleClose}>
+          <div className={classes.drawerwrapper}>
+            <Button className={classes.drawerbutton} component={RouterLink} to="/">
+              News
+            </Button>
+            <Button className={classes.drawerbutton} component={RouterLink} to="/marketplace">
+              Market
+            </Button>
+            <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} component={RouterLink} to="/collections">
+              Collections
+              <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
+            </Button>
+            <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} component={RouterLink} to="/guides">
+              Guides
+              <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
+            </Button>
+            <Button className={classes.drawerbutton} href="https://discord.gg/3NPBpZh" target="_blank">
+              <Icon className={`fab fa-discord`} />
+            </Button>
+          </div>
+        </Drawer>
+      </>
     );
   } else {
     return (
@@ -143,12 +177,14 @@ function NavBar({
             Market
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/collections">
+          <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/collections">
             Collections
+            <Typography className={classes.soontext}>Coming Soon!</Typography>
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/guides">
+          <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/guides">
             Guides
+            <Typography className={classes.soontext}>Coming Soon!</Typography>
           </Button>
           <Divider className={classes.divider} orientation="vertical" />
           <Button className={classes.button} href="https://discord.gg/3NPBpZh" target="_blank">
@@ -160,26 +196,14 @@ function NavBar({
           container
           className={classes.padding}
           alignItems="center"
-          alignContent="flex-end"
+          alignContent="center"
           justify="flex-end"
         >
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search.."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
           {userProps.isAuthenticated ? (
             <>
               <Button className={classes.button} onClick={handleClick}>
-                <Icon className={`fas fa-user-circle`} />
+                <Icon className={`fas fa-user-circle`} />&nbsp;
+                {username}
               </Button>
               <Menu
                 id='user-menu'
@@ -190,8 +214,8 @@ function NavBar({
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <MenuItem className={classes.menuitem} component={RouterLink} to='/user'>My Account</MenuItem>
-                <MenuItem className={classes.menuitem} component={RouterLink} to='/user/sales'>My Sales</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user'>My Account</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user/sales'>My Trades</MenuItem>
                 <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
