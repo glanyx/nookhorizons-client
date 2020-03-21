@@ -266,7 +266,7 @@ function Item(props){
                 <Grid item xs={4}>
                     <Grid container direction='column' alignItems='center' spacing={2}>
                         <Grid item>
-                        <   ItemCard overlay={false} item={item} />
+                            <ItemCard overlay={false} item={item} />
                         </Grid>
                         <Grid item>
                             <StyledButton color='primary' variant='contained' onClick={handleOpen}>

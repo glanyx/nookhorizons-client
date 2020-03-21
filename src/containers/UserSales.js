@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Auth, API } from 'aws-amplify';
 import { makeStyles, Grid, Paper, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import { StyledButton } from '../components';
 
 const useStyles = makeStyles((theme) => ({
@@ -124,30 +125,46 @@ function User(props) {
                   <TableCell align='right'>Price</TableCell>
                   <TableCell align='right'>Note</TableCell>
                   <TableCell align='right'>Status</TableCell>
+                  <TableCell align='right'>Buyer</TableCell>
                   <TableCell />
                 </TableRow>
               </TableHead>
 
-              {!loading &&
-              <TableBody>
-                {sales.map(sale =>
-                  <TableRow key={sale.saleId}>
-                    <TableCell>{sale.item.name}</TableCell>
-                    <TableCell align='right'>{sale.variant}</TableCell>
-                    <TableCell align='right'>{sale.quantity}</TableCell>
-                    <TableCell align='right'>{sale.price}</TableCell>
-                    <TableCell align='right'>{sale.note}</TableCell>
-                    <TableCell align='right'>{sale.status}</TableCell>
-                    <TableCell align='center'>
-                      {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
-                        <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
-                            Cancel Sale
-                        </StyledButton>
-                      }
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
+              {!loading
+                ?
+                <TableBody>
+                  {sales.map(sale =>
+                    <TableRow key={sale.saleId}>
+                      <TableCell>{sale.item.name}</TableCell>
+                      <TableCell align='right'>{sale.variant}</TableCell>
+                      <TableCell align='right'>{sale.quantity}</TableCell>
+                      <TableCell align='right'>{sale.price}</TableCell>
+                      <TableCell align='right'>{sale.note}</TableCell>
+                      <TableCell align='right'>{sale.status}</TableCell>
+                      <TableCell align='right'>{sale.buyer.username}</TableCell>
+                      <TableCell align='center'>
+                        {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
+                          <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
+                              Cancel Sale
+                          </StyledButton>
+                        }
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+                :
+                <TableBody>
+                    <TableRow>
+                      <TableCell><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='center'><Skeleton variant='rect'/></TableCell>
+                    </TableRow>
+                </TableBody>
               }
             </Table>
           </TableContainer>
@@ -168,30 +185,46 @@ function User(props) {
                   <TableCell align='right'>Price</TableCell>
                   <TableCell align='right'>Note</TableCell>
                   <TableCell align='right'>Status</TableCell>
+                  <TableCell align='right'>Seller</TableCell>
                   <TableCell />
                 </TableRow>
               </TableHead>
 
-              {!loading &&
-              <TableBody>
-                {purchases.map(purchase =>
-                  <TableRow key={purchase.saleId}>
-                    <TableCell>{purchase.item.name}</TableCell>
-                    <TableCell align='right'>{purchase.variant}</TableCell>
-                    <TableCell align='right'>{purchase.quantity}</TableCell>
-                    <TableCell align='right'>{purchase.price}</TableCell>
-                    <TableCell align='right'>{purchase.note}</TableCell>
-                    <TableCell align='right'>{purchase.status}</TableCell>
-                    <TableCell align='center'>
-                      {purchase.status === 'Sold' &&
-                        <StyledButton error color='primary' variant='outlined' onClick={event => handleCompleteSale(event, purchase)} className={classes.salesbutton}>
-                            Complete
-                        </StyledButton>
-                      }
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
+              {!loading
+                ?
+                <TableBody>
+                  {purchases.map(purchase =>
+                    <TableRow key={purchase.saleId}>
+                      <TableCell>{purchase.item.name}</TableCell>
+                      <TableCell align='right'>{purchase.variant}</TableCell>
+                      <TableCell align='right'>{purchase.quantity}</TableCell>
+                      <TableCell align='right'>{purchase.price}</TableCell>
+                      <TableCell align='right'>{purchase.note}</TableCell>
+                      <TableCell align='right'>{purchase.status}</TableCell>
+                      <TableCell align='right'>{purchase.sellerDiscordTag}</TableCell>
+                      <TableCell align='center'>
+                        {purchase.status === 'Sold' &&
+                          <StyledButton error color='primary' variant='outlined' onClick={event => handleCompleteSale(event, purchase)} className={classes.salesbutton}>
+                              Complete
+                          </StyledButton>
+                        }
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+                :
+                <TableBody>
+                    <TableRow>
+                      <TableCell><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='center'><Skeleton variant='rect'/></TableCell>
+                    </TableRow>
+                </TableBody>
               }
             </Table>
           </TableContainer>

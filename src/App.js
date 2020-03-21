@@ -14,14 +14,14 @@ const useStyles = makeStyles(() => ({
   wrapper: {
     position: 'absolute',
     background: `linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url(${process
-      .env.PUBLIC_URL + "/assets/grass1.png"})`,
+      .env.PUBLIC_URL + "/assets/grass.png"})`,
     backgroundSize: '150px',
     backgroundColor: theme.palette.secondary.dark,
     minWidth: '100%',
     minHeight: '100%',
   },
   backdrop: {
-    backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/backdrop13.png"})`,
+    backgroundImage: `url(${process.env.PUBLIC_URL + "/assets/backdrop.png"})`,
     backgroundSize: '500px',
     height: '100%',
     minHeight: "100%",

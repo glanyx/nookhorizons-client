@@ -35,7 +35,8 @@ const useStyles = makeStyles(theme => ({
     },
     image: {
         paddingTop: '100%',
-        width: '100%'
+        maxWidth: '100%',
+        minWidth: 171
     },
     descriptionWrapper: {
         position: 'relative'

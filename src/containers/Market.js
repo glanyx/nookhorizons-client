@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
-import { makeStyles, fade, Paper, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
+import { makeStyles, fade, Link, Paper, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
 import { Auth, API, Storage } from "aws-amplify";
 
@@ -58,6 +58,9 @@ const useStyles = makeStyles(theme => ({
       padding: `${theme.spacing(2)}px !important`,
       marginBottom: theme.spacing(2),
   },
+  instructionsDialogText: {
+    display: 'grid'
+  },
 }));
 
 function Market(props) {
@@ -73,6 +76,14 @@ function Market(props) {
 
   const [openTagInput, setOpenTagInput] = useState(false);
   const [openCatInput, setOpenCatInput] = useState(false);
+  const [openInstructions, setOpenInstructions] = useState(false);
+
+  const [hidden, setHidden] = useState(false);
+
+  const handleOpenInstructions = () => {
+    setHidden(true);
+    setOpenInstructions(true);
+  }
 
   function loadItems() {
     return API.get('nh', '/items');
@@ -214,7 +225,7 @@ function Market(props) {
   }
 
   useEffect(() => {
-
+    console.log('test');
     async function setImages(items) {
       return Promise.all(items.map(item => setImage(item)));
     }
@@ -269,6 +280,11 @@ function Market(props) {
   const handleClose = () => {
     setOpenTagInput(false);
     setOpenCatInput(false);
+  }
+
+  const handleInstructionsClose = () => {
+    setHidden(false);
+    setOpenInstructions(false);
   }
 
   const [fields, handleFieldChange] = useFormFields({
@@ -326,6 +342,10 @@ function Market(props) {
                         <li>Before you use our marketplace, please make sure you have an <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
                         <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
                         <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
+                        <li>At this time, a discord account is required to use this marketplace, in order to contact the player you are trading with. We are working on our own messaging system.</li>
+                        <li>Buying/selling an item with no intention of completing the trade is classed as an offense here and repeated offenses will result in an account ban, which can be permanent.</li>
+                        <li>No NSFW, personal information or unhelpful spam allowed anywhere on your listings.</li>
+                        <li>You can view additional instructions <Link href='#' onClick={handleOpenInstructions}>here</Link>.</li>
                     </ul>
                 </Typography>
             </Grid>
@@ -468,6 +488,9 @@ function Market(props) {
                   <LoaderButton disabled={!validateItemForm() || submitting} type='submit' loading={submitting}>
                     Add
                   </LoaderButton>
+                  <StyledButton variant='contained' onClick={() => setHidden(!hidden)}>
+                    {hidden ? 'Load Items' : 'Unload Items'}
+                  </StyledButton>
                 </Grid>
               </Grid>
             </form>
@@ -483,7 +506,7 @@ function Market(props) {
               </Grid>
             </Grid>
           }
-          {!loading &&
+          {!loading && !hidden &&
             <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
               {items.map(item => (
                 <Grid item xs={3} key={item.itemId}>
@@ -540,6 +563,41 @@ function Market(props) {
           </Button>
           <Button onClick={handleCategoryCreate}>
             Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openInstructions} onClose={handleInstructionsClose} aria-labelledby='instructions'>
+        <DialogTitle id='instructions-dialog-title'>Instructions</DialogTitle>
+        <DialogContent>
+          <DialogContentText className={classes.instructionsDialogText}>
+            <Typography variant='paragraph'>
+              First, find the item you are interested in using CTRL + F to search for the item name, then click it's card to open it's page.
+            </Typography>
+            <Typography variant='paragraph'>
+              <span className={classes.bold}>As a buyer:</span>
+              <li>Press the buy button next to the listing you want to purchase. Make sure to read the note as it may contain important information about time zones.</li>
+              <li>Copy the provided Discord tag and add them to your Discord friends ASAP.</li>
+              <li>Arrange to meet in-game and complete the trade.</li>
+              <li>Once the trade is over, navigate to the "My Trades" page under your profile icon and click the "Complete"  button next to the trade.</li>
+              Please note that you can only have 5 outstanding purchases at once. You must complete these trades before you can buy more.
+            </Typography>
+            <Typography variant='paragraph'>
+            <span className={classes.bold}>As a seller:</span>
+              <li>Press the "Sell This Item" below the item image.</li>
+              <li>Add in all the relevant info. If you are only able to trade during a limited time period each day, please specify this or anything else relevant. Create the listing.</li>
+              <li>When your listing sells, it's status in "My Trades" will change to x upon refreshing the page. You should be added on Discord by the buyer.</li>
+              <li>Arrange to meet in-game and complete the trade.</li>
+              <li>Remind the buyer to complete the trade in their "My Trades" page, this will update it in your trades.</li>
+              Please note that you can only have 25 listings at once, including pending trades. You must complete sales in order to be able to list more.
+            </Typography>
+            <Typography variant='paragraph'>
+              If a buyer does not contact you, or you need to report a user for not fulfilling a trade, please contact staff on Discord via the ModMail bot.
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleInstructionsClose}>
+            Got It
           </Button>
         </DialogActions>
       </Dialog>

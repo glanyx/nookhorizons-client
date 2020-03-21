@@ -11,7 +11,8 @@ import {
   Fade,
   Menu,
   MenuItem,
-  Typography
+  Typography,
+  Drawer
 } from "@material-ui/core";
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
@@ -36,6 +37,20 @@ const useStyles = makeStyles(theme => ({
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
     },
   },
+  drawerbutton: {
+    height: '100%',
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.light,
+      backgroundImage: `-webkit-gradient(linear, 0 0, 100% 100%,
+        color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+        color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+        color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+        to(transparent))`,
+      backgroundSize: '50px 50px',
+      color: theme.palette.common.black,
+    },
+  },
   padding: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1)
@@ -53,6 +68,24 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: fade(theme.palette.common.black, 0.8),
       color: theme.palette.common.white
     }
+  },
+  drawerwrapper: {
+    display: 'grid',
+    backgroundColor: theme.palette.primary.light,
+    backgroundImage: `-webkit-gradient(linear, 0 0, 100% 100%,
+      color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+      color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+      color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+      to(transparent))`,
+    backgroundSize: '50px 50px',
+    height: '100vh'
+  },
+  drawersoontext: {
+    position: 'absolute',
+    fontSize: 10,
+    fontWeight: 500,
+    top: '25%',
+    color: theme.palette.common.white
   },
   comingsoon: {
     position: 'relative'
@@ -76,6 +109,7 @@ function NavBar({
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [username, setUsername] = useState('');
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -83,6 +117,7 @@ function NavBar({
 
   function handleClose() {
     setAnchorEl(null);
+    setOpenDrawer(false);
   }
 
   async function handleLogout() {
@@ -99,13 +134,36 @@ function NavBar({
 
   if (isWidthDown('md', props.width)) {
     return(
-      <div className={classes.root}>
-        <Grid container className={classes.padding} alignItems="center">
-          <Button className={classes.button}>
-            <Icon className={`fas fa-bars`} />
-          </Button>
-        </Grid>
-      </div>
+      <>
+        <div className={classes.root}>
+          <Grid container className={classes.padding} alignItems="center">
+            <Button className={classes.button} onClick={() => setOpenDrawer(true)}>
+              <Icon className={`fas fa-bars`} />
+            </Button>
+          </Grid>
+        </div>
+        <Drawer anchor='left' open={openDrawer} onClose={handleClose}>
+          <div className={classes.drawerwrapper}>
+            <Button className={classes.drawerbutton} component={RouterLink} to="/">
+              News
+            </Button>
+            <Button className={classes.drawerbutton} component={RouterLink} to="/marketplace">
+              Market
+            </Button>
+            <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} component={RouterLink} to="/collections">
+              Collections
+              <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
+            </Button>
+            <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} component={RouterLink} to="/guides">
+              Guides
+              <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
+            </Button>
+            <Button className={classes.drawerbutton} href="https://discord.gg/3NPBpZh" target="_blank">
+              <Icon className={`fab fa-discord`} />
+            </Button>
+          </div>
+        </Drawer>
+      </>
     );
   } else {
     return (
@@ -157,7 +215,7 @@ function NavBar({
                 TransitionComponent={Fade}
               >
                 <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user'>My Account</MenuItem>
-                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user/sales'>My Sales</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user/sales'>My Trades</MenuItem>
                 <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
