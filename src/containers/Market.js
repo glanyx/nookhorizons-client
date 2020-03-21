@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
 import { makeStyles, fade, Link, Paper, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
 import { Auth, API, Storage } from "aws-amplify";
 
@@ -514,7 +515,7 @@ function Market(props) {
           {!loading && !hidden &&
             <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
               {items.map(item => (
-                <Grid item xs={3} key={item.itemId}>
+                <Grid item xs={!isWidthDown('md', props.width) ? 3 : 12} key={item.itemId}>
                   <Grid container alignItems='center' justify='center'>
                     <ItemCard item={item} to={`/items/${item.itemId}`} />
                   </Grid>
@@ -610,4 +611,4 @@ function Market(props) {
   );
 }
 
-export default Market;
+export default withWidth()(Market);

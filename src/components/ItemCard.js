@@ -92,12 +92,6 @@ function ItemCard({
                             <Typography variant='body2' className={classes.descriptionText}>
                                 {item.description}
                             </Typography>
-                            <Typography variant='body1' className={classes.bold}>
-                                Source:
-                            </Typography>
-                            <Typography variant='body2' className={classes.descriptionText}>
-                                {item.source}
-                            </Typography>
                         </Grid>
                     }
                     <CardMedia
