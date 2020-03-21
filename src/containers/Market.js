@@ -338,7 +338,13 @@ function Market(props) {
                 </Typography>
                 <Typography variant='body2'>
                     <ul>
-                        <li>Before you use our marketplace, please make sure you have an <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
+                        <li>Before you use our marketplace, please make sure you have:
+                          <ul>
+                            <li>An <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
+                            <li>A <span className={classes.bold}>Discord account</span>, which is required in order to contact the player you are trading with. We are working on our own messaging system.</li>
+                          </ul>
+                        </li>
+                        <li>We are still in the process of adding new items to this list. Please check back another time to see if your item has been added or get in touch with the team.</li>
                         <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
                         <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
                         <li>At this time, a discord account is required to use this marketplace, in order to contact the player you are trading with. We are working on our own messaging system.</li>

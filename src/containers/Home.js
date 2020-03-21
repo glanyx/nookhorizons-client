@@ -42,6 +42,7 @@ function Home(props) {
 
     const post = {
         title: 'Website Launch',
+        date: 'March 21, 2020 - 9pm GMT',
         text: ["Welcome islanders!",
         "As of today, Nook Horizons is live, HURRAY! For those of you who aren't quite sure what it is we offer, we are a trading platform for Animal Crossing: New Horizons. Our goal is to make it easy for players to buy and sell in-game items, without the hassle of having to hunt all over the internet to find exactly what you want.",
         "Although our marketplace is now available to use, we plan on making plenty of additions and improvements to it as time goes on. We want to make sure that we are able to offer you the most optimal service we can provide. There are many new features in the works too, so keep your eyes peeled as our site develops along with your islands!",
@@ -63,6 +64,11 @@ function Home(props) {
                             />
                         </Grid>
                         <Grid item xs={8} className={classes.postComponent}>
+                            <Grid container direction='row' justify='flex-end'>
+                                <Typography variant='body1'>
+                                    {post.date}
+                                </Typography>
+                            </Grid>
                             <Typography variant='h2' className={classes.title}>
                                 {post.title}
                             </Typography>
