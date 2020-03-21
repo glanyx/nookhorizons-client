@@ -5,7 +5,7 @@ const dev = {
     },
     apiGateway: {
         REGION: 'eu-central-1',
-        URL: 'https://xdclomolaf.execute-api.eu-west-2.amazonaws.com/dev'
+        URL: 'https://xdclomolaf.execute-api.eu-central-1.amazonaws.com/dev'
     },
     cognito: {
         REGION: 'eu-central-1',
@@ -37,5 +37,6 @@ const config = process.env.REACT_APP_STAGE === 'prod'
     : dev;
 
 export default {
+    MAX_ATTACHMENT_SIZE: 5000000,
     ...config
 };

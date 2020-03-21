@@ -21,3 +21,29 @@ html {
 .fab {
   margin-right: 2px;
 }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+a:hover {
+  text-decoration: none;
+  outline: none;
+}
+
+a:visited {
+  text-decoration: none;
+  outline: none;
+}
+
+a:active {
+  text-decoration: none;
+  outline: none;
+}
+
+a:link {
+  text-decoration: none;
+  outline: none;
+}

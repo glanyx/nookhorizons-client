@@ -75,7 +75,13 @@ const theme = createMuiTheme({
       rounded: {
         borderRadius: '0px'
       }
-    }
+    },
+    MuiCardHeader: {
+      title: {
+        fontFamily: "'Varela Round', sans-serif",
+        fontWeight: 500
+      },
+    },
   }
 });
 

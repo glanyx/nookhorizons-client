@@ -3,13 +3,14 @@ import { Chip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     chip: {
+        backgroundColor: theme.palette.common.white,
         '& .MuiChip-icon': {
             color: props => props.color,
         },
     }
-});
+}));
 
 function StyledChip({
     color,

@@ -15,10 +15,10 @@ const useStyles = makeStyles(theme => ({
         height: '400px',
         color: theme.palette.common.black,
         '&::-webkit-scrollbar': {
-            width: '0.4em',
+            width: '0.8em',
         },
         '&::-webkit-scrollbar-track': {
-            '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+            '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.10)',
         },
         '&::-webkit-scrollbar-thumb': {
             backgroundColor: 'rgba(140,70,40,.4)',
