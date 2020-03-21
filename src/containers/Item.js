@@ -21,6 +21,7 @@ import {
     Tooltip,
     Typography
 } from '@material-ui/core';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useFormFields } from '../libs/hooksLib';
 import { StyledButton, LoaderButton, ItemCard } from '../components';
@@ -261,7 +262,7 @@ function Item(props){
         !loading &&
         <>
             <Grid container direction='row' spacing={2} className={classes.fullwrapper}>
-                <Grid item xs={4}>
+                <Grid item xs={!isWidthDown('md', props.width) ? 4 : 12}>
                     <Grid container direction='column' alignItems='center' spacing={2}>
                         <Grid item>
                             <ItemCard overlay={false} item={item} />
@@ -273,7 +274,7 @@ function Item(props){
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={8} >
+                <Grid item xs={!isWidthDown('md', props.width) ? 8 : 12} >
                     <Paper elevation={3} className={classes.description}>
                         <Grid container direction='column' spacing={2}>
                             <Grid item className={classes.descriptionComponent}>
@@ -448,4 +449,4 @@ function Item(props){
     )
 }
 
-export default Item;
+export default withWidth()(Item);
