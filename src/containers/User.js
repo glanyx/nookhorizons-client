@@ -119,7 +119,7 @@ function User(props) {
   }
 
   useEffect(() => {
-    setDiscordTag(props.user ? props.user.discordTag : '');
+    setDiscordTag(props.user ? (props.user.discordTag ? props.user.discordTag : '') : '');
   }, [props]);
 
   return (
