@@ -86,7 +86,7 @@ function User(props) {
 
       try {
         const user = await Auth.currentAuthenticatedUser();
-        await Auth.completeNewPassword(
+        await Auth.changePassword(
             user,
             fields.oldPassword,
             fields.newPassword
@@ -95,7 +95,6 @@ function User(props) {
         setSuccess(true);
       } catch (e) {
         setLoading(false);
-        console.log(e);
         alert(e.message);
       }
   }

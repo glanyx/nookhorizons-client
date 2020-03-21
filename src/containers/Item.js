@@ -144,7 +144,6 @@ function Item(props){
         }
 
         // Check if Discord Tag set
-        console.log(props.user);
         if (!props.user.discordTag) {
             props.history.push(`/user`);
             return;
@@ -250,8 +249,7 @@ function Item(props){
 
             item.saleCount = sales.length;
           } catch(e) {
-            console.log(e);
-            alert(e);
+            alert(e.message);
           }
           setLoading(false);
         }

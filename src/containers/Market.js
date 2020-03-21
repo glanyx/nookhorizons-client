@@ -225,7 +225,6 @@ function Market(props) {
   }
 
   useEffect(() => {
-    console.log('test');
     async function setImages(items) {
       return Promise.all(items.map(item => setImage(item)));
     }
