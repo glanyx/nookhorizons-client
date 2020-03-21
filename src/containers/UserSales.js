@@ -143,7 +143,7 @@ function User(props) {
                       <TableCell align='right'>{sale.status}</TableCell>
                       <TableCell align='right'>{sale.buyer ? sale.buyer.username : null}</TableCell>
                       <TableCell align='center'>
-                        {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
+                        {sale.status !== 'Trade Pending' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
                           <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
                               Cancel Sale
                           </StyledButton>
@@ -203,7 +203,7 @@ function User(props) {
                       <TableCell align='right'>{purchase.status}</TableCell>
                       <TableCell align='right'>{purchase.sellerDiscordTag}</TableCell>
                       <TableCell align='center'>
-                        {purchase.status === 'Sold' &&
+                        {purchase.status === 'Trade Pending' &&
                           <StyledButton error color='primary' variant='outlined' onClick={event => handleCompleteSale(event, purchase)} className={classes.salesbutton}>
                               Complete
                           </StyledButton>
