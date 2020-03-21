@@ -110,6 +110,7 @@ function NavBar({
   const [anchorEl, setAnchorEl] = useState(null);
   const [username, setUsername] = useState('');
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [userMenu, setUserMenu] = useState(false);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -122,8 +123,15 @@ function NavBar({
 
   async function handleLogout() {
     setAnchorEl(null);
+    setOpenDrawer(false);
+    setUserMenu(false);
     userProps.setUser(null);
     onLogout();
+  }
+
+  const handleResetNav = () => {
+    setOpenDrawer(false);
+    setUserMenu(false);
   }
 
   useEffect(() => {
@@ -144,23 +152,58 @@ function NavBar({
         </div>
         <Drawer anchor='left' open={openDrawer} onClose={handleClose}>
           <div className={classes.drawerwrapper}>
-            <Button className={classes.drawerbutton} component={RouterLink} to="/">
-              News
-            </Button>
-            <Button className={classes.drawerbutton} component={RouterLink} to="/marketplace">
-              Market
-            </Button>
-            <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} component={RouterLink} to="/collections">
-              Collections
-              <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
-            </Button>
-            <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} component={RouterLink} to="/guides">
-              Guides
-              <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
-            </Button>
-            <Button className={classes.drawerbutton} href="https://discord.gg/3NPBpZh" target="_blank">
-              <Icon className={`fab fa-discord`} />
-            </Button>
+            {!userMenu
+            ?
+              <>
+                <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/">
+                  News
+                </Button>
+                <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/marketplace">
+                  Market
+                </Button>
+                <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} onClick={handleResetNav} component={RouterLink} to="/collections">
+                  Collections
+                  <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
+                </Button>
+                <Button disabled className={`${classes.drawerbutton} ${classes.comingsoon}`} onClick={handleResetNav} component={RouterLink} to="/guides">
+                  Guides
+                  <Typography className={classes.drawersoontext}>Coming Soon!</Typography>
+                </Button>
+                {!userProps.isAuthenticated
+                ?
+                  <>
+                    <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/register">
+                      Register
+                    </Button>
+                    <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/login">
+                      Login
+                    </Button>
+                    <Button className={classes.drawerbutton} onClick={handleResetNav} href="https://discord.gg/3NPBpZh" target="_blank">
+                      <Icon className={`fab fa-discord`} />
+                    </Button>
+                  </>
+                :
+                  <>
+                    <Button className={classes.drawerbutton} onClick={() => setUserMenu(true)}>
+                      <Icon className={`fas fa-user-circle`} />&nbsp;
+                      {username}
+                    </Button>
+                  </>
+                }
+              </>
+            :
+              <>
+                <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/user">
+                  My Account
+                </Button>
+                <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/user/sales">
+                  My Trades
+                </Button>
+                <Button className={classes.drawerbutton} onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            }
           </div>
         </Drawer>
       </>

@@ -43,13 +43,15 @@ const useStyles = makeStyles(theme => ({
     },
     description: {
         position: 'absolute',
+        display: 'block',
+        padding: theme.spacing(1),
         left: 0,
         top: 0,
         width: '100%',
         height: '100%',
         color: 'transparent',
         '&:hover': {
-            backgroundColor: fade(theme.palette.common.black, .6),
+            backgroundColor: fade(theme.palette.common.black, .7),
             color: theme.palette.common.white
         }
     },
@@ -57,6 +59,9 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(2),
         fontSize: 16,
         fontWeight: 400
+    },
+    bold: {
+        fontWeight: 900
     }
 }));
 
@@ -80,11 +85,20 @@ function ItemCard({
                 </Grid>
                 <div className={classes.descriptionWrapper}>
                     {overlay &&
-                        <div className={classes.description}>
+                        <Grid container className={classes.description}>
+                            <Typography variant='body1' className={classes.bold}>
+                                Description:
+                            </Typography>
                             <Typography variant='body2' className={classes.descriptionText}>
                                 {item.description}
                             </Typography>
-                        </div>
+                            <Typography variant='body1' className={classes.bold}>
+                                Source:
+                            </Typography>
+                            <Typography variant='body2' className={classes.descriptionText}>
+                                {item.source}
+                            </Typography>
+                        </Grid>
                     }
                     <CardMedia
                         className={classes.image}
