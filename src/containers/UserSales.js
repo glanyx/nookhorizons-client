@@ -141,7 +141,7 @@ function User(props) {
                       <TableCell align='right'>{sale.price}</TableCell>
                       <TableCell align='right'>{sale.note}</TableCell>
                       <TableCell align='right'>{sale.status}</TableCell>
-                      <TableCell align='right'>{sale.buyer.username}</TableCell>
+                      <TableCell align='right'>{sale.buyer ? sale.buyer.username : null}</TableCell>
                       <TableCell align='center'>
                         {sale.status !== 'Sold' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
                           <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
