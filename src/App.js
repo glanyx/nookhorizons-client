@@ -80,7 +80,7 @@ function App(props) {
         }
       } catch (e) {
         if (e !== "No current user") {
-          alert(e);
+          alert(e.response.data.error);
         }
       }
       setIsAuthenticating(false);

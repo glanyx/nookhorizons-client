@@ -2,6 +2,15 @@ import { createMuiTheme, fade } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
   themeName: "Test Theme",
+  breakpoints: {
+    values : {
+      xs: 0,
+      sm: 500,
+      md: 960,
+      lg: 1280,
+      xl: 1920
+    }
+  },
   palette: {
     primary: {
       main: "#aa772c"

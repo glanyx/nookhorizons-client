@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Auth, API } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import {
   Box,
   Grid,
@@ -111,40 +111,18 @@ function LoginForm({ onSubmit, ...props }) {
     return regex.test(fields.newPassword) && fields.newPassword !== fields.username;
   }
 
-  const handleUserStore = async (username) => {
-
-    try{
-        await storeUser({
-          username,
-        });
-    } catch(e) {
-      console.log(e);
-    }
-  }
-
-  function storeUser(user) {
-    return API.post('nh', '/user', {
-      body: user
-    });
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
 
     try {
-      const userLogin = await Auth.signIn(fields.username, fields.password, {
-        "form-name": "login"
-      });
+      const userLogin = await Auth.signIn(fields.username, fields.password);
 
       if (userLogin.challengeName === 'NEW_PASSWORD_REQUIRED') {
         setUser(userLogin);
         setOpen(true);
         return;
       };
-
-      const user = await Auth.currentUserInfo();
-      handleUserStore(user.username);
 
       setSuccess(true);
       props.userHasAuthenticated(true);
@@ -183,7 +161,7 @@ function LoginForm({ onSubmit, ...props }) {
     setSubmitting(true);
 
     try {
-      await Auth.forgotPassword(fields.email);
+      await Auth.forgotPassword(fields.email.toLowerCase());
     } catch(e) {
       alert(e);
     }
@@ -198,7 +176,7 @@ function LoginForm({ onSubmit, ...props }) {
 
     try {
       await Auth.forgotPasswordSubmit(
-        fields.email,
+        fields.email.toLowerCase(),
         fields.code,
         fields.newPassword
       );

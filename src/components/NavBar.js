@@ -14,6 +14,7 @@ import {
   Typography,
   Drawer
 } from "@material-ui/core";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles(theme => ({
@@ -193,6 +194,9 @@ function NavBar({
               </>
             :
               <>
+                <Button className={classes.drawerbutton} onClick={() => setUserMenu(false)}>
+                  <ArrowBackIcon />
+                </Button>
                 <Button className={classes.drawerbutton} onClick={handleResetNav} component={RouterLink} to="/user">
                   My Account
                 </Button>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useFormFields } from '../libs/hooksLib';
 import { makeStyles, fade, Link, Paper, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
+import { Pagination } from '@material-ui/lab'
 import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
 import { Auth, API, Storage } from "aws-amplify";
 
@@ -62,6 +63,30 @@ const useStyles = makeStyles(theme => ({
   instructionsDialogText: {
     display: 'grid'
   },
+  paginator: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    '& .MuiButtonBase-root': {
+      color: theme.palette.common.white
+    }
+  },
+  sticky: {
+    backgroundColor: fade(theme.palette.common.black, .85),
+    borderRadius: 20,
+    padding: theme.spacing(3),
+    marginTop: theme.spacing(2),
+    position: 'sticky',
+    top: 20,
+    zIndex: 200
+  },
+  searchbar: {
+    '& .MuiInputBase-root': {
+      color: theme.palette.common.white
+    }
+  },
+  checkbox: {
+    color: theme.palette.common.white,
+  }
 }));
 
 function Market(props) {
@@ -302,6 +327,42 @@ function Market(props) {
   const [currency, setCurrency] = useState('Bells');
   const [craftable, setCraftable] = useState(false);
 
+  const [search, setSearch] = useState('');
+  const [salesOnly, setSalesOnly] = useState(false);
+  const [page, setPage] = useState(1);
+
+  const handleSearch = event => {
+    const resultCount = items
+      .filter(item => item.name.toLowerCase().includes(event.target.value.toLowerCase()))
+      .filter(item => salesOnly ? item.saleCount > 0 : item)
+      .length;
+    if (resultCount / 20 < page) {
+      setPage(1);
+    }
+    setSearch(event.target.value);
+  }
+
+  const handleSalesFilter = event => {
+    const resultCount = items
+      .filter(item => item.name.toLowerCase().includes(event.target.value.toLowerCase()))
+      .filter(item => salesOnly ? item.saleCount > 0 : item)
+      .length;
+    if (resultCount / 20 < page) {
+      setPage(1);
+    }
+    setSalesOnly(event.target.checked);
+  }
+
+  const sortItemName = (a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    } else if (a.name > b.name) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
   const addItemMock = {
     itemId: 'mock-id-1234',
     name: fields.name,
@@ -331,32 +392,6 @@ function Market(props) {
   return (
     <>
       <Grid container justify='center' alignItems='center'>
-      <Paper elevation={3} className={classes.howitworks}>
-        <Grid container direction='column' spacing={2}>
-            <Grid item className={classes.howitworksComponent}>
-                <Typography variant='h5'>
-                    Please Note:
-                </Typography>
-                <Typography variant='body2'>
-                    <ul>
-                        <li>Before you use our marketplace, please make sure you have:
-                          <ul>
-                            <li>An <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
-                            <li>A <span className={classes.bold}>Discord account</span>, which is required in order to contact the player you are trading with. We are working on our own messaging system.</li>
-                          </ul>
-                        </li>
-                        <li>We are still in the process of adding new items to this list. Please check back another time to see if your item has been added or get in touch with the team.</li>
-                        <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
-                        <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
-                        <li>At this time, a discord account is required to use this marketplace, in order to contact the player you are trading with. We are working on our own messaging system.</li>
-                        <li>Buying/selling an item with no intention of completing the trade is classed as an offense here and repeated offenses will result in an account ban, which can be permanent.</li>
-                        <li>No NSFW, personal information or unhelpful spam allowed anywhere on your listings.</li>
-                        <li>You can view additional instructions <Link href='#' onClick={handleOpenInstructions}>here</Link>.</li>
-                    </ul>
-                </Typography>
-            </Grid>
-        </Grid>
-    </Paper>
         {!loading && isAdmin &&
           <Box border={5} className={classes.wrapper}>
             <form onSubmit={handleNewItem}>
@@ -502,6 +537,32 @@ function Market(props) {
             </form>
           </Box>
           }
+          <Paper elevation={3} className={classes.howitworks}>
+            <Grid container direction='column' spacing={2}>
+              <Grid item className={classes.howitworksComponent}>
+                <Typography variant='h5'>
+                    Please Note:
+                </Typography>
+                <Typography variant='body2'>
+                    <ul>
+                        <li>Before you use our marketplace, please make sure you have:
+                          <ul>
+                            <li>An <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
+                            <li>A <span className={classes.bold}>Discord account</span>, which is required in order to contact the player you are trading with. We are working on our own messaging system.</li>
+                          </ul>
+                        </li>
+                        <li>We are still in the process of adding new items to this list. Please check back another time to see if your item has been added or get in touch with the team.</li>
+                        <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
+                        <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
+                        <li>At this time, a discord account is required to use this marketplace, in order to contact the player you are trading with. We are working on our own messaging system.</li>
+                        <li>Buying/selling an item with no intention of completing the trade is classed as an offense here and repeated offenses will result in an account ban, which can be permanent.</li>
+                        <li>No NSFW, personal information or unhelpful spam allowed anywhere on your listings.</li>
+                        <li>You can view additional instructions <Link href='#' onClick={handleOpenInstructions}>here</Link>.</li>
+                    </ul>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Paper>
           {loading &&
             <Grid container direction='column' alignContent='center' alignItems='center'>
               <Grid item className={classes.loadWrapper}>
@@ -513,15 +574,52 @@ function Market(props) {
             </Grid>
           }
           {!loading && !hidden &&
-            <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
-              {items.map(item => (
-                <Grid item xs={!isWidthDown('md', props.width) ? 3 : 12} key={item.itemId}>
-                  <Grid container alignItems='center' justify='center'>
-                    <ItemCard item={item} to={`/items/${item.itemId}`} />
+            <>
+              <div className={classes.sticky}>
+                <StyledTextbox
+                  id='search'
+                  className={classes.searchbar}
+                  placeholder='Search item..'
+                  type='text'
+                  variant='outlined'
+                  color='primary'
+                  value={search}
+                  onChange={handleSearch}
+                />
+                <StyledCheckbox
+                  className={classes.checkbox}
+                  label='Display only items with listings'
+                  value={salesOnly}
+                  onChange={handleSalesFilter}
+                />
+                <Pagination
+                  color='primary'
+                  count={Math.ceil(
+                    items
+                      .filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+                      .filter(item => salesOnly ? item.saleCount > 0 : item)
+                      .length / 20)
+                  }
+                  page={page}
+                  className={classes.paginator}
+                  onChange={(event, value) => setPage(value)}
+                />
+              </div>
+              <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
+                {items
+                  .filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+                  .filter(item => salesOnly ? item.saleCount > 0 : item)
+                  .sort(sortItemName)
+                  .slice((page - 1) * 20, page * 20)
+                  .map(item => (
+                  <Grid item xs={!isWidthDown('md', props.width) ? (!isWidthDown('sm', props.width) ? 3 : 6) : 12} key={item.itemId}>
+                    <Grid container alignItems='center' justify='center'>
+                      <ItemCard item={item} to={`/items/${item.itemId}`} />
+                    </Grid>
                   </Grid>
-                </Grid>
-              ))}
-            </Grid>
+                ))}
+              </Grid>
+            </>
           }
         </Grid>
       <Dialog open={openTagInput} onClose={handleClose} aria-labelledby='tag-input'>

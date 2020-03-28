@@ -40,54 +40,70 @@ function Home(props) {
 
     const classes = useStyles();
 
-    const post = {
+    const posts = [
+        {
+            title: 'Website Update',
+            date: 'March 28, 2020 - 10pm GMT',
+            text: [
+                "Hey traders!",
+                "You asked, we listened! Today we've added some heavily requested quality of life features to the website. That's right, you can now filter through the list of items and show only items that people are currently selling.",
+                "We've also split items over pages for ease of access and to make the site run a bit smoother.",
+                "We'll continue listening to your feedback so if you have anything to share, please contact us on the Discord!"
+            ],
+            signature: '~ The Nook Horizons Team ~',
+            image: null,
+        },
+        {
         title: 'Website Launch',
         date: 'March 21, 2020 - 9pm GMT',
-        text: ["Welcome islanders!",
-        "As of today, Nook Horizons is live, HURRAY! For those of you who aren't quite sure what it is we offer, we are a trading platform for Animal Crossing: New Horizons. Our goal is to make it easy for players to buy and sell in-game items, without the hassle of having to hunt all over the internet to find exactly what you want.",
-        "Although our marketplace is now available to use, we plan on making plenty of additions and improvements to it as time goes on. We want to make sure that we are able to offer you the most optimal service we can provide. There are many new features in the works too, so keep your eyes peeled as our site develops along with your islands!",
-        "If you need further help, would like to report a bug or just want to chat, you should join us on Discord.",
-        "Thanks for your patronage!"],
+        text: [
+            "Welcome islanders!",
+            "As of today, Nook Horizons is live, HURRAY! For those of you who aren't quite sure what it is we offer, we are a trading platform for Animal Crossing: New Horizons. Our goal is to make it easy for players to buy and sell in-game items, without the hassle of having to hunt all over the internet to find exactly what you want.",
+            "Although our marketplace is now available to use, we plan on making plenty of additions and improvements to it as time goes on. We want to make sure that we are able to offer you the most optimal service we can provide. There are many new features in the works too, so keep your eyes peeled as our site develops along with your islands!",
+            "If you need further help, would like to report a bug or just want to chat, you should join us on Discord.",
+            "Thanks for your patronage!"],
         signature: '~ The Nook Horizons Team ~',
         image: `${process.env.PUBLIC_URL + "/assets/WoodLogoTease.png"}`,
-    }
+    }]
 
     return (
-        <Grid container direction='row' className={classes.wrapper}>
-            <Grid item xs={12}>
-                <Paper elevation={3} className={classes.post}>
-                    <Grid container direction='row' spacing={2}>
-                        <Grid item xs={4}>
-                            <Img
-                                src={post.image}
-                                className={classes.image}
-                            />
-                        </Grid>
-                        <Grid item xs={8} className={classes.postComponent}>
-                            <Grid container direction='row' justify='flex-end'>
-                                <Typography variant='body1'>
-                                    {post.date}
-                                </Typography>
+        <Grid container direction='column' spacing={3} className={classes.wrapper}>
+            {posts.map(post =>
+                <Grid item xs={12}>
+                    <Paper elevation={3} className={classes.post}>
+                        <Grid container direction='row' spacing={2}>
+                            <Grid item xs={4}>
+                                <Img
+                                    src={post.image}
+                                    className={classes.image}
+                                />
                             </Grid>
-                            <Typography variant='h2' className={classes.title}>
-                                {post.title}
-                            </Typography>
-                            {post.text.map(t =>
-                                <Typography variant='paragraph'>
-                                    {t}
-                                </Typography>
-                            )}
-                            <Grid container justify='flex-end'>
-                                <Grid item>
-                                    <Typography variant='paragraph' className={classes.signature}>
-                                        {post.signature}
+                            <Grid item xs={post.image ? 8 : 12} className={classes.postComponent}>
+                                <Grid container direction='row' justify='flex-end'>
+                                    <Typography variant='body1'>
+                                        {post.date}
                                     </Typography>
+                                </Grid>
+                                <Typography variant='h2' className={classes.title}>
+                                    {post.title}
+                                </Typography>
+                                {post.text.map(t =>
+                                    <Typography variant='paragraph'>
+                                        {t}
+                                    </Typography>
+                                )}
+                                <Grid container justify='flex-end'>
+                                    <Grid item>
+                                        <Typography variant='paragraph' className={classes.signature}>
+                                            {post.signature}
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </Paper>
-            </Grid>
+                    </Paper>
+                </Grid>
+            )}
         </Grid>
     );
 }
