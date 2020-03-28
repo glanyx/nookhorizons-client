@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import {
   Box,
   Grid,
@@ -124,6 +124,7 @@ function LoginForm({ onSubmit, ...props }) {
         return;
       };
 
+      handleUserStore(fields.username);
       setSuccess(true);
       props.userHasAuthenticated(true);
 
@@ -191,6 +192,23 @@ function LoginForm({ onSubmit, ...props }) {
   const handleClose = () => {
     setOpen(false);
     setOpenForget(false);
+  }
+
+  const handleUserStore = async (username) => {
+
+    try{
+        await storeUser({
+          username,
+        });
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  function storeUser(user) {
+    return API.post('nh', '/user', {
+      body: user
+    });
   }
 
   function renderEmailDialog() {
