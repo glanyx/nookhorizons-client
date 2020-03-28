@@ -8,7 +8,6 @@ import {
   UserSales,
   Login,
   Register,
-  Auth,
   Privacy,
   Market,
   Item,
@@ -25,7 +24,6 @@ function Routes({ appProps }) {
       <AuthenticatedRoute path="/user/sales" exact component={UserSales} appProps={appProps} />
       <RedirectRoute path="/login" exact component={Login} appProps={appProps} />
       <AppliedRoute path="/register" exact component={Register} appProps={appProps} />
-      <AppliedRoute path="/registered" exact component={Auth} appProps={appProps} />
       <AppliedRoute path="/privacy" exact component={Privacy} appProps={appProps} />
       <AppliedRoute path="/marketplace" exact component={Market} appProps={appProps} />
       <AppliedRoute path="/items/:id" exact component={Item} appProps={appProps} />

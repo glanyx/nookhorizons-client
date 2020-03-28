@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
-import { Auth } from 'aws-amplify';
+import { API, Auth } from 'aws-amplify';
 import { Box, Grid, Link, Typography, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, fade, makeStyles } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 
@@ -125,7 +125,7 @@ function RegisterForm({
         username: fields.username,
         password: fields.password,
         attributes: {
-          email: fields.email
+          email: fields.email.toLowerCase()
         }
       });
       setSnackbar({
@@ -182,7 +182,10 @@ function RegisterForm({
     setLoading(true);
     try {
       await Auth.confirmSignUp(fields.username, fields.code);
-      props.history.push("/registered");
+      await Auth.signIn(fields.username, fields.password);
+      handleUserStore(fields.username);
+      props.userHasAuthenticated(true);
+      props.history.push("/");
     } catch (e) {
       setSnackbar({
         type: 'error',
@@ -191,6 +194,23 @@ function RegisterForm({
       });
       setLoading(false);
     }
+  }
+
+  const handleUserStore = async (username) => {
+
+    try{
+        await storeUser({
+          username,
+        });
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  function storeUser(user) {
+    return API.post('nh', '/user', {
+      body: user
+    });
   }
 
   const handleSnackClose = (event, reason) => {
