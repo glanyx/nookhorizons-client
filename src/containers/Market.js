@@ -131,7 +131,7 @@ function Market(props) {
         ? await s3Upload(file, 'protected')
         : null;
 
-      await createItem({
+      const newItem = await createItem({
         name: fields.name,
         image: attachment,
         description: fields.description,
@@ -144,6 +144,9 @@ function Market(props) {
         recipe: fields.recipe.length > 0 ? fields.recipe : null,
         recipeSource: fields.recipeSource.length > 0 ? fields.recipeSource : null,
       });
+      newItem.tags = tags;
+      newItem.category = categoryChoice;
+      setItems([...items, newItem]);
       fields.name = '';
       fields.description = 'Unknown';
       fields.source = 'Unknown';
@@ -289,6 +292,7 @@ function Market(props) {
 
       try{
         const items = await loadItems();
+        console.log(items);
         
         await setImages(items);
 
@@ -300,7 +304,7 @@ function Market(props) {
       setLoading(false);
     }
     onLoad();
-  }, [props.isAuthenticated, submitting]);
+  }, [props.isAuthenticated]);
 
   const handleClose = () => {
     setOpenTagInput(false);
