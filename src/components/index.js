@@ -19,6 +19,8 @@ export { default as RegisterForm } from './RegisterForm';
 export { default as ItemCard } from './ItemCard';
 export { default as SaleCard } from './SaleCard';
 
+export { default as ItemDialog } from './ItemDialog';
+
 export { default as Pin } from './Pin';
 export { default as Sticker } from './Sticker';
 
