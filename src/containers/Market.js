@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useFormFields } from '../libs/hooksLib';
-import { makeStyles, fade, Link, Paper, Box, Grid, Typography, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Radio, RadioGroup, FormControl, FormControlLabel, CircularProgress } from '@material-ui/core';
+import { makeStyles, fade, Link, Paper, Grid, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, CircularProgress } from '@material-ui/core';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import { Pagination } from '@material-ui/lab'
-import { StyledTextbox, StyledSingleSelect, StyledMultiSelect, ItemCard, LoaderButton, StyledButton, StyledCheckbox } from '../components';
+import { StyledTextbox, ItemCard, StyledCheckbox } from '../components';
 import { Auth, API, Storage } from "aws-amplify";
+import { ItemDialog } from '../components';
 
 import { s3Upload } from '../libs/storageLib';
 import config from "../config";
@@ -93,15 +93,12 @@ function Market(props) {
 
   const classes = useStyles()
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [items, setItems] = useState([]);
-  const [file, setFile] = useState(null);
 
-  const [openTagInput, setOpenTagInput] = useState(false);
-  const [openCatInput, setOpenCatInput] = useState(false);
+  const [openItemDialog, setOpenItemDialog] = useState(false);
   const [openInstructions, setOpenInstructions] = useState(false);
 
   const [hidden, setHidden] = useState(false);
@@ -115,142 +112,46 @@ function Market(props) {
     return API.get('nh', '/items');
   }
   
-  async function handleNewItem(event) {
-    event.preventDefault();
+  async function handleNewItem(item) {
 
-    if (file !== null && file.size > config.MAX_ATTACHMENT_SIZE) {
+    if (item.file !== null && item.file.size > config.MAX_ATTACHMENT_SIZE) {
       alert(`Maximum file size is ${config.MAX_ATTACHMENT_SIZE/ 1000000} MB.`);
       return;
     }
 
-    setSubmitting(true);
-
     try{
 
-      const attachment = file
-        ? await s3Upload(file, 'protected')
+      const attachment = item.file
+        ? await s3Upload(item.file, 'protected')
         : null;
 
       const newItem = await createItem({
-        name: fields.name,
+        name: item.name,
         image: attachment,
-        description: fields.description,
-        source: fields.source,
-        category: categoryChoice.categoryId,
-        tags: tags.map(tag => tag.tagId),
-        currency: currency,
-        retailPrice: price,
-        craftable: craftable,
-        recipe: fields.recipe.length > 0 ? fields.recipe : null,
-        recipeSource: fields.recipeSource.length > 0 ? fields.recipeSource : null,
+        description: item.description,
+        source: item.source,
+        category: item.category.categoryId,
+        tags: item.tags.map(tag => tag.tagId),
+        currency: item.currency,
+        retailPrice: item.retailPrice,
+        craftable: item.craftable,
+        recipe: item.recipe.length > 0 ? item.recipe : null,
+        recipeSource: item.recipeSource.length > 0 ? item.recipeSource : null,
       });
-      newItem.tags = tags;
-      newItem.category = categoryChoice;
+      newItem.tags = item.tags;
+      newItem.category = item.category;
+      newItem.image = attachment ? URL.createObjectURL(item.file) : null;
       setItems([...items, newItem]);
-      fields.name = '';
-      fields.description = 'Unknown';
-      fields.source = 'Unknown';
-      setCategoryChoice('');
-      setTags([]);
-      setCurrency('Bells');
-      setPrice('Unknown');
-      setCraftable(false);
-      fields.recipe = '';
-      fields.recipeSource = '';
-      setFile(null);
     } catch(e) {
       alert(e);
     }
 
-    setSubmitting(false);
   }
 
   function createItem(item) {
     return API.post('nh', '/items', {
       body: item
     });
-  }
-
-  function validateItemForm() {
-    return fields.name.length > 0 && fields.description.length > 0 && categoryChoice
-  }
-
-  /* Tags */
-  const [tagOptions, setTagOptions] = useState([]);
-  const [tags, setTags] = useState([]);
-  function loadTags() {
-    return API.get('nh', '/tags');
-  }
-  function createTag(tag) {
-    return API.post('nh', '/tags', {
-      body: tag
-    });
-  }
-  const handleTagChange = event => {
-    if (event.target.value) {
-      setTags(event.target.value);
-    }
-  }
-  const handleNewTag = event => {
-    event.preventDefault();
-    event.stopPropagation();
-    setOpenTagInput(true);
-  }
-  async function handleTagCreate(event) {
-    
-    if(fields.newTag.length === 0) {
-      alert('Tag name must have a value.');
-      return;
-    }
-
-    try{
-      tagOptions.push(await createTag({ name: fields.newTag }));
-      fields.newTag = '';
-      handleClose();
-    } catch(e) {
-      alert(e);
-    }
-  }
-
-  /* Categories */
-  const [categoryOptions, setCategoryOptions] = useState([]);
-  const [categoryChoice, setCategoryChoice] = useState('');
-  function loadCategories() {
-    return API.get('nh', '/categories');
-  }
-  function createCategory(category) {
-    return API.post('nh', '/categories', {
-      body: category
-    });
-  }
-  const handleCategoryChange = event => {
-    if (event.target.value) {
-      setCategoryChoice(event.target.value);
-    }
-  }
-  const handleNewCategory = event => {
-    event.preventDefault();
-    event.stopPropagation();
-    setOpenCatInput(true);
-  }
-  async function handleCategoryCreate(event) {
-    
-    if(fields.newCategory.length === 0) {
-      alert('Category name must have a value.');
-      return;
-    }
-
-    try{
-      categoryOptions.push(await createCategory({ name: fields.newCategory }));
-      fields.newCategory = '';
-      handleClose();
-    } catch(e) {
-      alert(e);
-    }
-  }
-
-  function handleFileChange(event) {
-    setFile(event.target.files[0]);
   }
 
   useEffect(() => {
@@ -275,24 +176,12 @@ function Market(props) {
         if (session.getIdToken().payload['cognito:groups']){
           const admin = session.getIdToken().payload['cognito:groups'].indexOf('Admin') !== -1;
 
-          if (admin) {
-            try {
-              const tags = await loadTags();
-              setTagOptions(tags);
-              const categories = await loadCategories();
-              setCategoryOptions(categories);
-            } catch(e) {
-              alert(e);
-            }
-          }
-
           setIsAdmin(admin);
         }
       }
 
       try{
         const items = await loadItems();
-        console.log(items);
         
         await setImages(items);
 
@@ -306,30 +195,10 @@ function Market(props) {
     onLoad();
   }, [props.isAuthenticated]);
 
-  const handleClose = () => {
-    setOpenTagInput(false);
-    setOpenCatInput(false);
-  }
-
   const handleInstructionsClose = () => {
     setHidden(false);
     setOpenInstructions(false);
   }
-
-  const [fields, handleFieldChange] = useFormFields({
-    name: "",
-    description: 'Unknown',
-    source: 'Unknown',
-    newTag: "",
-    newCategory: "",
-    width: '',
-    height: '',
-    recipe: '',
-    recipeSource: '',
-  });
-  const [price, setPrice] = useState('Unknown');
-  const [currency, setCurrency] = useState('Bells');
-  const [craftable, setCraftable] = useState(false);
 
   const [search, setSearch] = useState('');
   const [salesOnly, setSalesOnly] = useState(false);
@@ -367,313 +236,106 @@ function Market(props) {
     }
   }
 
-  const addItemMock = {
-    itemId: 'mock-id-1234',
-    name: fields.name,
-    imageUrl: file !== null ? URL.createObjectURL(file) : '',
-    category: categoryChoice,
-    description: fields.description,
-    tags: tags,
-    saleCount: 0
-  }
-  
-  const tagData = {
-    options: tagOptions,
-    choices: tags,
-    onChange: handleTagChange,
-    allowAdd: true,
-    onAdd: handleNewTag
-  }
-
-  const categoryData = {
-    options: categoryOptions,
-    choices: categoryChoice,
-    onChange: handleCategoryChange,
-    allowAdd: true,
-    onAdd: handleNewCategory
-  }
-
   return (
     <>
-      <Grid container justify='center' alignItems='center'>
+      <Grid container justify='center' alignItems='center' direction='column'>
         {!loading && isAdmin &&
-          <Box border={5} className={classes.wrapper}>
-            <form onSubmit={handleNewItem}>
-              <Grid container spacing={2}>
-                <Grid item xs={4} className={classes.blockWrapper}>
-                  <Grid item>
-                    <ItemCard item={addItemMock} />
-                  </Grid>
-                  <Grid item>
-                    <StyledButton
-                      color='primary'
-                      variant='contained'
-                      component='label'
-                    >
-                      Add Image
-                      <input
-                        type='file'
-                        onChange={handleFileChange}
-                        style={{ display: 'none' }}
-                      />
-                    </StyledButton>
-                  </Grid>
-                </Grid>
-                <Grid item xs={4} spacing={1}>
-                  <Grid container spacing={1} direction='row'>
-                    <Grid item xs={12}>
-                      <StyledTextbox
-                        id='name'
-                        placeholder='Name'
-                        variant='outlined'
-                        color='primary'
-                        value={fields.name}
-                        onChange={handleFieldChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <StyledTextbox
-                        id='description'
-                        placeholder='Description'
-                        variant='outlined'
-                        color='primary'
-                        multiline
-                        rows='3'
-                        value={fields.description}
-                        onChange={handleFieldChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <StyledTextbox
-                        id='source'
-                        placeholder='Source'
-                        variant='outlined'
-                        color='primary'
-                        multiline
-                        rows='3'
-                        value={fields.source}
-                        onChange={handleFieldChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <StyledSingleSelect
-                        id='category'
-                        color='primary'
-                        label='Category'
-                        {...categoryData}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <StyledMultiSelect
-                        id='tags'
-                        color='primary'
-                        variant='outlined'
-                        label='Tags'
-                        {...tagData}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={4}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <FormControl component='fieldset' className={classes.block}>
-                        <RadioGroup aria-label='currency' value={currency} onChange={event => setCurrency(event.target.value)}>
-                          <FormControlLabel value='Bells' control={<Radio />} label='Bells' />
-                          <FormControlLabel value='Nook Miles' control={<Radio />} label='Nook Miles' />
-                        </RadioGroup>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <StyledTextbox
-                        id='price'
-                        placeholder='Retail Price'
-                        type='text'
-                        variant='outlined'
-                        color='primary'
-                        value={price}
-                        onChange={e => setPrice(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <FormControlLabel
-                        control={
-                          <StyledCheckbox checked={craftable} onChange={event => setCraftable(event.target.checked)} />
-                        }
-                        label='Craftable?'
-                      />
-                    </Grid>
-                    {craftable &&
-                      <>
-                        <Grid item xs={12}>
-                          <StyledTextbox
-                            id='recipe'
-                            placeholder='Recipe'
-                            type='text'
-                            variant='outlined'
-                            color='primary'
-                            value={fields.recipe}
-                            onChange={handleFieldChange}
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <StyledTextbox
-                            id='recipeSource'
-                            placeholder='Recipe Source'
-                            type='text'
-                            variant='outlined'
-                            color='primary'
-                            value={fields.recipeSource}
-                            onChange={handleFieldChange}
-                          />
-                        </Grid>
-                      </>
-                    }
-                  </Grid>
-                  <LoaderButton disabled={!validateItemForm() || submitting} type='submit' loading={submitting}>
-                    Add
-                  </LoaderButton>
-                  <StyledButton variant='contained' onClick={() => setHidden(!hidden)}>
-                    {hidden ? 'Load Items' : 'Unload Items'}
-                  </StyledButton>
-                </Grid>
-              </Grid>
-            </form>
-          </Box>
-          }
-          <Paper elevation={3} className={classes.howitworks}>
-            <Grid container direction='column' spacing={2}>
-              <Grid item className={classes.howitworksComponent}>
-                <Typography variant='h5'>
-                    Please Note:
-                </Typography>
-                <Typography variant='body2'>
-                    <ul>
-                        <li>Before you use our marketplace, please make sure you have:
-                          <ul>
-                            <li>An <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
-                            <li>A <span className={classes.bold}>Discord account</span>, which is required in order to contact the player you are trading with. We are working on our own messaging system.</li>
-                          </ul>
-                        </li>
-                        <li>We are still in the process of adding new items to this list. Please check back another time to see if your item has been added or get in touch with the team.</li>
-                        <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
-                        <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
-                        <li>At this time, a discord account is required to use this marketplace, in order to contact the player you are trading with. We are working on our own messaging system.</li>
-                        <li>Buying/selling an item with no intention of completing the trade is classed as an offense here and repeated offenses will result in an account ban, which can be permanent.</li>
-                        <li>No NSFW, personal information or unhelpful spam allowed anywhere on your listings.</li>
-                        <li>You can view additional instructions <Link href='#' onClick={handleOpenInstructions}>here</Link>.</li>
-                    </ul>
-                </Typography>
+          <Grid item xs={12}>
+            <Button variant='contained' color='primary' onClick={() => setOpenItemDialog(true)}>
+              Create Item
+            </Button>
+            <ItemDialog
+              open={openItemDialog}
+              onSubmit={handleNewItem}
+              onClose={() => setOpenItemDialog(false)}
+            />
+          </Grid>
+        }
+        <Paper elevation={3} className={classes.howitworks}>
+          <Grid container direction='column' spacing={2}>
+            <Grid item className={classes.howitworksComponent}>
+              <Typography variant='h5'>
+                  Please Note:
+              </Typography>
+              <Typography variant='body2'>
+                  <ul>
+                      <li>Before you use our marketplace, please make sure you have:
+                        <ul>
+                          <li>An <span className={classes.bold}>active nintendo online membership</span>, otherwise you cannot visit other players to trade.</li>
+                          <li>A <span className={classes.bold}>Discord account</span>, which is required in order to contact the player you are trading with. We are working on our own messaging system.</li>
+                        </ul>
+                      </li>
+                      <li>We are still in the process of adding new items to this list. Please check back another time to see if your item has been added or get in touch with the team.</li>
+                      <li>A search bar and filters will be coming soon! Until then, to search for items, please press CTRL + F on your keyboard and type in the item name you are looking for.</li>
+                      <li>To contribute data or images to our listings, or report another user, please join our Discord and use ModMail.</li>
+                      <li>At this time, a discord account is required to use this marketplace, in order to contact the player you are trading with. We are working on our own messaging system.</li>
+                      <li>Buying/selling an item with no intention of completing the trade is classed as an offense here and repeated offenses will result in an account ban, which can be permanent.</li>
+                      <li>No NSFW, personal information or unhelpful spam allowed anywhere on your listings.</li>
+                      <li>You can view additional instructions <Link href='#' onClick={handleOpenInstructions}>here</Link>.</li>
+                  </ul>
+              </Typography>
+            </Grid>
+          </Grid>
+        </Paper>
+        {loading &&
+          <Grid container direction='column' alignContent='center' alignItems='center'>
+            <Grid item className={classes.loadWrapper}>
+              <Grid container direction='column' alignContent='center' alignItems='center'>
+                <CircularProgress size={80} thickness={6} color='inherit' />
+                <Typography variant='body'>Loading items..</Typography>
               </Grid>
             </Grid>
-          </Paper>
-          {loading &&
-            <Grid container direction='column' alignContent='center' alignItems='center'>
-              <Grid item className={classes.loadWrapper}>
-                <Grid container direction='column' alignContent='center' alignItems='center'>
-                  <CircularProgress size={80} thickness={6} color='inherit' />
-                  <Typography variant='body'>Loading items..</Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          }
-          {!loading && !hidden &&
-            <>
-              <div className={classes.sticky}>
-                <StyledTextbox
-                  id='search'
-                  className={classes.searchbar}
-                  placeholder='Search item..'
-                  type='text'
-                  variant='outlined'
-                  color='primary'
-                  value={search}
-                  onChange={handleSearch}
-                />
-                <StyledCheckbox
-                  className={classes.checkbox}
-                  label='Display only items with listings'
-                  value={salesOnly}
-                  onChange={handleSalesFilter}
-                />
-                <Pagination
-                  color='primary'
-                  count={Math.ceil(
-                    items
-                      .filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
-                      .filter(item => salesOnly ? item.saleCount > 0 : item)
-                      .length / 20)
-                  }
-                  page={page}
-                  className={classes.paginator}
-                  onChange={(event, value) => setPage(value)}
-                />
-              </div>
-              <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
-                {items
-                  .filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
-                  .filter(item => salesOnly ? item.saleCount > 0 : item)
-                  .sort(sortItemName)
-                  .slice((page - 1) * 20, page * 20)
-                  .map(item => (
-                  <Grid item xs={!isWidthDown('md', props.width) ? (!isWidthDown('sm', props.width) ? 3 : 6) : 12} key={item.itemId}>
-                    <Grid container alignItems='center' justify='center'>
-                      <ItemCard item={item} to={`/items/${item.itemId}`} />
-                    </Grid>
+          </Grid>
+        }
+        {!loading && !hidden &&
+          <>
+            <div className={classes.sticky}>
+              <StyledTextbox
+                id='search'
+                className={classes.searchbar}
+                placeholder='Search item..'
+                type='text'
+                variant='outlined'
+                color='primary'
+                value={search}
+                onChange={handleSearch}
+              />
+              <StyledCheckbox
+                className={classes.checkbox}
+                label='Display only items with listings'
+                value={salesOnly}
+                onChange={handleSalesFilter}
+              />
+              <Pagination
+                color='primary'
+                count={Math.ceil(
+                  items
+                    .filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+                    .filter(item => salesOnly ? item.saleCount > 0 : item)
+                    .length / 20)
+                }
+                page={page}
+                className={classes.paginator}
+                onChange={(event, value) => setPage(value)}
+              />
+            </div>
+            <Grid container spacing={2} className={classes.itemList} justify='center' alignItems='center'>
+              {items
+                .filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+                .filter(item => salesOnly ? item.saleCount > 0 : item)
+                .sort(sortItemName)
+                .slice((page - 1) * 20, page * 20)
+                .map(item => (
+                <Grid item xs={!isWidthDown('md', props.width) ? (!isWidthDown('sm', props.width) ? 3 : 6) : 12} key={item.itemId}>
+                  <Grid container alignItems='center' justify='center'>
+                    <ItemCard item={item} to={`/items/${item.itemId}`} />
                   </Grid>
-                ))}
-              </Grid>
-            </>
-          }
-        </Grid>
-      <Dialog open={openTagInput} onClose={handleClose} aria-labelledby='tag-input'>
-        <DialogTitle id='tag-dialog-title'>New Tag</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please add a name for the new Tag.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin='normal'
-            id='newTag'
-            label='Tag'
-            value={fields.newTag}
-            onChange={handleFieldChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleTagCreate}>
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openCatInput} onClose={handleClose} aria-labelledby='category-input'>
-        <DialogTitle id='category-dialog-title'>New Category</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please add a name for the new Category.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin='normal'
-            id='newCategory'
-            label='Category'
-            value={fields.newCategory}
-            onChange={handleFieldChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleCategoryCreate}>
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        }
+      </Grid>
       <Dialog open={openInstructions} onClose={handleInstructionsClose} aria-labelledby='instructions'>
         <DialogTitle id='instructions-dialog-title'>Instructions</DialogTitle>
         <DialogContent>

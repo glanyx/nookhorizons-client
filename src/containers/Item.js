@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API, Storage } from "aws-amplify";
+import { API, Storage, Auth } from "aws-amplify";
 import {
     makeStyles,
     fade,
@@ -24,7 +24,10 @@ import {
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useFormFields } from '../libs/hooksLib';
-import { StyledButton, LoaderButton, ItemCard } from '../components';
+import { ItemDialog, StyledButton, LoaderButton, ItemCard } from '../components';
+
+import { s3Upload } from '../libs/storageLib';
+import config from "../config";
 
 const useStyles = makeStyles(theme => ({
     fullwrapper: {
@@ -43,10 +46,6 @@ const useStyles = makeStyles(theme => ({
         '& .MuiTypography-root': {
             letterSpacing: '1px'
         }
-    },
-    image: {
-        height: 200,
-        maxWidth: '100%'
     },
     content: {
         backgroundColor: fade(theme.palette.primary.light, .5),
@@ -113,6 +112,9 @@ function Item(props){
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [buying, setBuying] = useState(false);
+
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [editting, setEditting] = useState(false);
 
     const [open, setOpen] = useState(false);
     const [purchaseCompleteOpen, setPurchaseCompleteOpen] = useState(false);
@@ -223,6 +225,50 @@ function Item(props){
         });
     }
 
+    async function handleItemUpdate(newItem) {
+
+        if (newItem.file !== null && newItem.file.size > config.MAX_ATTACHMENT_SIZE) {
+            alert(`Maximum file size is ${config.MAX_ATTACHMENT_SIZE/ 1000000} MB.`);
+            return;
+        }
+
+        setSubmitting(true);
+
+        try{
+            const attachment = newItem.file !== item.image
+                ? await s3Upload(newItem.file, 'protected')
+                : item.image;
+
+            const replacedItem = await updateItem({
+                name: newItem.name,
+                image: attachment,
+                description: newItem.description,
+                source: newItem.source,
+                category: newItem.category.categoryId,
+                tags: newItem.tags.map(tag => tag.tagId),
+                currency: newItem.currency,
+                retailPrice: newItem.retailPrice,
+                craftable: false,
+                recipe: newItem.recipe,
+                recipeSource: newItem.recipeSource,
+            });
+            replacedItem.tags = newItem.tags;
+            replacedItem.category = newItem.category;
+            replacedItem.imageUrl = newItem.file !== item.image ? URL.createObjectURL(newItem.file) : item.imageUrl;
+            setItem(replacedItem);
+        } catch(e) {
+            alert(e);
+        }
+
+        setSubmitting(false);
+    }
+
+    function updateItem(item) {
+    return API.put('nh', `/items/${props.match.params.id}`, {
+        body: item
+    });
+    }
+
     useEffect(() => {
         function loadItem() {
             return API.get('nh', `/items/${props.match.params.id}`);
@@ -233,6 +279,15 @@ function Item(props){
         }
 
         async function onLoad() {
+
+            if (props.isAuthenticated) {
+                const session = await Auth.currentSession();
+        
+                if (session.getIdToken().payload['cognito:groups']){
+                    const admin = session.getIdToken().payload['cognito:groups'].indexOf('Admin') !== -1;
+                    setIsAdmin(admin);
+                }
+            }
 
           try{
             const item = await loadItem();
@@ -268,9 +323,20 @@ function Item(props){
                             <ItemCard overlay={false} item={item} />
                         </Grid>
                         <Grid item>
-                            <StyledButton color='primary' variant='contained' onClick={handleOpen}>
-                                Sell this item
-                            </StyledButton>
+                            <Grid container direction='row' spacing={2}>
+                                <Grid item>
+                                    <StyledButton color='primary' variant='contained' onClick={handleOpen}>
+                                        Sell this item
+                                    </StyledButton>
+                                </Grid>
+                                {isAdmin &&
+                                    <Grid item>
+                                        <StyledButton color='secondary' variant='contained' onClick={() => setEditting(true)}>
+                                            Edit
+                                        </StyledButton>
+                                    </Grid>
+                                }
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -445,6 +511,12 @@ function Item(props){
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ItemDialog
+                open={editting}
+                item={item}
+                onSubmit={handleItemUpdate}
+                onClose={() => setEditting(false)}
+            />
         </>
     )
 }
