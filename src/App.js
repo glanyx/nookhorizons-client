@@ -2,13 +2,18 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import "./App.css";
 
-import { makeStyles, fade } from "@material-ui/core";
+import { makeStyles, fade, Snackbar } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
 import Routes from "./Routes";
 import { Clock, NavBar, MediaBar } from "./components";
 import { API, Auth } from "aws-amplify";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -63,30 +68,45 @@ const useStyles = makeStyles(() => ({
 function App(props) {
   const classes = useStyles();
 
+  const DEFAULT_MESSAGE = `Something went wrong.. Please try again or contact the Nook Horizons team.`;
+
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({
+    username: '',
+    discordTag: '',
+  });
 
-  useEffect(() => {
+  const [alert, setAlert] = useState({
+    active: false,
+    type: 'warning',
+    message: '[message]'
+  })
+
+  useEffect((setAlert) => {
     async function onLoad() {
       try {
         await Auth.currentSession();
         userHasAuthenticated(true);
   
-        if (isAuthenticated) {
-          const user = await loadUser();
-          setUser(user);
-        }
+        const user = await loadUser();
+        setUser(user);
+
       } catch (e) {
         if (e !== "No current user") {
-          alert(e.response.data.error);
+          setAlert({
+            active: true,
+            type: 'error',
+            message: e.response.data ? e.response.data.error : e.message
+          });
         }
       }
       setIsAuthenticating(false);
     }
     onLoad();
   }, [isAuthenticated]);
+
 
   function loadUser() {
     return API.get('nh', `/user`);
@@ -96,6 +116,17 @@ function App(props) {
     await Auth.signOut();
     userHasAuthenticated(false);
     props.history.push("/login");
+  }
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setAlert({
+      ...alert,
+      active: false,
+    })
   }
 
   return (
@@ -109,15 +140,20 @@ function App(props) {
               </div>
             </div>
             <NavBar
-              userProps={{ isAuthenticated, userHasAuthenticated, user, setUser }}
+              userProps={{ isAuthenticated, userHasAuthenticated, user, setUser, setAlert }}
               onLogout={handleLogout}
             />
             <div className={classes.fill}>
-              <Routes appProps={{ isAuthenticated, userHasAuthenticated, user, setUser }} />
+              <Routes appProps={{ isAuthenticated, userHasAuthenticated, user, setUser, setAlert }} />
             </div>
             <MediaBar />
           </div>
         </div>
+        <Snackbar open={alert.active} autoHideDuration={5000} onClose={handleAlertClose}>
+          <Alert onClose={handleAlertClose} severity={alert.message === 'undefined' ? 'error' : alert.type}>
+            {alert.message === 'undefined' ? DEFAULT_MESSAGE : alert.message}
+          </Alert>
+        </Snackbar>
       </MuiThemeProvider>
     )
   );

@@ -31,8 +31,7 @@ const useStyles = makeStyles(theme => ({
     textShadow: '1px 2px 2px rgba(210,170,110,.7)',
     height: '100%',
     '&:hover': {
-      background: `linear-gradient(rgba(255,200,200,.1),rgba(255,200,200,.1)),url(${process
-        .env.PUBLIC_URL + "/assets/buttonBackground.png"})`,
+      backgroundColor: fade(theme.palette.common.black, .65),
       boxShadow: '0px 0px 2px 2px rgba(190,140,70,.8)',
       color: theme.palette.primary.light,
       textShadow: '1px 2px 0px rgba(50,40,30,.9)',
@@ -109,6 +108,7 @@ function NavBar({
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl2, setAnchorEl2] = useState(null);
   const [username, setUsername] = useState('');
   const [openDrawer, setOpenDrawer] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
@@ -119,11 +119,13 @@ function NavBar({
 
   function handleClose() {
     setAnchorEl(null);
+    setAnchorEl2(null);
     setOpenDrawer(false);
   }
 
   async function handleLogout() {
     setAnchorEl(null);
+    setAnchorEl2(null);
     setOpenDrawer(false);
     setUserMenu(false);
     userProps.setUser(null);
@@ -216,67 +218,98 @@ function NavBar({
     return (
       <div className={classes.root}>
         <Grid container className={classes.padding} alignItems="center">
-          <Button className={classes.button} component={RouterLink} to="/">
-            News
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} component={RouterLink} to="/marketplace">
-            Market
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/collections">
-            Collections
-            <Typography className={classes.soontext}>Coming Soon!</Typography>
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/guides">
-            Guides
-            <Typography className={classes.soontext}>Coming Soon!</Typography>
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-          <Button className={classes.button} href="https://discord.gg/3NPBpZh" target="_blank">
-            <Icon className={`fab fa-discord`} />
-          </Button>
-          <Divider className={classes.divider} orientation="vertical" />
-        </Grid>
-        <Grid
-          container
-          className={classes.padding}
-          alignItems="center"
-          alignContent="center"
-          justify="flex-end"
-        >
-          {userProps.isAuthenticated ? (
-            <>
-              <Button className={classes.button} onClick={handleClick}>
-                <Icon className={`fas fa-user-circle`} />&nbsp;
-                {username}
-              </Button>
-              <Menu
-                id='user-menu'
-                className={classes.menu}
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user'>My Account</MenuItem>
-                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user/sales'>My Trades</MenuItem>
-                <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <>
-              <Button className={classes.button} component={RouterLink} to="/register">
-                Register
+          <Grid item xs={8}>
+            <Grid container direction='row' alignItems="center">
+              <Button className={classes.button} component={RouterLink} to="/">
+                News
               </Button>
               <Divider className={classes.divider} orientation="vertical" />
-              <Button className={classes.button} component={RouterLink} to="/login">
-                Login
+              <Button className={classes.button} onClick={(event) => setAnchorEl2(event.currentTarget)}>
+                Database
               </Button>
-            </>
-          )}
+              <Menu
+                id='database-menu'
+                className={classes.menu}
+                anchorEl={anchorEl2}
+                keepMounted
+                open={Boolean(anchorEl2)}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+              >
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/items'>Items</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/recipes'>Recipes</MenuItem>
+                <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/villagers'>Villagers</MenuItem>
+              </Menu>
+              <Divider className={classes.divider} orientation="vertical" />
+              <Button className={classes.button} component={RouterLink} to="/marketplace">
+                Market
+              </Button>
+              <Divider className={classes.divider} orientation="vertical" />
+              <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/collections">
+                Collections
+                <Typography className={classes.soontext}>Coming Soon!</Typography>
+              </Button>
+              <Divider className={classes.divider} orientation="vertical" />
+              <Button disabled className={`${classes.button} ${classes.comingsoon}`} component={RouterLink} to="/guides">
+                Guides
+                <Typography className={classes.soontext}>Coming Soon!</Typography>
+              </Button>
+              <Divider className={classes.divider} orientation="vertical" />
+              <Button className={classes.button} href="https://discord.gg/3NPBpZh" target="_blank">
+                <Icon className={`fab fa-discord`} />
+              </Button>
+              <Divider className={classes.divider} orientation="vertical" />
+            </Grid>
+          </Grid>
+          <Grid item xs={4}>
+            <Grid
+              container
+              className={classes.padding}
+              alignItems="center"
+              alignContent="center"
+              justify="flex-end"
+            >
+              {userProps.isAuthenticated ? (
+                <>
+                  <Button className={classes.button} onClick={handleClick}>
+                    <Icon className={`fas fa-user-circle`} />&nbsp;
+                    {username}
+                  </Button>
+                  <Menu
+                    id='user-menu'
+                    className={classes.menu}
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    TransitionComponent={Fade}
+                  >
+                    <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user'>My Account</MenuItem>
+                    <MenuItem className={classes.menuitem} onClick={handleClose} component={RouterLink} to='/user/sales'>My Trades</MenuItem>
+                    <MenuItem className={classes.menuitem} onClick={handleLogout}>Logout</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <>
+                  <Button className={classes.button} component={RouterLink} to="/register">
+                    Register
+                  </Button>
+                  <Divider className={classes.divider} orientation="vertical" />
+                  <Button className={classes.button} component={RouterLink} to="/login">
+                    Login
+                  </Button>
+                </>
+              )}
+            </Grid>
+          </Grid>
         </Grid>
       </div>
     );

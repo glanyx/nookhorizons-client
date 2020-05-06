@@ -124,14 +124,30 @@ function LoginForm({ onSubmit, ...props }) {
         return;
       };
 
+      const user = await loadUser();
+      props.setUser(user);
+      props.setAlert({
+        active: true,
+        type: 'success',
+        message: `Welcome back, ${user.username}!`
+      })
+
       handleUserStore(fields.username);
       setSuccess(true);
       props.userHasAuthenticated(true);
 
     } catch (e) {
-      alert(e.message);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
       setLoading(false);
     }
+  }
+
+  function loadUser() {
+    return API.get('nh', `/user`);
   }
 
   async function handleForcePassword(event) {
@@ -152,7 +168,11 @@ function LoginForm({ onSubmit, ...props }) {
 
     } catch (e) {
       setSubmitting(false);
-      alert(e.message);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
   }
 
@@ -164,7 +184,11 @@ function LoginForm({ onSubmit, ...props }) {
     try {
       await Auth.forgotPassword(fields.email.toLowerCase());
     } catch(e) {
-      alert(e);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
     setCodeSent(true);
     setSubmitting(false);
@@ -182,7 +206,11 @@ function LoginForm({ onSubmit, ...props }) {
         fields.newPassword
       );
     } catch(e) {
-      alert(e);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
     setCodeSent(false);
     setSubmitting(false);

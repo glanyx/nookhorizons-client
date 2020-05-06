@@ -29,8 +29,13 @@ function User(props) {
   const [cancelling, setCancelling] = useState(false);
   const [completing, setCompleting] = useState(false);
 
+  const [requests, setRequests] = useState([]);
   const [sales, setSales] = useState([]);
   const [purchases, setPurchases] = useState([]);
+
+  // function loadRequests(user) {
+  //   return API.get('nh', `/user/${user.id}/requests`);
+  // }
 
   function loadSales(user) {
     return API.get('nh', `/user/${user.id}/sales`);
@@ -53,8 +58,11 @@ function User(props) {
       try {
         const sales = await loadSales(user);
         const purchases = await loadPurchases(user);
+        // const requests = await loadRequests(user);
+        const requests = [];
         setSales(sales);
         setPurchases(purchases);
+        setRequests(requests);
       } catch (e) {
         alert(e);
       }
@@ -75,7 +83,11 @@ function User(props) {
             saleId: saleId
         });
     } catch (e) {
-        alert(e.message);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
 
     setCancelling(false);
@@ -96,7 +108,11 @@ function User(props) {
         sale: sale
       });
     } catch(e) {
-      alert(e.message);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
 
     setCompleting(false);
@@ -110,9 +126,69 @@ function User(props) {
 
   return (
     <>
+    <Paper className={classes.section}>
+        <Typography variant='h2'>
+          My Requests
+        </Typography>
+        <Grid container justify='center'>
+          <TableContainer component={Paper} className={classes.salestable}>
+            <Table aria-label='requests'>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell align='right'>Variant</TableCell>
+                  <TableCell align='right'>Quantity</TableCell>
+                  <TableCell align='right'>Your Offer</TableCell>
+                  <TableCell align='right'>Note</TableCell>
+                  <TableCell align='right'>Status</TableCell>
+                  <TableCell align='right'>Buyer</TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableHead>
+
+              {!loading
+                ?
+                <TableBody>
+                  {requests.map(request =>
+                    <TableRow key={request.requestId}>
+                      <TableCell>{request.item.name}</TableCell>
+                      <TableCell align='right'>{request.variant}</TableCell>
+                      <TableCell align='right'>{request.quantity}</TableCell>
+                      <TableCell align='right'>{request.price}</TableCell>
+                      <TableCell align='right'>{request.note}</TableCell>
+                      <TableCell align='right'>{request.status}</TableCell>
+                      <TableCell align='right'>{request.buyer ? request.buyer.username : null}</TableCell>
+                      <TableCell align='center'>
+                        {/* {sale.status !== 'Trade Pending' && sale.status !== 'Cancelled' && sale.status !== 'Complete' &&
+                          <StyledButton error color='primary' variant='outlined' onClick={event => handleCancelSale(event, sale.saleId)} className={classes.salesbutton}>
+                              Cancel Sale
+                          </StyledButton>
+                        } */}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+                :
+                <TableBody>
+                    <TableRow>
+                      <TableCell><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='right'><Skeleton variant='text'/></TableCell>
+                      <TableCell align='center'><Skeleton variant='rect'/></TableCell>
+                    </TableRow>
+                </TableBody>
+              }
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Paper>
       <Paper className={classes.section}>
         <Typography variant='h2'>
-          User Sales
+          My Sales
         </Typography>
         <Grid container justify='center'>
           <TableContainer component={Paper} className={classes.salestable}>
@@ -172,7 +248,7 @@ function User(props) {
       </Paper>
       <Paper className={classes.section}>
         <Typography variant='h2'>
-          User Purchases
+          My Purchases
         </Typography>
         <Grid container justify='center'>
           <TableContainer component={Paper} className={classes.salestable}>

@@ -63,7 +63,11 @@ function User(props) {
         discordTag: discordTag
       });
     } catch(e) {
-        alert(e.message);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
     props.setUser({
       ...props.user,
@@ -95,7 +99,11 @@ function User(props) {
         setSuccess(true);
       } catch (e) {
         setLoading(false);
-        alert(e.message);
+        props.setAlert({
+          active: true,
+          type: 'error',
+          message: e.message
+        });
       }
   }
 

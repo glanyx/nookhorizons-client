@@ -104,12 +104,17 @@ const ItemDialog = ({
       return;
     }
 
+    console.log(event.target.value);
     setTags(event.target.value);
   }
   async function handleTagCreate(event) {
     
     if(fields.newTag.length === 0) {
-      alert('Tag name must have a value.');
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: 'Tag name must have a value.'
+      });
       return;
     }
 
@@ -118,7 +123,11 @@ const ItemDialog = ({
       fields.newTag = '';
       handleClose();
     } catch(e) {
-      alert(e);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
   }
   function loadTags() {
@@ -147,7 +156,11 @@ const ItemDialog = ({
   async function handleCategoryCreate(event) {
     
     if(fields.newCategory.length === 0) {
-      alert('Category name must have a value.');
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: 'Category name must have a value.'
+      });
       return;
     }
 
@@ -156,7 +169,11 @@ const ItemDialog = ({
       fields.newCategory = '';
       handleClose();
     } catch(e) {
-      alert(e);
+      props.setAlert({
+        active: true,
+        type: 'error',
+        message: e.message
+      });
     }
   }
   function loadCategories() {
@@ -223,11 +240,10 @@ const ItemDialog = ({
       setTagOptions(tags);
       const categories = await loadCategories();
       setCategoryOptions(categories);
-
-      setValues();
     }
 
     onLoad();
+    setValues();
   }, [item]);
 
   const handleCancel = () => {
